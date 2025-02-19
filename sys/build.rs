@@ -60,36 +60,17 @@ fn main() -> anyhow::Result<()> {
     println!("cargo::rustc-link-search=native={cef_dir}");
 
     let mut cef_dll_wrapper = cmake::Config::new(&cef_dir);
-    cef_dll_wrapper
-        .generator("Ninja")
-        .profile("RelWithDebInfo")
-        .no_build_target(true);
+    cef_dll_wrapper.generator("Ninja").no_build_target(true);
 
     match os_arch.os {
         "linux" => {
             println!("cargo::rustc-link-lib=dylib=cef");
         }
         "windows" => {
-            let sdk_libs = [
-                "comctl32.lib",
-                "delayimp.lib",
-                "mincore.lib",
-                "powrprof.lib",
-                "propsys.lib",
-                "runtimeobject.lib",
-                "setupapi.lib",
-                "shcore.lib",
-                "shell32.lib",
-                "shlwapi.lib",
-                "user32.lib",
-                "version.lib",
-                "wbemuuid.lib",
-                "winmm.lib",
-            ]
-            .join(" ");
-
+            // These libraries consist of two CMake variables, ${CEF_STANDARD_LIBS} and ${CEF_SANDBOX_STANDARD_LIBS}.
+            let sdk_libs = "comctl32.lib;gdi32.lib;rpcrt4.lib;shlwapi.lib;ws2_32.lib;Advapi32.lib;dbghelp.lib;Delayimp.lib;ntdll.lib;OleAut32.lib;PowrProf.lib;Propsys.lib;psapi.lib;SetupAPI.lib;Shell32.lib;Shcore.lib;Userenv.lib;version.lib;wbemuuid.lib;WindowsApp.lib;winmm.lib".replace(";", " ");
             let build_dir = cef_dll_wrapper
-                .define("CMAKE_MSVC_RUNTIME_LIBRARY", "MultiThreaded")
+                .static_crt(true)
                 .define("CMAKE_OBJECT_PATH_MAX", "500")
                 .define("CMAKE_STATIC_LINKER_FLAGS", &sdk_libs)
                 .build()
