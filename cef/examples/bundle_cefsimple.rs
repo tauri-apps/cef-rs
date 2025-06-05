@@ -36,6 +36,8 @@ mod mac {
         ls_minimum_system_version: String,
         #[serde(rename = "LSUIElement")]
         ls_ui_element: String,
+        #[serde(rename = "NSBluetoothAlwaysUsageDescription")]
+        ns_bluetooth_always_usage_description: String,
         #[serde(rename = "NSSupportsAutomaticGraphicsSwitching")]
         ns_supports_automatic_graphics_switching: bool,
     }
@@ -108,6 +110,7 @@ mod mac {
             ls_file_quarantine_enabled: true,
             ls_minimum_system_version: "11.0".to_string(),
             ls_ui_element: "1".to_string(),
+            ns_bluetooth_always_usage_description: exec_name.to_string(),
             ns_supports_automatic_graphics_switching: true,
         };
 
