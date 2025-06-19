@@ -42,7 +42,6 @@ mod mac {
         ns_supports_automatic_graphics_switching: bool,
         #[serde(rename = "NSWebBrowserPublicKeyCredentialUsageDescription")]
         ns_web_browser_publickey_credential_usage_description: String,
-        
     }
 
     const EXEC_PATH: &str = "Contents/MacOS";
