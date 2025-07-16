@@ -13,12 +13,20 @@ fn main() -> anyhow::Result<()> {
     let cef_path_env = env::var("FLATPAK")
         .map(|_| String::from("/usr/lib"))
         .or_else(|_| env::var("CEF_PATH"));
+    
+    println!("cargo::rerun-if-env-changed=CEF_PATH_NO_CHECK");
+    let cef_path_no_check = match env::var("CEF_PATH_NO_CHECK") {
+        Ok(v) if v == "true" || v == "1" => true,
+        _ => false
+    };
 
     let cef_dir = match cef_path_env {
         Ok(cef_path) => {
             // Allow overriding the CEF path with environment variables.
             println!("Using CEF path from environment: {cef_path}");
-            download_cef::check_archive_json(&env::var("CARGO_PKG_VERSION")?, &cef_path)?;
+            if !cef_path_no_check {
+                download_cef::check_archive_json(&env::var("CARGO_PKG_VERSION")?, &cef_path)?;
+            }
             PathBuf::from(cef_path)
         }
         Err(_) => {
