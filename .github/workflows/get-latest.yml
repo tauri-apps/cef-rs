@@ -16,18 +16,20 @@ jobs:
 
       - name: Check for updates
         id: check-updates
-        run: cargo run -p get-latest -- -u
+        run: |
+          RESET_REV=$(git rev-parse HEAD)
+          echo "reset-rev=${RESET_REV}" >> "$GITHUB_OUTPUT"
+          cargo run -p get-latest -- -u
+          git reset ${RESET_REV}
 
       - name: Push changes
         id: push-changes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COMMIT_MESSAGE: ${{ steps.check-updates.outputs.commit-message }}
+          RESET_REV: ${{ steps.check-updates.outputs.reset-rev }}
         run: |
           git switch -c get-latest
-          RESET_REV=$(git rev-parse HEAD)
-
-          git reset ${RESET_REV}
           git add .
 
           CHANGED=($(git diff --name-only --staged | xargs))
