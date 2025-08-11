@@ -28,7 +28,7 @@ jobs:
 
       - name: Cache CEF
         id: cache-cef
-        uses: actions/cache@v4.2.3
+        uses: actions/cache@v4.2.4
         with:
           path: ~/.local/share/cef
           key: cef-${{ matrix.os }}-${{ hashFiles('Cargo.toml') }}
