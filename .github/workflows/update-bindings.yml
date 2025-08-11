@@ -165,7 +165,7 @@ jobs:
 
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@v4.3.0
+        uses: actions/download-artifact@v5.0.0
         with:
           pattern: update-*
           merge-multiple: true
@@ -213,7 +213,7 @@ jobs:
           ref: ${{ inputs.branch }}
 
       - name: Download Artifacts
-        uses: actions/download-artifact@v4.3.0
+        uses: actions/download-artifact@v5.0.0
         with:
           name: merge-changes
 
