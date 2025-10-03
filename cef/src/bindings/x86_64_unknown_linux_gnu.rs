@@ -20793,28 +20793,30 @@ mod impl_cef_life_span_handler_t {
             Some(WrapParamRef::<WindowInfo, _>::from(arg_window_info))
         };
         let arg_window_info = arg_window_info.as_mut().map(|arg| arg.as_mut());
-        let mut arg_client = unsafe { arg_client.as_mut() }.and_then(|ptr| {
+        let out_client = arg_client;
+        let mut wrap_client = unsafe { arg_client.as_mut() }.and_then(|ptr| {
             if ptr.is_null() {
                 None
             } else {
                 Some(Client(unsafe { RefGuard::from_raw(*ptr) }))
             }
         });
-        let arg_client = Some(&mut arg_client);
+        let arg_client = Some(&mut wrap_client);
         let mut arg_settings = if arg_settings.is_null() {
             None
         } else {
             Some(WrapParamRef::<BrowserSettings, _>::from(arg_settings))
         };
         let arg_settings = arg_settings.as_mut().map(|arg| arg.as_mut());
-        let mut arg_extra_info = unsafe { arg_extra_info.as_mut() }.and_then(|ptr| {
+        let out_extra_info = arg_extra_info;
+        let mut wrap_extra_info = unsafe { arg_extra_info.as_mut() }.and_then(|ptr| {
             if ptr.is_null() {
                 None
             } else {
                 Some(DictionaryValue(unsafe { RefGuard::from_raw(*ptr) }))
             }
         });
-        let arg_extra_info = Some(&mut arg_extra_info);
+        let arg_extra_info = Some(&mut wrap_extra_info);
         let mut arg_no_javascript_access = if arg_no_javascript_access.is_null() {
             None
         } else {
@@ -20823,7 +20825,7 @@ mod impl_cef_life_span_handler_t {
             ))
         };
         let arg_no_javascript_access = arg_no_javascript_access.as_mut().map(|arg| arg.as_mut());
-        ImplLifeSpanHandler::on_before_popup(
+        let result = ImplLifeSpanHandler::on_before_popup(
             &arg_self_.interface,
             arg_browser,
             arg_frame,
@@ -20838,7 +20840,17 @@ mod impl_cef_life_span_handler_t {
             arg_settings,
             arg_extra_info,
             arg_no_javascript_access,
-        )
+        );
+        if let (Some(out_client), Some(wrap_client)) = (unsafe { out_client.as_mut() }, wrap_client)
+        {
+            *out_client = wrap_client.wrap_result();
+        }
+        if let (Some(out_extra_info), Some(wrap_extra_info)) =
+            (unsafe { out_extra_info.as_mut() }, wrap_extra_info)
+        {
+            *out_extra_info = wrap_extra_info.wrap_result();
+        }
+        result
     }
     extern "C" fn on_before_popup_aborted<I: ImplLifeSpanHandler>(
         self_: *mut _cef_life_span_handler_t,
@@ -20893,28 +20905,30 @@ mod impl_cef_life_span_handler_t {
             Some(WrapParamRef::<WindowInfo, _>::from(arg_window_info))
         };
         let arg_window_info = arg_window_info.as_mut().map(|arg| arg.as_mut());
-        let mut arg_client = unsafe { arg_client.as_mut() }.and_then(|ptr| {
+        let out_client = arg_client;
+        let mut wrap_client = unsafe { arg_client.as_mut() }.and_then(|ptr| {
             if ptr.is_null() {
                 None
             } else {
                 Some(Client(unsafe { RefGuard::from_raw(*ptr) }))
             }
         });
-        let arg_client = Some(&mut arg_client);
+        let arg_client = Some(&mut wrap_client);
         let mut arg_settings = if arg_settings.is_null() {
             None
         } else {
             Some(WrapParamRef::<BrowserSettings, _>::from(arg_settings))
         };
         let arg_settings = arg_settings.as_mut().map(|arg| arg.as_mut());
-        let mut arg_extra_info = unsafe { arg_extra_info.as_mut() }.and_then(|ptr| {
+        let out_extra_info = arg_extra_info;
+        let mut wrap_extra_info = unsafe { arg_extra_info.as_mut() }.and_then(|ptr| {
             if ptr.is_null() {
                 None
             } else {
                 Some(DictionaryValue(unsafe { RefGuard::from_raw(*ptr) }))
             }
         });
-        let arg_extra_info = Some(&mut arg_extra_info);
+        let arg_extra_info = Some(&mut wrap_extra_info);
         let mut arg_use_default_window = if arg_use_default_window.is_null() {
             None
         } else {
@@ -20923,7 +20937,7 @@ mod impl_cef_life_span_handler_t {
             ))
         };
         let arg_use_default_window = arg_use_default_window.as_mut().map(|arg| arg.as_mut());
-        ImplLifeSpanHandler::on_before_dev_tools_popup(
+        let result = ImplLifeSpanHandler::on_before_dev_tools_popup(
             &arg_self_.interface,
             arg_browser,
             arg_window_info,
@@ -20931,7 +20945,16 @@ mod impl_cef_life_span_handler_t {
             arg_settings,
             arg_extra_info,
             arg_use_default_window,
-        )
+        );
+        if let (Some(out_client), Some(wrap_client)) = (unsafe { out_client.as_mut() }, wrap_client)
+        {
+            *out_client = wrap_client.wrap_result();
+        }
+        if let (Some(out_extra_info), Some(wrap_extra_info)) =
+            (unsafe { out_extra_info.as_mut() }, wrap_extra_info)
+        {
+            *out_extra_info = wrap_extra_info.wrap_result();
+        }
     }
     extern "C" fn on_after_created<I: ImplLifeSpanHandler>(
         self_: *mut _cef_life_span_handler_t,
@@ -30148,28 +30171,34 @@ mod impl_cef_v8_handler_t {
                 .collect::<Vec<_>>()
         });
         let arg_arguments = vec_arguments.as_deref();
-        let mut arg_retval = unsafe { arg_retval.as_mut() }.and_then(|ptr| {
+        let out_retval = arg_retval;
+        let mut wrap_retval = unsafe { arg_retval.as_mut() }.and_then(|ptr| {
             if ptr.is_null() {
                 None
             } else {
                 Some(V8Value(unsafe { RefGuard::from_raw(*ptr) }))
             }
         });
-        let arg_retval = Some(&mut arg_retval);
+        let arg_retval = Some(&mut wrap_retval);
         let mut arg_exception = if arg_exception.is_null() {
             None
         } else {
             Some(arg_exception.into())
         };
         let arg_exception = arg_exception.as_mut();
-        ImplV8Handler::execute(
+        let result = ImplV8Handler::execute(
             &arg_self_.interface,
             arg_name,
             arg_object,
             arg_arguments,
             arg_retval,
             arg_exception,
-        )
+        );
+        if let (Some(out_retval), Some(wrap_retval)) = (unsafe { out_retval.as_mut() }, wrap_retval)
+        {
+            *out_retval = wrap_retval.wrap_result();
+        }
+        result
     }
 }
 impl ImplV8Handler for V8Handler {
@@ -30369,27 +30398,33 @@ mod impl_cef_v8_accessor_t {
         let mut arg_object =
             unsafe { arg_object.as_mut() }.map(|arg| V8Value(unsafe { RefGuard::from_raw(arg) }));
         let arg_object = arg_object.as_mut();
-        let mut arg_retval = unsafe { arg_retval.as_mut() }.and_then(|ptr| {
+        let out_retval = arg_retval;
+        let mut wrap_retval = unsafe { arg_retval.as_mut() }.and_then(|ptr| {
             if ptr.is_null() {
                 None
             } else {
                 Some(V8Value(unsafe { RefGuard::from_raw(*ptr) }))
             }
         });
-        let arg_retval = Some(&mut arg_retval);
+        let arg_retval = Some(&mut wrap_retval);
         let mut arg_exception = if arg_exception.is_null() {
             None
         } else {
             Some(arg_exception.into())
         };
         let arg_exception = arg_exception.as_mut();
-        ImplV8Accessor::get(
+        let result = ImplV8Accessor::get(
             &arg_self_.interface,
             arg_name,
             arg_object,
             arg_retval,
             arg_exception,
-        )
+        );
+        if let (Some(out_retval), Some(wrap_retval)) = (unsafe { out_retval.as_mut() }, wrap_retval)
+        {
+            *out_retval = wrap_retval.wrap_result();
+        }
+        result
     }
     extern "C" fn set<I: ImplV8Accessor>(
         self_: *mut _cef_v8_accessor_t,
@@ -30652,27 +30687,33 @@ mod impl_cef_v8_interceptor_t {
         let mut arg_object =
             unsafe { arg_object.as_mut() }.map(|arg| V8Value(unsafe { RefGuard::from_raw(arg) }));
         let arg_object = arg_object.as_mut();
-        let mut arg_retval = unsafe { arg_retval.as_mut() }.and_then(|ptr| {
+        let out_retval = arg_retval;
+        let mut wrap_retval = unsafe { arg_retval.as_mut() }.and_then(|ptr| {
             if ptr.is_null() {
                 None
             } else {
                 Some(V8Value(unsafe { RefGuard::from_raw(*ptr) }))
             }
         });
-        let arg_retval = Some(&mut arg_retval);
+        let arg_retval = Some(&mut wrap_retval);
         let mut arg_exception = if arg_exception.is_null() {
             None
         } else {
             Some(arg_exception.into())
         };
         let arg_exception = arg_exception.as_mut();
-        ImplV8Interceptor::byname(
+        let result = ImplV8Interceptor::byname(
             &arg_self_.interface,
             arg_name,
             arg_object,
             arg_retval,
             arg_exception,
-        )
+        );
+        if let (Some(out_retval), Some(wrap_retval)) = (unsafe { out_retval.as_mut() }, wrap_retval)
+        {
+            *out_retval = wrap_retval.wrap_result();
+        }
+        result
     }
     extern "C" fn get_byindex<I: ImplV8Interceptor>(
         self_: *mut _cef_v8_interceptor_t,
@@ -30688,27 +30729,33 @@ mod impl_cef_v8_interceptor_t {
         let mut arg_object =
             unsafe { arg_object.as_mut() }.map(|arg| V8Value(unsafe { RefGuard::from_raw(arg) }));
         let arg_object = arg_object.as_mut();
-        let mut arg_retval = unsafe { arg_retval.as_mut() }.and_then(|ptr| {
+        let out_retval = arg_retval;
+        let mut wrap_retval = unsafe { arg_retval.as_mut() }.and_then(|ptr| {
             if ptr.is_null() {
                 None
             } else {
                 Some(V8Value(unsafe { RefGuard::from_raw(*ptr) }))
             }
         });
-        let arg_retval = Some(&mut arg_retval);
+        let arg_retval = Some(&mut wrap_retval);
         let mut arg_exception = if arg_exception.is_null() {
             None
         } else {
             Some(arg_exception.into())
         };
         let arg_exception = arg_exception.as_mut();
-        ImplV8Interceptor::byindex(
+        let result = ImplV8Interceptor::byindex(
             &arg_self_.interface,
             arg_index,
             arg_object,
             arg_retval,
             arg_exception,
-        )
+        );
+        if let (Some(out_retval), Some(wrap_retval)) = (unsafe { out_retval.as_mut() }, wrap_retval)
+        {
+            *out_retval = wrap_retval.wrap_result();
+        }
+        result
     }
     extern "C" fn set_byname<I: ImplV8Interceptor>(
         self_: *mut _cef_v8_interceptor_t,

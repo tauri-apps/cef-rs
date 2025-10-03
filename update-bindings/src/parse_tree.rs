@@ -821,6 +821,8 @@ impl SignatureRef<'_> {
                 ty: Some(arg_ty),
             } => {
                 let arg_name = format_ident!("arg_{name}");
+                let out_name = format_ident!("out_{name}");
+                let wrap_name = format_ident!("wrap_{name}");
                 let (modifiers, arg_ty) = (arg_ty.modifiers.as_slice(), &arg_ty.ty);
                 let ty_tokens = arg_ty.to_token_stream();
                 let ty_string = ty_tokens.to_string();
@@ -850,14 +852,15 @@ impl SignatureRef<'_> {
                                         let #arg_name = #arg_name.as_mut();
                                     }),
                                     [TypeModifier::MutPtr, TypeModifier::MutPtr] => Some(quote! {
-                                        let mut #arg_name = unsafe { #arg_name.as_mut() }.and_then(|ptr| {
+                                        let #out_name = #arg_name;
+                                        let mut #wrap_name = unsafe { #arg_name.as_mut() }.and_then(|ptr| {
                                             if ptr.is_null() {
                                                 None
                                             } else {
                                                 Some(#name(unsafe { RefGuard::from_raw(*ptr) }))
                                             }
                                         });
-                                        let #arg_name = Some(&mut #arg_name);
+                                        let #arg_name = Some(&mut #wrap_name);
                                     }),
                                     _ => None,
                                 }
@@ -1091,6 +1094,26 @@ impl SignatureRef<'_> {
 
     fn unwrap_cef_args(&self, tree: &ParseTree) -> proc_macro2::TokenStream {
         let args = self.merge_params(tree).filter_map(|arg| match arg {
+            MergedParam::Single {
+                name,
+                ty: Some(arg_ty),
+            } => {
+                let (modifiers, arg_ty) = (arg_ty.modifiers.as_slice(), &arg_ty.ty);
+                let ty_tokens = arg_ty.to_token_stream();
+                let ty_string = ty_tokens.to_string();
+                match modifiers {
+                    [TypeModifier::MutPtr, TypeModifier::MutPtr] if tree.root(&ty_string) == BASE_REF_COUNTED => {
+                        let out_name = format_ident!("out_{name}");
+                        let wrap_name = format_ident!("wrap_{name}");
+                        Some(quote! {
+                            if let (Some(#out_name), Some(#wrap_name)) = (unsafe { #out_name.as_mut() }, #wrap_name) {
+                                *#out_name = #wrap_name.wrap_result();
+                            }
+                        })
+                    }
+                    _ => None,
+                }
+            }
             MergedParam::Bounded {
                 count_name,
                 count_ty:
