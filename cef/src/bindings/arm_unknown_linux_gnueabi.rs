@@ -35957,7 +35957,7 @@ pub trait ImplButtonDelegate: ImplViewDelegate {
     #[doc = "See [`_cef_button_delegate_t::on_button_state_changed`] for more documentation."]
     fn on_button_state_changed(&self, button: Option<&mut Button>) {}
     fn init_methods(object: &mut _cef_button_delegate_t) {
-        impl_cef_view_delegate_t::init_methods::<Self>(&mut object.base);
+        impl_cef_button_delegate_t::bridge_cef_view_delegate_t::init_methods::<Self>(object);
         impl_cef_button_delegate_t::init_methods::<Self>(object);
     }
     fn get_raw(&self) -> *mut _cef_button_delegate_t {
@@ -35994,6 +35994,179 @@ mod impl_cef_button_delegate_t {
             unsafe { arg_button.as_mut() }.map(|arg| Button(unsafe { RefGuard::from_raw(arg) }));
         let arg_button = arg_button.as_mut();
         ImplButtonDelegate::on_button_state_changed(&arg_self_.interface, arg_button)
+    }
+    pub(crate) mod bridge_cef_view_delegate_t {
+        use super::*;
+        pub fn init_methods<I: ImplButtonDelegate>(object: &mut _cef_button_delegate_t) {
+            object.base.get_preferred_size = Some(get_preferred_size::<I>);
+            object.base.get_minimum_size = Some(get_minimum_size::<I>);
+            object.base.get_maximum_size = Some(get_maximum_size::<I>);
+            object.base.get_height_for_width = Some(get_height_for_width::<I>);
+            object.base.on_parent_view_changed = Some(on_parent_view_changed::<I>);
+            object.base.on_child_view_changed = Some(on_child_view_changed::<I>);
+            object.base.on_window_changed = Some(on_window_changed::<I>);
+            object.base.on_layout_changed = Some(on_layout_changed::<I>);
+            object.base.on_focus = Some(on_focus::<I>);
+            object.base.on_blur = Some(on_blur::<I>);
+            object.base.on_theme_changed = Some(on_theme_changed::<I>);
+        }
+        extern "C" fn get_preferred_size<I: ImplButtonDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) -> _cef_size_t {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_button_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let result = ImplViewDelegate::preferred_size(&arg_self_.interface, arg_view);
+            result.into()
+        }
+        extern "C" fn get_minimum_size<I: ImplButtonDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) -> _cef_size_t {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_button_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let result = ImplViewDelegate::minimum_size(&arg_self_.interface, arg_view);
+            result.into()
+        }
+        extern "C" fn get_maximum_size<I: ImplButtonDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) -> _cef_size_t {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_button_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let result = ImplViewDelegate::maximum_size(&arg_self_.interface, arg_view);
+            result.into()
+        }
+        extern "C" fn get_height_for_width<I: ImplButtonDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+            width: ::std::os::raw::c_int,
+        ) -> ::std::os::raw::c_int {
+            let (arg_self_, arg_view, arg_width) = (self_, view, width);
+            let arg_self_: &RcImpl<_cef_button_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let arg_width = arg_width.into_raw();
+            ImplViewDelegate::height_for_width(&arg_self_.interface, arg_view, arg_width)
+        }
+        extern "C" fn on_parent_view_changed<I: ImplButtonDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+            added: ::std::os::raw::c_int,
+            parent: *mut _cef_view_t,
+        ) {
+            let (arg_self_, arg_view, arg_added, arg_parent) = (self_, view, added, parent);
+            let arg_self_: &RcImpl<_cef_button_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let arg_added = arg_added.into_raw();
+            let mut arg_parent =
+                unsafe { arg_parent.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_parent = arg_parent.as_mut();
+            ImplViewDelegate::on_parent_view_changed(
+                &arg_self_.interface,
+                arg_view,
+                arg_added,
+                arg_parent,
+            )
+        }
+        extern "C" fn on_child_view_changed<I: ImplButtonDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+            added: ::std::os::raw::c_int,
+            child: *mut _cef_view_t,
+        ) {
+            let (arg_self_, arg_view, arg_added, arg_child) = (self_, view, added, child);
+            let arg_self_: &RcImpl<_cef_button_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let arg_added = arg_added.into_raw();
+            let mut arg_child =
+                unsafe { arg_child.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_child = arg_child.as_mut();
+            ImplViewDelegate::on_child_view_changed(
+                &arg_self_.interface,
+                arg_view,
+                arg_added,
+                arg_child,
+            )
+        }
+        extern "C" fn on_window_changed<I: ImplButtonDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+            added: ::std::os::raw::c_int,
+        ) {
+            let (arg_self_, arg_view, arg_added) = (self_, view, added);
+            let arg_self_: &RcImpl<_cef_button_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let arg_added = arg_added.into_raw();
+            ImplViewDelegate::on_window_changed(&arg_self_.interface, arg_view, arg_added)
+        }
+        extern "C" fn on_layout_changed<I: ImplButtonDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+            new_bounds: *const _cef_rect_t,
+        ) {
+            let (arg_self_, arg_view, arg_new_bounds) = (self_, view, new_bounds);
+            let arg_self_: &RcImpl<_cef_button_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let arg_new_bounds = if arg_new_bounds.is_null() {
+                None
+            } else {
+                Some(WrapParamRef::<Rect, _>::from(arg_new_bounds))
+            };
+            let arg_new_bounds = arg_new_bounds.as_ref().map(|arg| arg.as_ref());
+            ImplViewDelegate::on_layout_changed(&arg_self_.interface, arg_view, arg_new_bounds)
+        }
+        extern "C" fn on_focus<I: ImplButtonDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_button_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            ImplViewDelegate::on_focus(&arg_self_.interface, arg_view)
+        }
+        extern "C" fn on_blur<I: ImplButtonDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_button_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            ImplViewDelegate::on_blur(&arg_self_.interface, arg_view)
+        }
+        extern "C" fn on_theme_changed<I: ImplButtonDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_button_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            ImplViewDelegate::on_theme_changed(&arg_self_.interface, arg_view)
+        }
     }
 }
 impl ImplViewDelegate for ButtonDelegate {
@@ -36615,8 +36788,8 @@ pub trait ImplMenuButtonDelegate: ImplButtonDelegate {
     ) {
     }
     fn init_methods(object: &mut _cef_menu_button_delegate_t) {
-        impl_cef_view_delegate_t::init_methods::<Self>(&mut object.base.base);
-        impl_cef_button_delegate_t::init_methods::<Self>(&mut object.base);
+        impl_cef_menu_button_delegate_t::bridge_cef_view_delegate_t::init_methods::<Self>(object);
+        impl_cef_menu_button_delegate_t::bridge_cef_button_delegate_t::init_methods::<Self>(object);
         impl_cef_menu_button_delegate_t::init_methods::<Self>(object);
     }
     fn get_raw(&self) -> *mut _cef_menu_button_delegate_t {
@@ -36658,6 +36831,208 @@ mod impl_cef_menu_button_delegate_t {
             arg_screen_point,
             arg_button_pressed_lock,
         )
+    }
+    pub(crate) mod bridge_cef_view_delegate_t {
+        use super::*;
+        pub fn init_methods<I: ImplMenuButtonDelegate>(object: &mut _cef_menu_button_delegate_t) {
+            object.base.base.get_preferred_size = Some(get_preferred_size::<I>);
+            object.base.base.get_minimum_size = Some(get_minimum_size::<I>);
+            object.base.base.get_maximum_size = Some(get_maximum_size::<I>);
+            object.base.base.get_height_for_width = Some(get_height_for_width::<I>);
+            object.base.base.on_parent_view_changed = Some(on_parent_view_changed::<I>);
+            object.base.base.on_child_view_changed = Some(on_child_view_changed::<I>);
+            object.base.base.on_window_changed = Some(on_window_changed::<I>);
+            object.base.base.on_layout_changed = Some(on_layout_changed::<I>);
+            object.base.base.on_focus = Some(on_focus::<I>);
+            object.base.base.on_blur = Some(on_blur::<I>);
+            object.base.base.on_theme_changed = Some(on_theme_changed::<I>);
+        }
+        extern "C" fn get_preferred_size<I: ImplMenuButtonDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) -> _cef_size_t {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_menu_button_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let result = ImplViewDelegate::preferred_size(&arg_self_.interface, arg_view);
+            result.into()
+        }
+        extern "C" fn get_minimum_size<I: ImplMenuButtonDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) -> _cef_size_t {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_menu_button_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let result = ImplViewDelegate::minimum_size(&arg_self_.interface, arg_view);
+            result.into()
+        }
+        extern "C" fn get_maximum_size<I: ImplMenuButtonDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) -> _cef_size_t {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_menu_button_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let result = ImplViewDelegate::maximum_size(&arg_self_.interface, arg_view);
+            result.into()
+        }
+        extern "C" fn get_height_for_width<I: ImplMenuButtonDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+            width: ::std::os::raw::c_int,
+        ) -> ::std::os::raw::c_int {
+            let (arg_self_, arg_view, arg_width) = (self_, view, width);
+            let arg_self_: &RcImpl<_cef_menu_button_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let arg_width = arg_width.into_raw();
+            ImplViewDelegate::height_for_width(&arg_self_.interface, arg_view, arg_width)
+        }
+        extern "C" fn on_parent_view_changed<I: ImplMenuButtonDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+            added: ::std::os::raw::c_int,
+            parent: *mut _cef_view_t,
+        ) {
+            let (arg_self_, arg_view, arg_added, arg_parent) = (self_, view, added, parent);
+            let arg_self_: &RcImpl<_cef_menu_button_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let arg_added = arg_added.into_raw();
+            let mut arg_parent =
+                unsafe { arg_parent.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_parent = arg_parent.as_mut();
+            ImplViewDelegate::on_parent_view_changed(
+                &arg_self_.interface,
+                arg_view,
+                arg_added,
+                arg_parent,
+            )
+        }
+        extern "C" fn on_child_view_changed<I: ImplMenuButtonDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+            added: ::std::os::raw::c_int,
+            child: *mut _cef_view_t,
+        ) {
+            let (arg_self_, arg_view, arg_added, arg_child) = (self_, view, added, child);
+            let arg_self_: &RcImpl<_cef_menu_button_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let arg_added = arg_added.into_raw();
+            let mut arg_child =
+                unsafe { arg_child.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_child = arg_child.as_mut();
+            ImplViewDelegate::on_child_view_changed(
+                &arg_self_.interface,
+                arg_view,
+                arg_added,
+                arg_child,
+            )
+        }
+        extern "C" fn on_window_changed<I: ImplMenuButtonDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+            added: ::std::os::raw::c_int,
+        ) {
+            let (arg_self_, arg_view, arg_added) = (self_, view, added);
+            let arg_self_: &RcImpl<_cef_menu_button_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let arg_added = arg_added.into_raw();
+            ImplViewDelegate::on_window_changed(&arg_self_.interface, arg_view, arg_added)
+        }
+        extern "C" fn on_layout_changed<I: ImplMenuButtonDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+            new_bounds: *const _cef_rect_t,
+        ) {
+            let (arg_self_, arg_view, arg_new_bounds) = (self_, view, new_bounds);
+            let arg_self_: &RcImpl<_cef_menu_button_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let arg_new_bounds = if arg_new_bounds.is_null() {
+                None
+            } else {
+                Some(WrapParamRef::<Rect, _>::from(arg_new_bounds))
+            };
+            let arg_new_bounds = arg_new_bounds.as_ref().map(|arg| arg.as_ref());
+            ImplViewDelegate::on_layout_changed(&arg_self_.interface, arg_view, arg_new_bounds)
+        }
+        extern "C" fn on_focus<I: ImplMenuButtonDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_menu_button_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            ImplViewDelegate::on_focus(&arg_self_.interface, arg_view)
+        }
+        extern "C" fn on_blur<I: ImplMenuButtonDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_menu_button_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            ImplViewDelegate::on_blur(&arg_self_.interface, arg_view)
+        }
+        extern "C" fn on_theme_changed<I: ImplMenuButtonDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_menu_button_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            ImplViewDelegate::on_theme_changed(&arg_self_.interface, arg_view)
+        }
+    }
+    pub(crate) mod bridge_cef_button_delegate_t {
+        use super::*;
+        pub fn init_methods<I: ImplMenuButtonDelegate>(object: &mut _cef_menu_button_delegate_t) {
+            object.base.on_button_pressed = Some(on_button_pressed::<I>);
+            object.base.on_button_state_changed = Some(on_button_state_changed::<I>);
+        }
+        extern "C" fn on_button_pressed<I: ImplMenuButtonDelegate>(
+            self_: *mut _cef_button_delegate_t,
+            button: *mut _cef_button_t,
+        ) {
+            let (arg_self_, arg_button) = (self_, button);
+            let arg_self_: &RcImpl<_cef_menu_button_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_button = unsafe { arg_button.as_mut() }
+                .map(|arg| Button(unsafe { RefGuard::from_raw(arg) }));
+            let arg_button = arg_button.as_mut();
+            ImplButtonDelegate::on_button_pressed(&arg_self_.interface, arg_button)
+        }
+        extern "C" fn on_button_state_changed<I: ImplMenuButtonDelegate>(
+            self_: *mut _cef_button_delegate_t,
+            button: *mut _cef_button_t,
+        ) {
+            let (arg_self_, arg_button) = (self_, button);
+            let arg_self_: &RcImpl<_cef_menu_button_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_button = unsafe { arg_button.as_mut() }
+                .map(|arg| Button(unsafe { RefGuard::from_raw(arg) }));
+            let arg_button = arg_button.as_mut();
+            ImplButtonDelegate::on_button_state_changed(&arg_self_.interface, arg_button)
+        }
     }
 }
 impl ImplViewDelegate for MenuButtonDelegate {
@@ -37184,7 +37559,7 @@ pub trait ImplTextfieldDelegate: ImplViewDelegate {
     #[doc = "See [`_cef_textfield_delegate_t::on_after_user_action`] for more documentation."]
     fn on_after_user_action(&self, textfield: Option<&mut Textfield>) {}
     fn init_methods(object: &mut _cef_textfield_delegate_t) {
-        impl_cef_view_delegate_t::init_methods::<Self>(&mut object.base);
+        impl_cef_textfield_delegate_t::bridge_cef_view_delegate_t::init_methods::<Self>(object);
         impl_cef_textfield_delegate_t::init_methods::<Self>(object);
     }
     fn get_raw(&self) -> *mut _cef_textfield_delegate_t {
@@ -37228,6 +37603,179 @@ mod impl_cef_textfield_delegate_t {
             .map(|arg| Textfield(unsafe { RefGuard::from_raw(arg) }));
         let arg_textfield = arg_textfield.as_mut();
         ImplTextfieldDelegate::on_after_user_action(&arg_self_.interface, arg_textfield)
+    }
+    pub(crate) mod bridge_cef_view_delegate_t {
+        use super::*;
+        pub fn init_methods<I: ImplTextfieldDelegate>(object: &mut _cef_textfield_delegate_t) {
+            object.base.get_preferred_size = Some(get_preferred_size::<I>);
+            object.base.get_minimum_size = Some(get_minimum_size::<I>);
+            object.base.get_maximum_size = Some(get_maximum_size::<I>);
+            object.base.get_height_for_width = Some(get_height_for_width::<I>);
+            object.base.on_parent_view_changed = Some(on_parent_view_changed::<I>);
+            object.base.on_child_view_changed = Some(on_child_view_changed::<I>);
+            object.base.on_window_changed = Some(on_window_changed::<I>);
+            object.base.on_layout_changed = Some(on_layout_changed::<I>);
+            object.base.on_focus = Some(on_focus::<I>);
+            object.base.on_blur = Some(on_blur::<I>);
+            object.base.on_theme_changed = Some(on_theme_changed::<I>);
+        }
+        extern "C" fn get_preferred_size<I: ImplTextfieldDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) -> _cef_size_t {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_textfield_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let result = ImplViewDelegate::preferred_size(&arg_self_.interface, arg_view);
+            result.into()
+        }
+        extern "C" fn get_minimum_size<I: ImplTextfieldDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) -> _cef_size_t {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_textfield_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let result = ImplViewDelegate::minimum_size(&arg_self_.interface, arg_view);
+            result.into()
+        }
+        extern "C" fn get_maximum_size<I: ImplTextfieldDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) -> _cef_size_t {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_textfield_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let result = ImplViewDelegate::maximum_size(&arg_self_.interface, arg_view);
+            result.into()
+        }
+        extern "C" fn get_height_for_width<I: ImplTextfieldDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+            width: ::std::os::raw::c_int,
+        ) -> ::std::os::raw::c_int {
+            let (arg_self_, arg_view, arg_width) = (self_, view, width);
+            let arg_self_: &RcImpl<_cef_textfield_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let arg_width = arg_width.into_raw();
+            ImplViewDelegate::height_for_width(&arg_self_.interface, arg_view, arg_width)
+        }
+        extern "C" fn on_parent_view_changed<I: ImplTextfieldDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+            added: ::std::os::raw::c_int,
+            parent: *mut _cef_view_t,
+        ) {
+            let (arg_self_, arg_view, arg_added, arg_parent) = (self_, view, added, parent);
+            let arg_self_: &RcImpl<_cef_textfield_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let arg_added = arg_added.into_raw();
+            let mut arg_parent =
+                unsafe { arg_parent.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_parent = arg_parent.as_mut();
+            ImplViewDelegate::on_parent_view_changed(
+                &arg_self_.interface,
+                arg_view,
+                arg_added,
+                arg_parent,
+            )
+        }
+        extern "C" fn on_child_view_changed<I: ImplTextfieldDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+            added: ::std::os::raw::c_int,
+            child: *mut _cef_view_t,
+        ) {
+            let (arg_self_, arg_view, arg_added, arg_child) = (self_, view, added, child);
+            let arg_self_: &RcImpl<_cef_textfield_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let arg_added = arg_added.into_raw();
+            let mut arg_child =
+                unsafe { arg_child.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_child = arg_child.as_mut();
+            ImplViewDelegate::on_child_view_changed(
+                &arg_self_.interface,
+                arg_view,
+                arg_added,
+                arg_child,
+            )
+        }
+        extern "C" fn on_window_changed<I: ImplTextfieldDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+            added: ::std::os::raw::c_int,
+        ) {
+            let (arg_self_, arg_view, arg_added) = (self_, view, added);
+            let arg_self_: &RcImpl<_cef_textfield_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let arg_added = arg_added.into_raw();
+            ImplViewDelegate::on_window_changed(&arg_self_.interface, arg_view, arg_added)
+        }
+        extern "C" fn on_layout_changed<I: ImplTextfieldDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+            new_bounds: *const _cef_rect_t,
+        ) {
+            let (arg_self_, arg_view, arg_new_bounds) = (self_, view, new_bounds);
+            let arg_self_: &RcImpl<_cef_textfield_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let arg_new_bounds = if arg_new_bounds.is_null() {
+                None
+            } else {
+                Some(WrapParamRef::<Rect, _>::from(arg_new_bounds))
+            };
+            let arg_new_bounds = arg_new_bounds.as_ref().map(|arg| arg.as_ref());
+            ImplViewDelegate::on_layout_changed(&arg_self_.interface, arg_view, arg_new_bounds)
+        }
+        extern "C" fn on_focus<I: ImplTextfieldDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_textfield_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            ImplViewDelegate::on_focus(&arg_self_.interface, arg_view)
+        }
+        extern "C" fn on_blur<I: ImplTextfieldDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_textfield_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            ImplViewDelegate::on_blur(&arg_self_.interface, arg_view)
+        }
+        extern "C" fn on_theme_changed<I: ImplTextfieldDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_textfield_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            ImplViewDelegate::on_theme_changed(&arg_self_.interface, arg_view)
+        }
     }
 }
 impl ImplViewDelegate for TextfieldDelegate {
@@ -38097,7 +38645,7 @@ pub trait ImplBrowserViewDelegate: ImplViewDelegate {
         Default::default()
     }
     fn init_methods(object: &mut _cef_browser_view_delegate_t) {
-        impl_cef_view_delegate_t::init_methods::<Self>(&mut object.base);
+        impl_cef_browser_view_delegate_t::bridge_cef_view_delegate_t::init_methods::<Self>(object);
         impl_cef_browser_view_delegate_t::init_methods::<Self>(object);
     }
     fn get_raw(&self) -> *mut _cef_browser_view_delegate_t {
@@ -38282,6 +38830,179 @@ mod impl_cef_browser_view_delegate_t {
             &arg_self_.interface,
             arg_browser_view,
         )
+    }
+    pub(crate) mod bridge_cef_view_delegate_t {
+        use super::*;
+        pub fn init_methods<I: ImplBrowserViewDelegate>(object: &mut _cef_browser_view_delegate_t) {
+            object.base.get_preferred_size = Some(get_preferred_size::<I>);
+            object.base.get_minimum_size = Some(get_minimum_size::<I>);
+            object.base.get_maximum_size = Some(get_maximum_size::<I>);
+            object.base.get_height_for_width = Some(get_height_for_width::<I>);
+            object.base.on_parent_view_changed = Some(on_parent_view_changed::<I>);
+            object.base.on_child_view_changed = Some(on_child_view_changed::<I>);
+            object.base.on_window_changed = Some(on_window_changed::<I>);
+            object.base.on_layout_changed = Some(on_layout_changed::<I>);
+            object.base.on_focus = Some(on_focus::<I>);
+            object.base.on_blur = Some(on_blur::<I>);
+            object.base.on_theme_changed = Some(on_theme_changed::<I>);
+        }
+        extern "C" fn get_preferred_size<I: ImplBrowserViewDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) -> _cef_size_t {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_browser_view_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let result = ImplViewDelegate::preferred_size(&arg_self_.interface, arg_view);
+            result.into()
+        }
+        extern "C" fn get_minimum_size<I: ImplBrowserViewDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) -> _cef_size_t {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_browser_view_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let result = ImplViewDelegate::minimum_size(&arg_self_.interface, arg_view);
+            result.into()
+        }
+        extern "C" fn get_maximum_size<I: ImplBrowserViewDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) -> _cef_size_t {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_browser_view_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let result = ImplViewDelegate::maximum_size(&arg_self_.interface, arg_view);
+            result.into()
+        }
+        extern "C" fn get_height_for_width<I: ImplBrowserViewDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+            width: ::std::os::raw::c_int,
+        ) -> ::std::os::raw::c_int {
+            let (arg_self_, arg_view, arg_width) = (self_, view, width);
+            let arg_self_: &RcImpl<_cef_browser_view_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let arg_width = arg_width.into_raw();
+            ImplViewDelegate::height_for_width(&arg_self_.interface, arg_view, arg_width)
+        }
+        extern "C" fn on_parent_view_changed<I: ImplBrowserViewDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+            added: ::std::os::raw::c_int,
+            parent: *mut _cef_view_t,
+        ) {
+            let (arg_self_, arg_view, arg_added, arg_parent) = (self_, view, added, parent);
+            let arg_self_: &RcImpl<_cef_browser_view_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let arg_added = arg_added.into_raw();
+            let mut arg_parent =
+                unsafe { arg_parent.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_parent = arg_parent.as_mut();
+            ImplViewDelegate::on_parent_view_changed(
+                &arg_self_.interface,
+                arg_view,
+                arg_added,
+                arg_parent,
+            )
+        }
+        extern "C" fn on_child_view_changed<I: ImplBrowserViewDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+            added: ::std::os::raw::c_int,
+            child: *mut _cef_view_t,
+        ) {
+            let (arg_self_, arg_view, arg_added, arg_child) = (self_, view, added, child);
+            let arg_self_: &RcImpl<_cef_browser_view_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let arg_added = arg_added.into_raw();
+            let mut arg_child =
+                unsafe { arg_child.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_child = arg_child.as_mut();
+            ImplViewDelegate::on_child_view_changed(
+                &arg_self_.interface,
+                arg_view,
+                arg_added,
+                arg_child,
+            )
+        }
+        extern "C" fn on_window_changed<I: ImplBrowserViewDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+            added: ::std::os::raw::c_int,
+        ) {
+            let (arg_self_, arg_view, arg_added) = (self_, view, added);
+            let arg_self_: &RcImpl<_cef_browser_view_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let arg_added = arg_added.into_raw();
+            ImplViewDelegate::on_window_changed(&arg_self_.interface, arg_view, arg_added)
+        }
+        extern "C" fn on_layout_changed<I: ImplBrowserViewDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+            new_bounds: *const _cef_rect_t,
+        ) {
+            let (arg_self_, arg_view, arg_new_bounds) = (self_, view, new_bounds);
+            let arg_self_: &RcImpl<_cef_browser_view_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let arg_new_bounds = if arg_new_bounds.is_null() {
+                None
+            } else {
+                Some(WrapParamRef::<Rect, _>::from(arg_new_bounds))
+            };
+            let arg_new_bounds = arg_new_bounds.as_ref().map(|arg| arg.as_ref());
+            ImplViewDelegate::on_layout_changed(&arg_self_.interface, arg_view, arg_new_bounds)
+        }
+        extern "C" fn on_focus<I: ImplBrowserViewDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_browser_view_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            ImplViewDelegate::on_focus(&arg_self_.interface, arg_view)
+        }
+        extern "C" fn on_blur<I: ImplBrowserViewDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_browser_view_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            ImplViewDelegate::on_blur(&arg_self_.interface, arg_view)
+        }
+        extern "C" fn on_theme_changed<I: ImplBrowserViewDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_browser_view_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            ImplViewDelegate::on_theme_changed(&arg_self_.interface, arg_view)
+        }
     }
 }
 impl ImplViewDelegate for BrowserViewDelegate {
@@ -39714,7 +40435,7 @@ pub trait WrapPanelDelegate: ImplPanelDelegate {
 }
 pub trait ImplPanelDelegate: ImplViewDelegate {
     fn init_methods(object: &mut _cef_panel_delegate_t) {
-        impl_cef_view_delegate_t::init_methods::<Self>(&mut object.base);
+        impl_cef_panel_delegate_t::bridge_cef_view_delegate_t::init_methods::<Self>(object);
         impl_cef_panel_delegate_t::init_methods::<Self>(object);
     }
     fn get_raw(&self) -> *mut _cef_panel_delegate_t {
@@ -39727,6 +40448,179 @@ macro_rules ! wrap_panel_delegate { ($ vis : vis struct $ name : ident ; impl Vi
 mod impl_cef_panel_delegate_t {
     use super::*;
     pub fn init_methods<I: ImplPanelDelegate>(object: &mut _cef_panel_delegate_t) {}
+    pub(crate) mod bridge_cef_view_delegate_t {
+        use super::*;
+        pub fn init_methods<I: ImplPanelDelegate>(object: &mut _cef_panel_delegate_t) {
+            object.base.get_preferred_size = Some(get_preferred_size::<I>);
+            object.base.get_minimum_size = Some(get_minimum_size::<I>);
+            object.base.get_maximum_size = Some(get_maximum_size::<I>);
+            object.base.get_height_for_width = Some(get_height_for_width::<I>);
+            object.base.on_parent_view_changed = Some(on_parent_view_changed::<I>);
+            object.base.on_child_view_changed = Some(on_child_view_changed::<I>);
+            object.base.on_window_changed = Some(on_window_changed::<I>);
+            object.base.on_layout_changed = Some(on_layout_changed::<I>);
+            object.base.on_focus = Some(on_focus::<I>);
+            object.base.on_blur = Some(on_blur::<I>);
+            object.base.on_theme_changed = Some(on_theme_changed::<I>);
+        }
+        extern "C" fn get_preferred_size<I: ImplPanelDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) -> _cef_size_t {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_panel_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let result = ImplViewDelegate::preferred_size(&arg_self_.interface, arg_view);
+            result.into()
+        }
+        extern "C" fn get_minimum_size<I: ImplPanelDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) -> _cef_size_t {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_panel_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let result = ImplViewDelegate::minimum_size(&arg_self_.interface, arg_view);
+            result.into()
+        }
+        extern "C" fn get_maximum_size<I: ImplPanelDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) -> _cef_size_t {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_panel_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let result = ImplViewDelegate::maximum_size(&arg_self_.interface, arg_view);
+            result.into()
+        }
+        extern "C" fn get_height_for_width<I: ImplPanelDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+            width: ::std::os::raw::c_int,
+        ) -> ::std::os::raw::c_int {
+            let (arg_self_, arg_view, arg_width) = (self_, view, width);
+            let arg_self_: &RcImpl<_cef_panel_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let arg_width = arg_width.into_raw();
+            ImplViewDelegate::height_for_width(&arg_self_.interface, arg_view, arg_width)
+        }
+        extern "C" fn on_parent_view_changed<I: ImplPanelDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+            added: ::std::os::raw::c_int,
+            parent: *mut _cef_view_t,
+        ) {
+            let (arg_self_, arg_view, arg_added, arg_parent) = (self_, view, added, parent);
+            let arg_self_: &RcImpl<_cef_panel_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let arg_added = arg_added.into_raw();
+            let mut arg_parent =
+                unsafe { arg_parent.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_parent = arg_parent.as_mut();
+            ImplViewDelegate::on_parent_view_changed(
+                &arg_self_.interface,
+                arg_view,
+                arg_added,
+                arg_parent,
+            )
+        }
+        extern "C" fn on_child_view_changed<I: ImplPanelDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+            added: ::std::os::raw::c_int,
+            child: *mut _cef_view_t,
+        ) {
+            let (arg_self_, arg_view, arg_added, arg_child) = (self_, view, added, child);
+            let arg_self_: &RcImpl<_cef_panel_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let arg_added = arg_added.into_raw();
+            let mut arg_child =
+                unsafe { arg_child.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_child = arg_child.as_mut();
+            ImplViewDelegate::on_child_view_changed(
+                &arg_self_.interface,
+                arg_view,
+                arg_added,
+                arg_child,
+            )
+        }
+        extern "C" fn on_window_changed<I: ImplPanelDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+            added: ::std::os::raw::c_int,
+        ) {
+            let (arg_self_, arg_view, arg_added) = (self_, view, added);
+            let arg_self_: &RcImpl<_cef_panel_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let arg_added = arg_added.into_raw();
+            ImplViewDelegate::on_window_changed(&arg_self_.interface, arg_view, arg_added)
+        }
+        extern "C" fn on_layout_changed<I: ImplPanelDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+            new_bounds: *const _cef_rect_t,
+        ) {
+            let (arg_self_, arg_view, arg_new_bounds) = (self_, view, new_bounds);
+            let arg_self_: &RcImpl<_cef_panel_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let arg_new_bounds = if arg_new_bounds.is_null() {
+                None
+            } else {
+                Some(WrapParamRef::<Rect, _>::from(arg_new_bounds))
+            };
+            let arg_new_bounds = arg_new_bounds.as_ref().map(|arg| arg.as_ref());
+            ImplViewDelegate::on_layout_changed(&arg_self_.interface, arg_view, arg_new_bounds)
+        }
+        extern "C" fn on_focus<I: ImplPanelDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_panel_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            ImplViewDelegate::on_focus(&arg_self_.interface, arg_view)
+        }
+        extern "C" fn on_blur<I: ImplPanelDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_panel_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            ImplViewDelegate::on_blur(&arg_self_.interface, arg_view)
+        }
+        extern "C" fn on_theme_changed<I: ImplPanelDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_panel_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            ImplViewDelegate::on_theme_changed(&arg_self_.interface, arg_view)
+        }
+    }
 }
 impl ImplViewDelegate for PanelDelegate {
     fn preferred_size(&self, view: Option<&mut View>) -> Size {
@@ -40385,8 +41279,8 @@ pub trait ImplWindowDelegate: ImplPanelDelegate {
         Default::default()
     }
     fn init_methods(object: &mut _cef_window_delegate_t) {
-        impl_cef_view_delegate_t::init_methods::<Self>(&mut object.base.base);
-        impl_cef_panel_delegate_t::init_methods::<Self>(&mut object.base);
+        impl_cef_window_delegate_t::bridge_cef_view_delegate_t::init_methods::<Self>(object);
+        impl_cef_window_delegate_t::bridge_cef_panel_delegate_t::init_methods::<Self>(object);
         impl_cef_window_delegate_t::init_methods::<Self>(object);
     }
     fn get_raw(&self) -> *mut _cef_window_delegate_t {
@@ -40758,6 +41652,183 @@ mod impl_cef_window_delegate_t {
             arg_window,
             arg_properties,
         )
+    }
+    pub(crate) mod bridge_cef_view_delegate_t {
+        use super::*;
+        pub fn init_methods<I: ImplWindowDelegate>(object: &mut _cef_window_delegate_t) {
+            object.base.base.get_preferred_size = Some(get_preferred_size::<I>);
+            object.base.base.get_minimum_size = Some(get_minimum_size::<I>);
+            object.base.base.get_maximum_size = Some(get_maximum_size::<I>);
+            object.base.base.get_height_for_width = Some(get_height_for_width::<I>);
+            object.base.base.on_parent_view_changed = Some(on_parent_view_changed::<I>);
+            object.base.base.on_child_view_changed = Some(on_child_view_changed::<I>);
+            object.base.base.on_window_changed = Some(on_window_changed::<I>);
+            object.base.base.on_layout_changed = Some(on_layout_changed::<I>);
+            object.base.base.on_focus = Some(on_focus::<I>);
+            object.base.base.on_blur = Some(on_blur::<I>);
+            object.base.base.on_theme_changed = Some(on_theme_changed::<I>);
+        }
+        extern "C" fn get_preferred_size<I: ImplWindowDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) -> _cef_size_t {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_window_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let result = ImplViewDelegate::preferred_size(&arg_self_.interface, arg_view);
+            result.into()
+        }
+        extern "C" fn get_minimum_size<I: ImplWindowDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) -> _cef_size_t {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_window_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let result = ImplViewDelegate::minimum_size(&arg_self_.interface, arg_view);
+            result.into()
+        }
+        extern "C" fn get_maximum_size<I: ImplWindowDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) -> _cef_size_t {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_window_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let result = ImplViewDelegate::maximum_size(&arg_self_.interface, arg_view);
+            result.into()
+        }
+        extern "C" fn get_height_for_width<I: ImplWindowDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+            width: ::std::os::raw::c_int,
+        ) -> ::std::os::raw::c_int {
+            let (arg_self_, arg_view, arg_width) = (self_, view, width);
+            let arg_self_: &RcImpl<_cef_window_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let arg_width = arg_width.into_raw();
+            ImplViewDelegate::height_for_width(&arg_self_.interface, arg_view, arg_width)
+        }
+        extern "C" fn on_parent_view_changed<I: ImplWindowDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+            added: ::std::os::raw::c_int,
+            parent: *mut _cef_view_t,
+        ) {
+            let (arg_self_, arg_view, arg_added, arg_parent) = (self_, view, added, parent);
+            let arg_self_: &RcImpl<_cef_window_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let arg_added = arg_added.into_raw();
+            let mut arg_parent =
+                unsafe { arg_parent.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_parent = arg_parent.as_mut();
+            ImplViewDelegate::on_parent_view_changed(
+                &arg_self_.interface,
+                arg_view,
+                arg_added,
+                arg_parent,
+            )
+        }
+        extern "C" fn on_child_view_changed<I: ImplWindowDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+            added: ::std::os::raw::c_int,
+            child: *mut _cef_view_t,
+        ) {
+            let (arg_self_, arg_view, arg_added, arg_child) = (self_, view, added, child);
+            let arg_self_: &RcImpl<_cef_window_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let arg_added = arg_added.into_raw();
+            let mut arg_child =
+                unsafe { arg_child.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_child = arg_child.as_mut();
+            ImplViewDelegate::on_child_view_changed(
+                &arg_self_.interface,
+                arg_view,
+                arg_added,
+                arg_child,
+            )
+        }
+        extern "C" fn on_window_changed<I: ImplWindowDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+            added: ::std::os::raw::c_int,
+        ) {
+            let (arg_self_, arg_view, arg_added) = (self_, view, added);
+            let arg_self_: &RcImpl<_cef_window_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let arg_added = arg_added.into_raw();
+            ImplViewDelegate::on_window_changed(&arg_self_.interface, arg_view, arg_added)
+        }
+        extern "C" fn on_layout_changed<I: ImplWindowDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+            new_bounds: *const _cef_rect_t,
+        ) {
+            let (arg_self_, arg_view, arg_new_bounds) = (self_, view, new_bounds);
+            let arg_self_: &RcImpl<_cef_window_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            let arg_new_bounds = if arg_new_bounds.is_null() {
+                None
+            } else {
+                Some(WrapParamRef::<Rect, _>::from(arg_new_bounds))
+            };
+            let arg_new_bounds = arg_new_bounds.as_ref().map(|arg| arg.as_ref());
+            ImplViewDelegate::on_layout_changed(&arg_self_.interface, arg_view, arg_new_bounds)
+        }
+        extern "C" fn on_focus<I: ImplWindowDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_window_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            ImplViewDelegate::on_focus(&arg_self_.interface, arg_view)
+        }
+        extern "C" fn on_blur<I: ImplWindowDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_window_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            ImplViewDelegate::on_blur(&arg_self_.interface, arg_view)
+        }
+        extern "C" fn on_theme_changed<I: ImplWindowDelegate>(
+            self_: *mut _cef_view_delegate_t,
+            view: *mut _cef_view_t,
+        ) {
+            let (arg_self_, arg_view) = (self_, view);
+            let arg_self_: &RcImpl<_cef_window_delegate_t, I> = RcImpl::get(arg_self_.cast());
+            let mut arg_view =
+                unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
+            let arg_view = arg_view.as_mut();
+            ImplViewDelegate::on_theme_changed(&arg_self_.interface, arg_view)
+        }
+    }
+    pub(crate) mod bridge_cef_panel_delegate_t {
+        use super::*;
+        pub fn init_methods<I: ImplWindowDelegate>(object: &mut _cef_window_delegate_t) {}
     }
 }
 impl ImplViewDelegate for WindowDelegate {
