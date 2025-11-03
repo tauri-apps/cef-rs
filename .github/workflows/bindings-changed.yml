@@ -2,6 +2,8 @@ name: Bindings changed
 
 on:
   push:
+    branches:
+      - dev
     paths:
       - Cargo.toml
       - sys/wrapper.h
@@ -13,4 +15,4 @@ jobs:
   update-bindings:
     uses: ./.github/workflows/update-bindings.yml
     with:
-      branch: "fix/interface-cast"
+      branch: "dev"
