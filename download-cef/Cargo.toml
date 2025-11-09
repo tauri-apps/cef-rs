@@ -8,16 +8,20 @@ license.workspace = true
 authors.workspace = true
 repository.workspace = true
 
+[features]
+default = ["download"]
+download = ["dep:clap", "dep:regex", "dep:semver", "dep:serde", "dep:serde_json", "dep:bzip2", "dep:indicatif", "dep:sha1_smol", "dep:tar", "dep:ureq"]
+
 [dependencies]
-clap.workspace = true
-regex.workspace = true
-semver.workspace = true
-serde.workspace = true
-serde_json.workspace = true
+clap = { workspace = true, optional = true }
+regex = { workspace = true, optional = true }
+semver = { workspace = true, optional = true }
+serde = { workspace = true, optional = true }
+serde_json = { workspace = true, optional = true }
 thiserror.workspace = true
 
-bzip2 = "0.6"
-indicatif = "0.18"
-sha1_smol = "1"
-tar = "0.4"
-ureq = { version = "3", features = ["json", "socks-proxy"] }
+bzip2 = { version = "0.6", optional = true }
+indicatif = { version = "0.18", optional = true }
+sha1_smol = { version = "1", optional = true }
+tar = { version = "0.4", optional = true }
+ureq = { version = "3", features = ["json", "socks-proxy"], optional = true }

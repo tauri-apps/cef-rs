@@ -9,7 +9,7 @@ authors.workspace = true
 repository.workspace = true
 
 [features]
-default = ["sandbox"]
+default = ["sandbox", "download"]
 dox = ["cef-dll-sys/dox"]
 sandbox = ["cef-dll-sys/sandbox"]
 # Unified texture import system for CEF hardware acceleration
@@ -24,12 +24,13 @@ accelerated_osr = [
     "objc",
     "metal"
 ]
+download = ["cef-dll-sys/download"]
 
 [package.metadata.docs.rs]
 features = ["dox"]
 
 [dependencies]
-cef-dll-sys.workspace = true
+cef-dll-sys = { workspace = true, default-features = false }
 
 # accelerated_osr
 ash = { workspace = true, optional = true }

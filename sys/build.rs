@@ -1,7 +1,7 @@
 #[cfg(not(feature = "dox"))]
 fn main() -> anyhow::Result<()> {
-    use download_cef::{CefIndex, OsAndArch};
-    use std::{env, fs, path::PathBuf};
+    use download_cef::OsAndArch;
+    use std::{env, path::PathBuf};
 
     println!("cargo::rerun-if-changed=build.rs");
 
@@ -18,10 +18,21 @@ fn main() -> anyhow::Result<()> {
         Ok(cef_path) => {
             // Allow overriding the CEF path with environment variables.
             println!("Using CEF path from environment: {cef_path}");
-            download_cef::check_archive_json(&env::var("CARGO_PKG_VERSION")?, &cef_path)?;
+
+            #[cfg(feature = "download")]
+            {
+                let cef_force_env = env::var("CEF_PATH_FORCE")
+                    .unwrap_or(String::from("0")) == "1";
+                if !cef_force_env {
+                    download_cef::check_archive_json(&env::var("CARGO_PKG_VERSION")?, &cef_path)?;
+                }
+            }
             PathBuf::from(cef_path)
         }
+        #[cfg(feature = "download")]
         Err(_) => {
+            use download_cef::CefIndex;
+            use std::fs;
             let out_dir = PathBuf::from(env::var("OUT_DIR")?);
             let cef_dir = os_arch.to_string();
             let cef_dir = out_dir.join(&cef_dir);
@@ -46,6 +57,10 @@ fn main() -> anyhow::Result<()> {
 
             cef_dir
         }
+        #[cfg(not(feature = "download"))]
+        Err(_) => return Err(anyhow::anyhow!(
+            "Crate is compiled without download feature, CEF path must be specified with CEF_PATH environment variable.",
+        ))
     };
 
     let cef_dir = cef_dir.display().to_string();

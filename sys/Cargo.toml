@@ -13,8 +13,10 @@ repository.workspace = true
 doctest = false
 
 [features]
+default = ["download"]
 dox = []
 sandbox = []
+download = ["dep:serde_json", "download-cef/download"]
 
 [package.metadata.docs.rs]
 features = ["dox"]
@@ -22,5 +24,5 @@ features = ["dox"]
 [build-dependencies]
 anyhow.workspace = true
 cmake.workspace = true
-download-cef.workspace = true
-serde_json.workspace = true
+download-cef = { workspace = true, default-features = false }
+serde_json = { workspace = true, optional = true }
