@@ -7,13 +7,13 @@ use ash::vk;
 use wgpu::hal::api;
 
 pub struct DmaBufImporter {
-    fds: Vec<std::os::fd::RawFd>,
-    format: cef_color_type_t,
-    modifier: u64,
-    width: u32,
-    height: u32,
-    strides: Vec<u32>,
-    offsets: Vec<u32>,
+    pub fds: Vec<std::os::fd::RawFd>,
+    pub format: cef_color_type_t,
+    pub modifier: u64,
+    pub width: u32,
+    pub height: u32,
+    pub strides: Vec<u32>,
+    pub offsets: Vec<u32>,
 }
 
 impl TextureImporter for DmaBufImporter {
