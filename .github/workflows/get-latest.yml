@@ -19,7 +19,7 @@ jobs:
       updated: ${{ steps.push-changes.outputs.updated }}
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -80,7 +80,7 @@ jobs:
     if: needs.update-bindings.outputs.published == 'false'
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           ref: get-latest
           fetch-depth: 0
