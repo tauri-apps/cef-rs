@@ -38,7 +38,7 @@ git-cliff-core = "2"
 io-surface = "0.16"
 libc = "0.2"
 libloading = "0.9"
-metal = "0.32"
+metal = "0.33"
 objc = "0.2"
 objc2 = "0.6.3"
 objc2-app-kit = { version = "0.3.2", default-features = false }
