@@ -57,7 +57,7 @@ syn = { version = "2", features = ["full"] }
 thiserror = "2"
 toml_edit = "0.24"
 tracing = "0.1"
-wgpu = "27"
+wgpu = "28"
 winres = "0.1"
 x11-dl = "2"
 
