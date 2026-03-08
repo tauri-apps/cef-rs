@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [145.6.1+145.0.28](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v145.6.0+145.0.28...cef-dll-sys-v145.6.1+145.0.28) - 2026-03-08
+
+### Other
+
+- Merge pull request #368 from tauri-apps/feat/cef_color_ids
+
 ## [144.3.0+144.0.12](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v144.2.0+144.0.11...cef-dll-sys-v144.3.0+144.0.12) - 2026-01-31
 
 ### Other
