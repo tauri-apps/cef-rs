@@ -504,12 +504,10 @@ impl From<&str> for CefStringUtf16 {
 impl From<&CefStringUserfreeUtf16> for CefStringUtf16 {
     fn from(value: &CefStringUserfreeUtf16) -> Self {
         let value: Option<&_cef_string_utf16_t> = value.into();
-        if value.is_none() {
-            eprintln!("Invalid UTF-16 string");
-        }
         Self(CefStringData::Clear(value.and_then(|value| unsafe {
             let mut data = mem::zeroed();
             if cef_dll_sys::cef_string_utf16_set(value.str_, value.length, &mut data, 1) == 0 {
+                eprintln!("Invalid UTF-16 string");
                 None
             } else {
                 Some(data)
