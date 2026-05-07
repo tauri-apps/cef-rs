@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.2](https://github.com/tauri-apps/cef-rs/compare/download-cef-v2.3.1...download-cef-v2.3.2) - 2026-05-07
+
+### Other
+
+- Merge remote-tracking branch 'origin/dev' into feat/copy-files
+- build
+- fmt
+- Merge remote-tracking branch 'origin/dev' into chore/use-fs-err
+
 ### Added
 
 - use `fs_err` instead of `std::fs` for file operations

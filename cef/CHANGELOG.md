@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [148.0.0+147.0.10](https://github.com/tauri-apps/cef-rs/compare/cef-v147.1.0+147.0.10...cef-v148.0.0+147.0.10) - 2026-05-07
+
+### Other
+
+- *(deps)* switch to objc2-metal crate
+
 ## [147.0.0+147.0.9](https://github.com/tauri-apps/cef-rs/compare/cef-v146.7.0+146.0.12...cef-v147.0.0+147.0.9) - 2026-04-25
 
 ### Other
