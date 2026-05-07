@@ -11,8 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Other
 
-- remove feature flag todos
-- Merge remote-tracking branch 'origin/fix/146-location-windows' into feat/copy-files
+- Copy CEF files to target directory on Windows and Linux so the binary can locate them
 
 ## [147.0.0+147.0.9](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v146.7.0+146.0.12...cef-dll-sys-v147.0.0+147.0.9) - 2026-04-25
 
