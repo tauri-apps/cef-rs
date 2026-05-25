@@ -45595,9 +45595,8 @@ impl ContentSettingTypes {
     #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_AUTOMATIC_FULLSCREEN`] for more documentation."]
     pub const AUTOMATIC_FULLSCREEN: Self =
         Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_AUTOMATIC_FULLSCREEN);
-    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SUB_APP_INSTALLATION_PROMPTS`] for more documentation."]
-    pub const SUB_APP_INSTALLATION_PROMPTS: Self =
-        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SUB_APP_INSTALLATION_PROMPTS);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SUB_APP_INSTALLATION_PROMPTS_DEPRECATED`] for more documentation."]
+    pub const SUB_APP_INSTALLATION_PROMPTS_DEPRECATED : Self = Self (cef_content_setting_types_t :: CEF_CONTENT_SETTING_TYPE_SUB_APP_INSTALLATION_PROMPTS_DEPRECATED) ;
     #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SPEAKER_SELECTION`] for more documentation."]
     pub const SPEAKER_SELECTION: Self =
         Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SPEAKER_SELECTION);
@@ -47128,6 +47127,8 @@ impl WindowOpenDisposition {
     #[doc = "See [`cef_window_open_disposition_t::CEF_WOD_NEW_PICTURE_IN_PICTURE`] for more documentation."]
     pub const NEW_PICTURE_IN_PICTURE: Self =
         Self(cef_window_open_disposition_t::CEF_WOD_NEW_PICTURE_IN_PICTURE);
+    #[doc = "See [`cef_window_open_disposition_t::CEF_WOD_NEW_SPLIT_VIEW`] for more documentation."]
+    pub const NEW_SPLIT_VIEW: Self = Self(cef_window_open_disposition_t::CEF_WOD_NEW_SPLIT_VIEW);
     #[doc = "See [`cef_window_open_disposition_t::CEF_WOD_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_window_open_disposition_t::CEF_WOD_NUM_VALUES);
 }
@@ -50299,6 +50300,10 @@ impl ChannelLayout {
     pub const LAYOUT_1_1: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_1_1);
     #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_3_1_BACK`] for more documentation."]
     pub const LAYOUT_3_1_BACK: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_3_1_BACK);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_5_1_4`] for more documentation."]
+    pub const LAYOUT_5_1_4: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_5_1_4);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_7_1_4`] for more documentation."]
+    pub const LAYOUT_7_1_4: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_7_1_4);
     #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_channel_layout_t::CEF_CHANNEL_NUM_VALUES);
 }
@@ -50625,9 +50630,9 @@ impl ChromePageActionIconType {
     #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_BOOKMARK_STAR`] for more documentation."]
     pub const BOOKMARK_STAR: Self =
         Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_BOOKMARK_STAR);
-    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_CLICK_TO_CALL_DEPRECATED`] for more documentation."]
-    pub const CLICK_TO_CALL_DEPRECATED: Self =
-        Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_CLICK_TO_CALL_DEPRECATED);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_CLICK_TO_CALL`] for more documentation."]
+    pub const CLICK_TO_CALL: Self =
+        Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_CLICK_TO_CALL);
     #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_COOKIE_CONTROLS`] for more documentation."]
     pub const COOKIE_CONTROLS: Self =
         Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_COOKIE_CONTROLS);
@@ -50732,9 +50737,8 @@ impl ChromePageActionIconType {
         Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_RECORD_REPLAY);
     #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_INDIGO`] for more documentation."]
     pub const INDIGO: Self = Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_INDIGO);
-    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_FEDERATION_DEPRECATED`] for more documentation."]
-    pub const FEDERATION_DEPRECATED: Self =
-        Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_FEDERATION_DEPRECATED);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_FEDERATION`] for more documentation."]
+    pub const FEDERATION: Self = Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_FEDERATION);
     #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_GLIC`] for more documentation."]
     pub const GLIC: Self = Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_GLIC);
     #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_NUM_VALUES`] for more documentation."]
@@ -53678,6 +53682,9 @@ impl ColorId {
     #[doc = "See [`cef_color_id_t::CEF_ColorGlicInactiveTabUnderlineGradient3`] for more documentation."]
     pub const COLOR_GLIC_INACTIVE_TAB_UNDERLINE_GRADIENT3: Self =
         Self(cef_color_id_t::CEF_ColorGlicInactiveTabUnderlineGradient3);
+    #[doc = "See [`cef_color_id_t::CEF_ColorGlicSelectionOverlayToast`] for more documentation."]
+    pub const COLOR_GLIC_SELECTION_OVERLAY_TOAST: Self =
+        Self(cef_color_id_t::CEF_ColorGlicSelectionOverlayToast);
     #[doc = "See [`cef_color_id_t::CEF_ColorHoverButtonBackgroundHovered`] for more documentation."]
     pub const COLOR_HOVER_BUTTON_BACKGROUND_HOVERED: Self =
         Self(cef_color_id_t::CEF_ColorHoverButtonBackgroundHovered);
@@ -53838,6 +53845,9 @@ impl ColorId {
     #[doc = "See [`cef_color_id_t::CEF_ColorNewTabPageChipForeground`] for more documentation."]
     pub const COLOR_NEW_TAB_PAGE_CHIP_FOREGROUND: Self =
         Self(cef_color_id_t::CEF_ColorNewTabPageChipForeground);
+    #[doc = "See [`cef_color_id_t::CEF_ColorNewTabPageComposeboxSubmitButtonBackground`] for more documentation."]
+    pub const COLOR_NEW_TAB_PAGE_COMPOSEBOX_SUBMIT_BUTTON_BACKGROUND: Self =
+        Self(cef_color_id_t::CEF_ColorNewTabPageComposeboxSubmitButtonBackground);
     #[doc = "See [`cef_color_id_t::CEF_ColorComposeboxBackground`] for more documentation."]
     pub const COLOR_COMPOSEBOX_BACKGROUND: Self =
         Self(cef_color_id_t::CEF_ColorComposeboxBackground);
@@ -54286,6 +54296,9 @@ impl ColorId {
     #[doc = "See [`cef_color_id_t::CEF_ColorOmniboxResultsBackgroundHovered`] for more documentation."]
     pub const COLOR_OMNIBOX_RESULTS_BACKGROUND_HOVERED: Self =
         Self(cef_color_id_t::CEF_ColorOmniboxResultsBackgroundHovered);
+    #[doc = "See [`cef_color_id_t::CEF_ColorOmniboxResultsBackgroundHoverOverlay`] for more documentation."]
+    pub const COLOR_OMNIBOX_RESULTS_BACKGROUND_HOVER_OVERLAY: Self =
+        Self(cef_color_id_t::CEF_ColorOmniboxResultsBackgroundHoverOverlay);
     #[doc = "See [`cef_color_id_t::CEF_ColorOmniboxResultsBackgroundSelected`] for more documentation."]
     pub const COLOR_OMNIBOX_RESULTS_BACKGROUND_SELECTED: Self =
         Self(cef_color_id_t::CEF_ColorOmniboxResultsBackgroundSelected);
@@ -55124,6 +55137,27 @@ impl ColorId {
     #[doc = "See [`cef_color_id_t::CEF_ColorReadAnythingAudioControlsIconLowContrastDark`] for more documentation."]
     pub const COLOR_READ_ANYTHING_AUDIO_CONTROLS_ICON_LOW_CONTRAST_DARK: Self =
         Self(cef_color_id_t::CEF_ColorReadAnythingAudioControlsIconLowContrastDark);
+    #[doc = "See [`cef_color_id_t::CEF_ColorReadAnythingFullPageScrollbarBlue`] for more documentation."]
+    pub const COLOR_READ_ANYTHING_FULL_PAGE_SCROLLBAR_BLUE: Self =
+        Self(cef_color_id_t::CEF_ColorReadAnythingFullPageScrollbarBlue);
+    #[doc = "See [`cef_color_id_t::CEF_ColorReadAnythingFullPageScrollbarDark`] for more documentation."]
+    pub const COLOR_READ_ANYTHING_FULL_PAGE_SCROLLBAR_DARK: Self =
+        Self(cef_color_id_t::CEF_ColorReadAnythingFullPageScrollbarDark);
+    #[doc = "See [`cef_color_id_t::CEF_ColorReadAnythingFullPageScrollbarLight`] for more documentation."]
+    pub const COLOR_READ_ANYTHING_FULL_PAGE_SCROLLBAR_LIGHT: Self =
+        Self(cef_color_id_t::CEF_ColorReadAnythingFullPageScrollbarLight);
+    #[doc = "See [`cef_color_id_t::CEF_ColorReadAnythingFullPageScrollbarYellow`] for more documentation."]
+    pub const COLOR_READ_ANYTHING_FULL_PAGE_SCROLLBAR_YELLOW: Self =
+        Self(cef_color_id_t::CEF_ColorReadAnythingFullPageScrollbarYellow);
+    #[doc = "See [`cef_color_id_t::CEF_ColorReadAnythingFullPageScrollbarHighContrast`] for more documentation."]
+    pub const COLOR_READ_ANYTHING_FULL_PAGE_SCROLLBAR_HIGH_CONTRAST: Self =
+        Self(cef_color_id_t::CEF_ColorReadAnythingFullPageScrollbarHighContrast);
+    #[doc = "See [`cef_color_id_t::CEF_ColorReadAnythingFullPageScrollbarLowContrastLight`] for more documentation."]
+    pub const COLOR_READ_ANYTHING_FULL_PAGE_SCROLLBAR_LOW_CONTRAST_LIGHT: Self =
+        Self(cef_color_id_t::CEF_ColorReadAnythingFullPageScrollbarLowContrastLight);
+    #[doc = "See [`cef_color_id_t::CEF_ColorReadAnythingFullPageScrollbarLowContrastDark`] for more documentation."]
+    pub const COLOR_READ_ANYTHING_FULL_PAGE_SCROLLBAR_LOW_CONTRAST_DARK: Self =
+        Self(cef_color_id_t::CEF_ColorReadAnythingFullPageScrollbarLowContrastDark);
     #[doc = "See [`cef_color_id_t::CEF_ColorSearchboxAnswerIconBackground`] for more documentation."]
     pub const COLOR_SEARCHBOX_ANSWER_ICON_BACKGROUND: Self =
         Self(cef_color_id_t::CEF_ColorSearchboxAnswerIconBackground);
@@ -55539,6 +55573,9 @@ impl ColorId {
     #[doc = "See [`cef_color_id_t::CEF_ColorTabBackgroundActiveFrameActive`] for more documentation."]
     pub const COLOR_TAB_BACKGROUND_ACTIVE_FRAME_ACTIVE: Self =
         Self(cef_color_id_t::CEF_ColorTabBackgroundActiveFrameActive);
+    #[doc = "See [`cef_color_id_t::CEF_ColorDetachedTabBackgroundActiveFrameActive`] for more documentation."]
+    pub const COLOR_DETACHED_TAB_BACKGROUND_ACTIVE_FRAME_ACTIVE: Self =
+        Self(cef_color_id_t::CEF_ColorDetachedTabBackgroundActiveFrameActive);
     #[doc = "See [`cef_color_id_t::CEF_ColorTabBackgroundActiveFrameInactive`] for more documentation."]
     pub const COLOR_TAB_BACKGROUND_ACTIVE_FRAME_INACTIVE: Self =
         Self(cef_color_id_t::CEF_ColorTabBackgroundActiveFrameInactive);
