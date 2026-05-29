@@ -263,7 +263,19 @@ jobs:
             git pull
 
             echo "Publishing PR for ${SOURCE_BRANCH} branch"
-            gh pr create -f
+            for attempt in 1 2 3; do
+              if gh pr create -f; then
+                break
+              fi
+
+              if [ "${attempt}" -eq 3 ]; then
+                echo "Failed to publish PR after ${attempt} attempts"
+                exit 1
+              fi
+
+              echo "gh pr create failed, retrying..."
+              sleep $((attempt * 5))
+            done
             echo "published=true" >> "$GITHUB_OUTPUT"
           else
             echo "No changes detected"
