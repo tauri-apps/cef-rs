@@ -23693,8 +23693,20 @@ impl ColorId {
     #[doc = "See [`cef_color_id_t::CEF_ColorComposeboxContextEntrypointHoverBackground`] for more documentation."]
     pub const COLOR_COMPOSEBOX_CONTEXT_ENTRYPOINT_HOVER_BACKGROUND: Self =
         Self(cef_color_id_t::CEF_ColorComposeboxContextEntrypointHoverBackground);
+    #[doc = "See [`cef_color_id_t::CEF_ColorComposeboxContextEntrypointBackground`] for more documentation."]
+    pub const COLOR_COMPOSEBOX_CONTEXT_ENTRYPOINT_BACKGROUND: Self =
+        Self(cef_color_id_t::CEF_ColorComposeboxContextEntrypointBackground);
+    #[doc = "See [`cef_color_id_t::CEF_ColorComposeboxLensButtonHoverBackground`] for more documentation."]
+    pub const COLOR_COMPOSEBOX_LENS_BUTTON_HOVER_BACKGROUND: Self =
+        Self(cef_color_id_t::CEF_ColorComposeboxLensButtonHoverBackground);
     #[doc = "See [`cef_color_id_t::CEF_ColorComposeboxLink`] for more documentation."]
     pub const COLOR_COMPOSEBOX_LINK: Self = Self(cef_color_id_t::CEF_ColorComposeboxLink);
+    #[doc = "See [`cef_color_id_t::CEF_ColorComposeboxToolChipBackground`] for more documentation."]
+    pub const COLOR_COMPOSEBOX_TOOL_CHIP_BACKGROUND: Self =
+        Self(cef_color_id_t::CEF_ColorComposeboxToolChipBackground);
+    #[doc = "See [`cef_color_id_t::CEF_ColorComposeboxVoiceButtonHoverBackground`] for more documentation."]
+    pub const COLOR_COMPOSEBOX_VOICE_BUTTON_HOVER_BACKGROUND: Self =
+        Self(cef_color_id_t::CEF_ColorComposeboxVoiceButtonHoverBackground);
     #[doc = "See [`cef_color_id_t::CEF_ColorNewTabPageCommonInputPlaceholder`] for more documentation."]
     pub const COLOR_NEW_TAB_PAGE_COMMON_INPUT_PLACEHOLDER: Self =
         Self(cef_color_id_t::CEF_ColorNewTabPageCommonInputPlaceholder);
@@ -23989,6 +24001,9 @@ impl ColorId {
     #[doc = "See [`cef_color_id_t::CEF_ColorOmniboxComposeboxSubmitButtonBackground`] for more documentation."]
     pub const COLOR_OMNIBOX_COMPOSEBOX_SUBMIT_BUTTON_BACKGROUND: Self =
         Self(cef_color_id_t::CEF_ColorOmniboxComposeboxSubmitButtonBackground);
+    #[doc = "See [`cef_color_id_t::CEF_ColorOmniboxComposeboxSubmitButtonEnergy`] for more documentation."]
+    pub const COLOR_OMNIBOX_COMPOSEBOX_SUBMIT_BUTTON_ENERGY: Self =
+        Self(cef_color_id_t::CEF_ColorOmniboxComposeboxSubmitButtonEnergy);
     #[doc = "See [`cef_color_id_t::CEF_ColorOmniboxComposeboxSubmitButtonIcon`] for more documentation."]
     pub const COLOR_OMNIBOX_COMPOSEBOX_SUBMIT_BUTTON_ICON: Self =
         Self(cef_color_id_t::CEF_ColorOmniboxComposeboxSubmitButtonIcon);
