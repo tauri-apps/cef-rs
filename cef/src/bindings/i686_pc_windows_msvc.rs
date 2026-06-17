@@ -15301,12 +15301,13 @@ impl ContentSettingTypes {
     #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_COOKIE_CONTROLS_METADATA`] for more documentation."]
     pub const COOKIE_CONTROLS_METADATA: Self =
         Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_COOKIE_CONTROLS_METADATA);
-    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TPCD_HEURISTICS_GRANTS`] for more documentation."]
-    pub const TPCD_HEURISTICS_GRANTS: Self =
-        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TPCD_HEURISTICS_GRANTS);
-    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TPCD_METADATA_GRANTS`] for more documentation."]
-    pub const TPCD_METADATA_GRANTS: Self =
-        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TPCD_METADATA_GRANTS);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TPCD_HEURISTICS_GRANTS_DEPRECATED`] for more documentation."]
+    pub const TPCD_HEURISTICS_GRANTS_DEPRECATED: Self = Self(
+        cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TPCD_HEURISTICS_GRANTS_DEPRECATED,
+    );
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TPCD_METADATA_GRANTS_DEPRECATED`] for more documentation."]
+    pub const TPCD_METADATA_GRANTS_DEPRECATED: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TPCD_METADATA_GRANTS_DEPRECATED);
     #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TPCD_TRIAL_DEPRECATED`] for more documentation."]
     pub const TPCD_TRIAL_DEPRECATED: Self =
         Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TPCD_TRIAL_DEPRECATED);
@@ -20485,6 +20486,12 @@ impl ChromePageActionIconType {
     pub const FEDERATION: Self = Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_FEDERATION);
     #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_GLIC`] for more documentation."]
     pub const GLIC: Self = Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_GLIC);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_ANCHORED_CONTEXTUAL_CUE`] for more documentation."]
+    pub const ANCHORED_CONTEXTUAL_CUE: Self =
+        Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_ANCHORED_CONTEXTUAL_CUE);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_WEB_AUTHN_AMBIENT_SIGNIN`] for more documentation."]
+    pub const WEB_AUTHN_AMBIENT_SIGNIN: Self =
+        Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_WEB_AUTHN_AMBIENT_SIGNIN);
     #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_NUM_VALUES);
 }
@@ -22279,6 +22286,12 @@ impl ColorId {
     #[doc = "See [`cef_color_id_t::CEF_ColorFrameCaptionButtonUnfocused`] for more documentation."]
     pub const COLOR_FRAME_CAPTION_BUTTON_UNFOCUSED: Self =
         Self(cef_color_id_t::CEF_ColorFrameCaptionButtonUnfocused);
+    #[doc = "See [`cef_color_id_t::CEF_ColorFrameCaptionForegroundActive`] for more documentation."]
+    pub const COLOR_FRAME_CAPTION_FOREGROUND_ACTIVE: Self =
+        Self(cef_color_id_t::CEF_ColorFrameCaptionForegroundActive);
+    #[doc = "See [`cef_color_id_t::CEF_ColorFrameCaptionForegroundInactive`] for more documentation."]
+    pub const COLOR_FRAME_CAPTION_FOREGROUND_INACTIVE: Self =
+        Self(cef_color_id_t::CEF_ColorFrameCaptionForegroundInactive);
     #[doc = "See [`cef_color_id_t::CEF_ColorFrameInactive`] for more documentation."]
     pub const COLOR_FRAME_INACTIVE: Self = Self(cef_color_id_t::CEF_ColorFrameInactive);
     #[doc = "See [`cef_color_id_t::CEF_ColorHelpIconActive`] for more documentation."]
@@ -23151,6 +23164,9 @@ impl ColorId {
     #[doc = "See [`cef_color_id_t::CEF_ColorBnplIssuerLinkedPillForeground`] for more documentation."]
     pub const COLOR_BNPL_ISSUER_LINKED_PILL_FOREGROUND: Self =
         Self(cef_color_id_t::CEF_ColorBnplIssuerLinkedPillForeground);
+    #[doc = "See [`cef_color_id_t::CEF_ColorAutofillPopupDeactivatedBnplForeground`] for more documentation."]
+    pub const COLOR_AUTOFILL_POPUP_DEACTIVATED_BNPL_FOREGROUND: Self =
+        Self(cef_color_id_t::CEF_ColorAutofillPopupDeactivatedBnplForeground);
     #[doc = "See [`cef_color_id_t::CEF_ColorComposeDialogBackground`] for more documentation."]
     pub const COLOR_COMPOSE_DIALOG_BACKGROUND: Self =
         Self(cef_color_id_t::CEF_ColorComposeDialogBackground);
@@ -23424,6 +23440,9 @@ impl ColorId {
     #[doc = "See [`cef_color_id_t::CEF_ColorGlicSelectionOverlayToast`] for more documentation."]
     pub const COLOR_GLIC_SELECTION_OVERLAY_TOAST: Self =
         Self(cef_color_id_t::CEF_ColorGlicSelectionOverlayToast);
+    #[doc = "See [`cef_color_id_t::CEF_ColorGlicSelectionOverlayToastCancelButton`] for more documentation."]
+    pub const COLOR_GLIC_SELECTION_OVERLAY_TOAST_CANCEL_BUTTON: Self =
+        Self(cef_color_id_t::CEF_ColorGlicSelectionOverlayToastCancelButton);
     #[doc = "See [`cef_color_id_t::CEF_ColorHoverButtonBackgroundHovered`] for more documentation."]
     pub const COLOR_HOVER_BUTTON_BACKGROUND_HOVERED: Self =
         Self(cef_color_id_t::CEF_ColorHoverButtonBackgroundHovered);
@@ -23983,6 +24002,9 @@ impl ColorId {
     #[doc = "See [`cef_color_id_t::CEF_ColorOmniboxComposeboxChipBackground`] for more documentation."]
     pub const COLOR_OMNIBOX_COMPOSEBOX_CHIP_BACKGROUND: Self =
         Self(cef_color_id_t::CEF_ColorOmniboxComposeboxChipBackground);
+    #[doc = "See [`cef_color_id_t::CEF_ColorOmniboxComposeboxContextEntrypointBackground`] for more documentation."]
+    pub const COLOR_OMNIBOX_COMPOSEBOX_CONTEXT_ENTRYPOINT_BACKGROUND: Self =
+        Self(cef_color_id_t::CEF_ColorOmniboxComposeboxContextEntrypointBackground);
     #[doc = "See [`cef_color_id_t::CEF_ColorOmniboxComposeboxDivider`] for more documentation."]
     pub const COLOR_OMNIBOX_COMPOSEBOX_DIVIDER: Self =
         Self(cef_color_id_t::CEF_ColorOmniboxComposeboxDivider);
@@ -25748,6 +25770,9 @@ impl ColorId {
     #[doc = "See [`cef_color_id_t::CEF_ColorToolbarContentAreaSeparator`] for more documentation."]
     pub const COLOR_TOOLBAR_CONTENT_AREA_SEPARATOR: Self =
         Self(cef_color_id_t::CEF_ColorToolbarContentAreaSeparator);
+    #[doc = "See [`cef_color_id_t::CEF_ColorToolbarContextualTasksButtonShadow`] for more documentation."]
+    pub const COLOR_TOOLBAR_CONTEXTUAL_TASKS_BUTTON_SHADOW: Self =
+        Self(cef_color_id_t::CEF_ColorToolbarContextualTasksButtonShadow);
     #[doc = "See [`cef_color_id_t::CEF_ColorToolbarExtensionSeparatorDisabled`] for more documentation."]
     pub const COLOR_TOOLBAR_EXTENSION_SEPARATOR_DISABLED: Self =
         Self(cef_color_id_t::CEF_ColorToolbarExtensionSeparatorDisabled);
