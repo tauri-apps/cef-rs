@@ -30,14 +30,14 @@ pub const CEF_API_VERSION_LAST: i32 = 14900;
 pub const CEF_API_VERSION_EXPERIMENTAL: i32 = 999999;
 pub const CEF_API_VERSION_NEXT: i32 = 999998;
 pub const CEF_API_VERSION: i32 = 999999;
-pub const CEF_VERSION: &[u8; 41] = b"149.0.5+g6770623+chromium-149.0.7827.197\0";
+pub const CEF_VERSION: &[u8; 41] = b"149.0.6+g0d0eeb6+chromium-149.0.7827.201\0";
 pub const CEF_VERSION_MAJOR: i32 = 149;
 pub const CEF_VERSION_MINOR: i32 = 0;
-pub const CEF_VERSION_PATCH: i32 = 5;
+pub const CEF_VERSION_PATCH: i32 = 6;
 pub const CHROME_VERSION_MAJOR: i32 = 149;
 pub const CHROME_VERSION_MINOR: i32 = 0;
 pub const CHROME_VERSION_BUILD: i32 = 7827;
-pub const CHROME_VERSION_PATCH: i32 = 197;
+pub const CHROME_VERSION_PATCH: i32 = 201;
 unsafe extern "C" {
     #[doc = "\n Load the CEF library at the specified |path|. Returns true (1) on\n success and false (0) on failure.\n"]
     pub fn cef_load_library(path: *const ::std::os::raw::c_char) -> ::std::os::raw::c_int;
