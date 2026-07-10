@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [150.0.0+150.0.10](https://github.com/tauri-apps/cef-rs/compare/cef-v149.3.0+149.0.6...cef-v150.0.0+150.0.10) - 2026-07-10
+
+### Other
+
+- *(release)* update CEF version to 150.0.10 ([#438](https://github.com/tauri-apps/cef-rs/pull/438))
+- Fix #364: remove spurious eprintln! for null pointer in UTF-16 string conversion ([#425](https://github.com/tauri-apps/cef-rs/pull/425))
+
 ## [148.2.0+148.0.8](https://github.com/tauri-apps/cef-rs/compare/cef-v148.1.0+147.0.14...cef-v148.2.0+148.0.8) - 2026-05-25
 
 ### Other
