@@ -3924,7 +3924,7 @@ impl<'a> From<&'a syn::File> for ParseTree<'a> {
             .struct_declarations
             .iter()
             .filter_map(|s| match s.fields.as_slice() {
-                [FieldRef { name, ty }] if name.as_str() == "base" => {
+                [FieldRef { name, ty }, ..] if name.as_str() == "base" => {
                     Some((s.name.clone(), tree.resolve_type_aliases(ty).to_string()))
                 }
                 _ => None,
