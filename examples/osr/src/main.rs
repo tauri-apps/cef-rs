@@ -99,7 +99,7 @@ impl State {
             vertex: wgpu::VertexState {
                 module: &shader,
                 entry_point: Some("vs_main"),
-                buffers: &[Vertex::desc()],
+                buffers: &[Some(Vertex::desc())],
                 compilation_options: Default::default(),
             },
             fragment: Some(wgpu::FragmentState {
@@ -159,6 +159,7 @@ impl State {
         let surface_config = wgpu::SurfaceConfiguration {
             usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
             format: self.surface_format,
+            color_space: wgpu::SurfaceColorSpace::Auto,
             view_formats: vec![self.surface_format],
             alpha_mode: wgpu::CompositeAlphaMode::Auto,
             width: self.size.width,
@@ -226,7 +227,7 @@ impl State {
         });
 
         self.window.pre_present_notify();
-        surface_texture.present();
+        self.queue.present(surface_texture);
     }
 }
 
