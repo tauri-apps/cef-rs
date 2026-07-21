@@ -138,6 +138,7 @@ impl DmaBufImporter {
                     usage: wgpu::TextureUsages::TEXTURE_BINDING,
                     view_formats: &[],
                 },
+                TextureUses::RESOURCE,
             )
         };
 
