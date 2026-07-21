@@ -1299,6 +1299,7 @@ impl<'a> TryFrom<&'a syn::Field> for SignatureRef<'a> {
         let syn::Type::Path(syn::TypePath {
             qself: None,
             path: syn::Path { segments, .. },
+            ..
         }) = &value.ty
         else {
             return Err(Unrecognized::FieldType);
@@ -1341,7 +1342,7 @@ impl<'a> TryFrom<&'a syn::Field> for SignatureRef<'a> {
         // See if the Option<T> type is a function pointer
         let mut args = args.iter();
         let (
-            Some(syn::GenericArgument::Type(syn::Type::BareFn(syn::TypeBareFn {
+            Some(syn::GenericArgument::Type(syn::Type::FnPtr(syn::TypeFnPtr {
                 unsafety: Some(_),
                 abi: Some(syn::Abi {
                     name: Some(abi), ..
@@ -1778,7 +1779,7 @@ impl ParseTree<'_> {
 
     fn resolve_type_aliases(&self, ty: &syn::Type) -> proc_macro2::TokenStream {
         match ty {
-            syn::Type::Path(syn::TypePath { qself: None, path }) => {
+            syn::Type::Path(syn::TypePath { qself: None, path, .. }) => {
                 let ty = path.to_token_stream().to_string();
                 if is_custom_string_userfree_alias(ty.as_str()) {
                     path.to_token_stream()
@@ -1811,10 +1812,10 @@ impl ParseTree<'_> {
                 quote! { [#elem] }
             }
             syn::Type::Ptr(syn::TypePtr {
-                const_token, elem, ..
+                mutability, elem, ..
             }) => {
                 let elem = self.resolve_type_aliases(elem.as_ref());
-                if const_token.is_some() {
+                if matches!(mutability, syn::PointerMutability::Const(_)) {
                     quote! { *const #elem }
                 } else {
                     quote! { *mut #elem }
