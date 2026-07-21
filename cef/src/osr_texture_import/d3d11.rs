@@ -130,6 +130,7 @@ impl D3D11Importer {
                     usage: wgpu::TextureUsages::TEXTURE_BINDING,
                     view_formats: &[],
                 },
+                wgpu::TextureUses::RESOURCE,
             )
         };
 
@@ -192,6 +193,7 @@ impl D3D11Importer {
                     usage: wgpu::TextureUsages::TEXTURE_BINDING,
                     view_formats: &[],
                 },
+                wgpu::TextureUses::RESOURCE,
             )
         };
 
