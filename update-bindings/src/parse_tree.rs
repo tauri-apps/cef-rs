@@ -1779,7 +1779,9 @@ impl ParseTree<'_> {
 
     fn resolve_type_aliases(&self, ty: &syn::Type) -> proc_macro2::TokenStream {
         match ty {
-            syn::Type::Path(syn::TypePath { qself: None, path, .. }) => {
+            syn::Type::Path(syn::TypePath {
+                qself: None, path, ..
+            }) => {
                 let ty = path.to_token_stream().to_string();
                 if is_custom_string_userfree_alias(ty.as_str()) {
                     path.to_token_stream()
