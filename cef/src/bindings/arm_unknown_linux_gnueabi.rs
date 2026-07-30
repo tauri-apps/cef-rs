@@ -45593,6 +45593,9 @@ impl ContentSettingTypes {
     #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SUB_APPS_WITHOUT_PROMPTS`] for more documentation."]
     pub const SUB_APPS_WITHOUT_PROMPTS: Self =
         Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SUB_APPS_WITHOUT_PROMPTS);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_INLINE_CUE_MENU`] for more documentation."]
+    pub const INLINE_CUE_MENU: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_INLINE_CUE_MENU);
     #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self =
         Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_NUM_VALUES);
@@ -46449,6 +46452,8 @@ impl Errorcode {
     #[doc = "See [`cef_errorcode_t::ERR_PROXY_DELEGATE_CANCELED_CONNECT_RESPONSE`] for more documentation."]
     pub const PROXY_DELEGATE_CANCELED_CONNECT_RESPONSE: Self =
         Self(cef_errorcode_t::ERR_PROXY_DELEGATE_CANCELED_CONNECT_RESPONSE);
+    #[doc = "See [`cef_errorcode_t::ERR_CONTROL_MSG_TOO_BIG`] for more documentation."]
+    pub const CONTROL_MSG_TOO_BIG: Self = Self(cef_errorcode_t::ERR_CONTROL_MSG_TOO_BIG);
     #[doc = "See [`cef_errorcode_t::ERR_CERT_COMMON_NAME_INVALID`] for more documentation."]
     pub const CERT_COMMON_NAME_INVALID: Self = Self(cef_errorcode_t::ERR_CERT_COMMON_NAME_INVALID);
     #[doc = "See [`cef_errorcode_t::ERR_CERT_DATE_INVALID`] for more documentation."]
@@ -46767,6 +46772,8 @@ impl Errorcode {
     pub const DNS_REFUSED: Self = Self(cef_errorcode_t::ERR_DNS_REFUSED);
     #[doc = "See [`cef_errorcode_t::ERR_DNS_OTHER_FAILURE`] for more documentation."]
     pub const DNS_OTHER_FAILURE: Self = Self(cef_errorcode_t::ERR_DNS_OTHER_FAILURE);
+    #[doc = "See [`cef_errorcode_t::ERR_DNS_DIRECT_ONLY`] for more documentation."]
+    pub const DNS_DIRECT_ONLY: Self = Self(cef_errorcode_t::ERR_DNS_DIRECT_ONLY);
     #[doc = "See [`cef_errorcode_t::ERR_BLOB_INVALID_CONSTRUCTION_ARGUMENTS`] for more documentation."]
     pub const BLOB_INVALID_CONSTRUCTION_ARGUMENTS: Self =
         Self(cef_errorcode_t::ERR_BLOB_INVALID_CONSTRUCTION_ARGUMENTS);
@@ -50730,8 +50737,9 @@ impl ChromeToolbarButtonType {
         Self(cef_chrome_toolbar_button_type_t::CEF_CTBT_SIDE_PANEL_DEPRECATED);
     #[doc = "See [`cef_chrome_toolbar_button_type_t::CEF_CTBT_MEDIA`] for more documentation."]
     pub const MEDIA: Self = Self(cef_chrome_toolbar_button_type_t::CEF_CTBT_MEDIA);
-    #[doc = "See [`cef_chrome_toolbar_button_type_t::CEF_CTBT_TAB_SEARCH`] for more documentation."]
-    pub const TAB_SEARCH: Self = Self(cef_chrome_toolbar_button_type_t::CEF_CTBT_TAB_SEARCH);
+    #[doc = "See [`cef_chrome_toolbar_button_type_t::CEF_CTBT_TAB_SEARCH_DEPRECATED`] for more documentation."]
+    pub const TAB_SEARCH_DEPRECATED: Self =
+        Self(cef_chrome_toolbar_button_type_t::CEF_CTBT_TAB_SEARCH_DEPRECATED);
     #[doc = "See [`cef_chrome_toolbar_button_type_t::CEF_CTBT_BATTERY_SAVER`] for more documentation."]
     pub const BATTERY_SAVER: Self = Self(cef_chrome_toolbar_button_type_t::CEF_CTBT_BATTERY_SAVER);
     #[doc = "See [`cef_chrome_toolbar_button_type_t::CEF_CTBT_AVATAR`] for more documentation."]
@@ -52583,6 +52591,12 @@ impl ColorId {
     #[doc = "See [`cef_color_id_t::CEF_ColorLiveCaptionBubbleLink`] for more documentation."]
     pub const COLOR_LIVE_CAPTION_BUBBLE_LINK: Self =
         Self(cef_color_id_t::CEF_ColorLiveCaptionBubbleLink);
+    #[doc = "See [`cef_color_id_t::CEF_ColorLiveCaptionDialogBackground`] for more documentation."]
+    pub const COLOR_LIVE_CAPTION_DIALOG_BACKGROUND: Self =
+        Self(cef_color_id_t::CEF_ColorLiveCaptionDialogBackground);
+    #[doc = "See [`cef_color_id_t::CEF_ColorLiveCaptionDialogForeground`] for more documentation."]
+    pub const COLOR_LIVE_CAPTION_DIALOG_FOREGROUND: Self =
+        Self(cef_color_id_t::CEF_ColorLiveCaptionDialogForeground);
     #[doc = "See [`cef_color_id_t::CEF_ColorLoadingGradientBorder`] for more documentation."]
     pub const COLOR_LOADING_GRADIENT_BORDER: Self =
         Self(cef_color_id_t::CEF_ColorLoadingGradientBorder);
@@ -53282,6 +53296,12 @@ impl ColorId {
     #[doc = "See [`cef_color_id_t::CEF_ColorAvatarFillForContrast`] for more documentation."]
     pub const COLOR_AVATAR_FILL_FOR_CONTRAST: Self =
         Self(cef_color_id_t::CEF_ColorAvatarFillForContrast);
+    #[doc = "See [`cef_color_id_t::CEF_ColorAiSubscriptionRingGradientStart`] for more documentation."]
+    pub const COLOR_AI_SUBSCRIPTION_RING_GRADIENT_START: Self =
+        Self(cef_color_id_t::CEF_ColorAiSubscriptionRingGradientStart);
+    #[doc = "See [`cef_color_id_t::CEF_ColorAiSubscriptionRingGradientEnd`] for more documentation."]
+    pub const COLOR_AI_SUBSCRIPTION_RING_GRADIENT_END: Self =
+        Self(cef_color_id_t::CEF_ColorAiSubscriptionRingGradientEnd);
     #[doc = "See [`cef_color_id_t::CEF_ColorBookmarkManagerItemBackgroundSelected`] for more documentation."]
     pub const COLOR_BOOKMARK_MANAGER_ITEM_BACKGROUND_SELECTED: Self =
         Self(cef_color_id_t::CEF_ColorBookmarkManagerItemBackgroundSelected);
@@ -53442,9 +53462,6 @@ impl ColorId {
     #[doc = "See [`cef_color_id_t::CEF_ColorContextualTasksBannerPromoIconBackground`] for more documentation."]
     pub const COLOR_CONTEXTUAL_TASKS_BANNER_PROMO_ICON_BACKGROUND: Self =
         Self(cef_color_id_t::CEF_ColorContextualTasksBannerPromoIconBackground);
-    #[doc = "See [`cef_color_id_t::CEF_ColorContextualTasksBannerPromoIconForeground`] for more documentation."]
-    pub const COLOR_CONTEXTUAL_TASKS_BANNER_PROMO_ICON_FOREGROUND: Self =
-        Self(cef_color_id_t::CEF_ColorContextualTasksBannerPromoIconForeground);
     #[doc = "See [`cef_color_id_t::CEF_ColorDesktopMediaPickerDescriptionLabel`] for more documentation."]
     pub const COLOR_DESKTOP_MEDIA_PICKER_DESCRIPTION_LABEL: Self =
         Self(cef_color_id_t::CEF_ColorDesktopMediaPickerDescriptionLabel);
@@ -53572,6 +53589,21 @@ impl ColorId {
     #[doc = "See [`cef_color_id_t::CEF_ColorFeaturePromoBubbleForeground`] for more documentation."]
     pub const COLOR_FEATURE_PROMO_BUBBLE_FOREGROUND: Self =
         Self(cef_color_id_t::CEF_ColorFeaturePromoBubbleForeground);
+    #[doc = "See [`cef_color_id_t::CEF_ColorFeatureShowcaseStepperCheck`] for more documentation."]
+    pub const COLOR_FEATURE_SHOWCASE_STEPPER_CHECK: Self =
+        Self(cef_color_id_t::CEF_ColorFeatureShowcaseStepperCheck);
+    #[doc = "See [`cef_color_id_t::CEF_ColorFeatureShowcaseStepperDot`] for more documentation."]
+    pub const COLOR_FEATURE_SHOWCASE_STEPPER_DOT: Self =
+        Self(cef_color_id_t::CEF_ColorFeatureShowcaseStepperDot);
+    #[doc = "See [`cef_color_id_t::CEF_ColorFeatureShowcaseThemePickerWrapperBackground`] for more documentation."]
+    pub const COLOR_FEATURE_SHOWCASE_THEME_PICKER_WRAPPER_BACKGROUND: Self =
+        Self(cef_color_id_t::CEF_ColorFeatureShowcaseThemePickerWrapperBackground);
+    #[doc = "See [`cef_color_id_t::CEF_ColorFeatureShowcaseThemePickerBackground`] for more documentation."]
+    pub const COLOR_FEATURE_SHOWCASE_THEME_PICKER_BACKGROUND: Self =
+        Self(cef_color_id_t::CEF_ColorFeatureShowcaseThemePickerBackground);
+    #[doc = "See [`cef_color_id_t::CEF_ColorFeatureShowcaseThemeColorBorder`] for more documentation."]
+    pub const COLOR_FEATURE_SHOWCASE_THEME_COLOR_BORDER: Self =
+        Self(cef_color_id_t::CEF_ColorFeatureShowcaseThemeColorBorder);
     #[doc = "See [`cef_color_id_t::CEF_ColorFeatureLensPromoBubbleBackground`] for more documentation."]
     pub const COLOR_FEATURE_LENS_PROMO_BUBBLE_BACKGROUND: Self =
         Self(cef_color_id_t::CEF_ColorFeatureLensPromoBubbleBackground);
