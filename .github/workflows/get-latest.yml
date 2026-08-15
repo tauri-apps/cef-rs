@@ -89,7 +89,7 @@ jobs:
           COMMIT_MESSAGE: ${{ steps.check-updates.outputs.commit-message }}
         run: |
             for attempt in 1 2 3; do
-              if gh pr create -t "${COMMIT_MESSAGE}"; then
+              if gh pr create -t "${COMMIT_MESSAGE}" -b ""; then
                 break
               fi
 

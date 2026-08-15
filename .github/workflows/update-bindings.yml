@@ -263,7 +263,7 @@ jobs:
 
             echo "Publishing PR for ${SOURCE_BRANCH} branch"
             for attempt in 1 2 3; do
-              if gh pr create -t "chore: update bindings"; then
+              if gh pr create -t "chore: update bindings" -b ""; then
                 break
               fi
 
