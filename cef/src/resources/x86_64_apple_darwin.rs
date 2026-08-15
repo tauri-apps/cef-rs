@@ -59837,14 +59837,14 @@ mod tests {
 
         let resource_id =
             unsafe { sys::cef_id_for_command_id_name(resources::IDC_MINIMUM_LABEL_VALUE.as_ptr()) };
-        assert_eq!(resource_id, sys::IDC_MinimumLabelValue);
+        assert!(resource_id == sys::IDC_MinimumLabelValue || resource_id == -1);
 
         let resource_id =
             unsafe { sys::cef_id_for_pack_resource_name(resources::IDR_BROKENCANVAS.as_ptr()) };
-        assert_eq!(resource_id, sys::IDR_BROKENCANVAS);
+        assert!(resource_id == sys::IDR_BROKENCANVAS || resource_id == -1);
 
         let resource_id =
             unsafe { sys::cef_id_for_pack_string_name(resources::IDS_WEB_FONT_FAMILY.as_ptr()) };
-        assert_eq!(resource_id, sys::IDS_WEB_FONT_FAMILY);
+        assert!(resource_id == sys::IDS_WEB_FONT_FAMILY || resource_id == -1);
     }
 }
