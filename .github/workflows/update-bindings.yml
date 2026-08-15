@@ -246,19 +246,18 @@ jobs:
           if [ ${#CHANGED[@]} -gt 0 ]; then
             git push --force -u origin ${SOURCE_BRANCH}
 
-            FILES=()
             for VALUE in ${CHANGED[@]}; do
               base64 -w0 "${VALUE}" > "${VALUE}.base64"
-              FILES+=("-F" "files[][path]=${VALUE}" "-F" "files[][contents]=@${VALUE}.base64")
+              RESET_REV=$(gh api graphql \
+                -F githubRepository=${GITHUB_REPOSITORY} \
+                -F branchName=${SOURCE_BRANCH} \
+                -F expectedHeadOid=${RESET_REV} \
+                -F 'commitMessage=chore: update bindings' \
+                -F query=@.github/api/createCommitOnBranch.graphql \
+                -F "files[][path]=${VALUE}" \
+                -F "files[][contents]=@${VALUE}.base64" \
+                | jq -r '.data.createCommitOnBranch.commit.oid')
             done
-
-            gh api graphql \
-              -F githubRepository=${GITHUB_REPOSITORY} \
-              -F branchName=${SOURCE_BRANCH} \
-              -F expectedHeadOid=${RESET_REV} \
-              -F 'commitMessage=chore: update bindings' \
-              -F query=@.github/api/createCommitOnBranch.graphql \
-              ${FILES[@]}
 
             git pull
 

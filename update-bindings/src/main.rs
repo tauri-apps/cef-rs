@@ -29,6 +29,7 @@ pub type Result<T> = std::result::Result<T, Error>;
 
 mod dirs;
 mod parse_tree;
+mod resources;
 mod upgrade;
 
 fn default_version() -> &'static str {
@@ -79,8 +80,11 @@ fn main() -> Result<()> {
     sys_bindings.push(&bindings_file);
     let mut cef_bindings = dirs::get_cef_dir()?;
     cef_bindings.push("src");
+    let mut cef_resources = cef_bindings.clone();
     cef_bindings.push("bindings");
     cef_bindings.push(&bindings_file);
+    cef_resources.push("resources");
+    cef_resources.push(&bindings_file);
 
     let bindings = parse_tree::generate_bindings(&sys_bindings)?;
     let source = read_bindings(&bindings)?;
@@ -89,6 +93,15 @@ fn main() -> Result<()> {
     if source != dest {
         fs::copy(&bindings, &cef_bindings)?;
         println!("Updated: {}", cef_bindings.display());
+    }
+
+    let resources = resources::generate_bindings(&sys_bindings)?;
+    let source = read_bindings(&resources)?;
+    let dest = read_bindings(&cef_resources).unwrap_or_default();
+
+    if source != dest {
+        fs::copy(&resources, &cef_resources)?;
+        println!("Updated: {}", cef_resources.display());
     }
 
     Ok(())

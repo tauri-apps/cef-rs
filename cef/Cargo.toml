@@ -14,9 +14,10 @@ repository.workspace = true
 name = "bundle-cef-app"
 
 [features]
-default = ["sandbox", "build-util"]
+default = ["sandbox", "build-util", "resources"]
 dox = ["cef-dll-sys/dox"]
 sandbox = ["cef-dll-sys/sandbox"]
+resources = []
 
 # Unified texture import system for CEF hardware acceleration
 accelerated_osr = [

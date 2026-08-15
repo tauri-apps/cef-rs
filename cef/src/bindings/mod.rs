@@ -41,105 +41,46 @@ pub use aarch64_apple_darwin::*;
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::{rc::*, sys};
-    use std::{cell::RefCell, ptr};
+    use crate::*;
+    use std::cell::RefCell;
 
     #[derive(Default)]
     struct CallInfo {
         extra_info: RefCell<Option<DictionaryValue>>,
     }
 
-    struct TestLifeSpanHandler {
-        object: *mut RcImpl<sys::_cef_life_span_handler_t, Self>,
-        call_info: std::rc::Rc<CallInfo>,
-    }
-
-    impl ImplLifeSpanHandler for TestLifeSpanHandler {
-        fn get_raw(&self) -> *mut sys::_cef_life_span_handler_t {
-            self.object.cast()
+    wrap_life_span_handler! {
+        struct TestLifeSpanHandler {
+            call_info: std::rc::Rc<CallInfo>,
         }
 
-        fn on_before_popup(
-            &self,
-            _browser: Option<&mut Browser>,
-            _frame: Option<&mut Frame>,
-            _popup_id: ::std::os::raw::c_int,
-            _target_url: Option<&CefString>,
-            _target_frame_name: Option<&CefString>,
-            _target_disposition: WindowOpenDisposition,
-            _user_gesture: ::std::os::raw::c_int,
-            _popup_features: Option<&PopupFeatures>,
-            _window_info: Option<&mut WindowInfo>,
-            _client: Option<&mut Option<Client>>,
-            _settings: Option<&mut BrowserSettings>,
-            extra_info: Option<&mut Option<DictionaryValue>>,
-            _no_javascript_access: Option<&mut ::std::os::raw::c_int>,
-        ) -> ::std::os::raw::c_int {
-            let extra_info = extra_info.expect("extra_info is required");
-            *extra_info = self.call_info.extra_info.take();
-            1
-        }
-    }
-
-    impl WrapLifeSpanHandler for TestLifeSpanHandler {
-        fn wrap_rc(&mut self, object: *mut RcImpl<sys::_cef_life_span_handler_t, Self>) {
-            self.object = object;
-        }
-    }
-
-    impl TestLifeSpanHandler {
-        fn new(call_info: std::rc::Rc<CallInfo>) -> LifeSpanHandler {
-            LifeSpanHandler::new(Self {
-                object: std::ptr::null_mut(),
-                call_info,
-            })
-        }
-    }
-
-    impl Clone for TestLifeSpanHandler {
-        fn clone(&self) -> Self {
-            let object = unsafe {
-                let rc_impl = &mut *self.object;
-                rc_impl.interface.add_ref();
-                self.object
-            };
-
-            Self {
-                object,
-                call_info: self.call_info.clone(),
-            }
-        }
-    }
-
-    impl Rc for TestLifeSpanHandler {
-        fn as_base(&self) -> &sys::cef_base_ref_counted_t {
-            unsafe {
-                let base = &*self.object;
-                std::mem::transmute(&base.cef_object)
+        impl LifeSpanHandler {
+            fn on_before_popup(
+                &self,
+                _browser: Option<&mut Browser>,
+                _frame: Option<&mut Frame>,
+                _popup_id: ::std::os::raw::c_int,
+                _target_url: Option<&CefString>,
+                _target_frame_name: Option<&CefString>,
+                _target_disposition: WindowOpenDisposition,
+                _user_gesture: ::std::os::raw::c_int,
+                _popup_features: Option<&PopupFeatures>,
+                _window_info: Option<&mut WindowInfo>,
+                _client: Option<&mut Option<Client>>,
+                _settings: Option<&mut BrowserSettings>,
+                extra_info: Option<&mut Option<DictionaryValue>>,
+                _no_javascript_access: Option<&mut ::std::os::raw::c_int>,
+            ) -> ::std::os::raw::c_int {
+                let extra_info = extra_info.expect("extra_info is required");
+                *extra_info = self.call_info.extra_info.take();
+                1
             }
         }
     }
 
     #[test]
     fn dictionary_value_out_param() {
-        #[cfg(target_os = "macos")]
-        unsafe {
-            use std::{ffi::CString, os::unix::ffi::OsStrExt};
-
-            let cef_dir = sys::get_cef_dir().expect("CEF not found");
-            let framework_dir = cef_dir
-                .join(sys::FRAMEWORK_PATH)
-                .canonicalize()
-                .expect("failed to get framework path");
-            let framework_dir =
-                CString::new(framework_dir.as_os_str().as_bytes()).expect("invalid path");
-
-            assert_eq!(sys::cef_load_library(framework_dir.as_ptr().cast()), 1);
-        }
-
-        assert_eq!(initialize(None, None, None, ptr::null_mut()), 0);
-
-        let _ = api_hash(sys::CEF_API_VERSION_LAST, 0);
+        test_init_cef();
 
         let call_info = std::rc::Rc::new(CallInfo::default());
         let extra_info = dictionary_value_create().expect("failed to create dictionary");

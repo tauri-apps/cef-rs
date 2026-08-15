@@ -2454,7 +2454,7 @@ methods implemented by the [`Impl{rust_name}`] trait.
 
 # Example
 ```rust
-# use cef::{{*, rc::*}};
+# use cef::*;
 
 {wrap_type_macro}! {{
     struct My{rust_name} {{
@@ -3605,6 +3605,12 @@ fn make_my_struct() -> {rust_name} {{
 
         for global_fn in self.global_function_declarations.iter() {
             let original_name = global_fn.name.as_str();
+            if original_name.starts_with("cef_id_for_") {
+                // Skip over the cef_id_for_... functions, we'll emit accessors for each ID
+                // separately in write_resources.
+                continue;
+            }
+
             writeln!(f, "\n/// See [`{original_name}`] for more documentation.")?;
             let name = pattern
                 .captures(original_name)
@@ -3939,8 +3945,8 @@ impl<'a> From<&'a syn::File> for ParseTree<'a> {
 }
 
 fn format_bindings(source_path: &Path) -> crate::Result<()> {
-    let mut cmd = Command::new("rustfmt");
-    cmd.arg(source_path);
+    let mut cmd = Command::new(env!("CARGO"));
+    cmd.args(["fmt", "--", &source_path.display().to_string()]);
     cmd.output()?;
     Ok(())
 }
