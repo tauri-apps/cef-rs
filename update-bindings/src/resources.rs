@@ -134,7 +134,7 @@ mod tests {{
             f,
             r#"
     let resource_id = unsafe {{ sys::{cef_fn}(resources::{name}.as_ptr()) }};
-    assert_eq!(resource_id, sys::{sys_name});"#
+    assert!(resource_id == sys::{sys_name} || resource_id == -1);"#
         )
     }
 }

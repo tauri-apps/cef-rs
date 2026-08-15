@@ -252,7 +252,7 @@ jobs:
                 -F githubRepository=${GITHUB_REPOSITORY} \
                 -F branchName=${SOURCE_BRANCH} \
                 -F expectedHeadOid=${RESET_REV} \
-                -F 'commitMessage=chore: update bindings' \
+                -F 'commitMessage=chore: update ${VALUE}' \
                 -F query=@.github/api/createCommitOnBranch.graphql \
                 -F "files[][path]=${VALUE}" \
                 -F "files[][contents]=@${VALUE}.base64" \
@@ -263,7 +263,7 @@ jobs:
 
             echo "Publishing PR for ${SOURCE_BRANCH} branch"
             for attempt in 1 2 3; do
-              if gh pr create -f; then
+              if gh pr create -t "chore: update bindings"; then
                 break
               fi
 

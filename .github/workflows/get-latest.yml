@@ -38,7 +38,6 @@ jobs:
         id: push-changes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COMMIT_MESSAGE: ${{ steps.check-updates.outputs.commit-message }}
           RESET_REV: ${{ steps.check-updates.outputs.reset-rev }}
         run: |
           git switch -c get-latest
@@ -54,7 +53,7 @@ jobs:
                 -F githubRepository=${GITHUB_REPOSITORY} \
                 -F branchName=get-latest \
                 -F expectedHeadOid=${RESET_REV} \
-                -F "commitMessage=${COMMIT_MESSAGE}" \
+                -F "commitMessage=chore: update ${VALUE}" \
                 -F query=@.github/api/createCommitOnBranch.graphql \
                 -F "files[][path]=${VALUE}" \
                 -F "files[][contents]=@${VALUE}.base64" \
@@ -87,4 +86,18 @@ jobs:
       - name: Publish PR
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh pr create -f
+          COMMIT_MESSAGE: ${{ steps.check-updates.outputs.commit-message }}
+        run: |
+            for attempt in 1 2 3; do
+              if gh pr create -t "${COMMIT_MESSAGE}"; then
+                break
+              fi
+
+              if [ "${attempt}" -eq 3 ]; then
+                echo "Failed to publish PR after ${attempt} attempts"
+                exit 1
+              fi
+
+              echo "gh pr create failed, retrying..."
+              sleep $((attempt * 5))
+            done
