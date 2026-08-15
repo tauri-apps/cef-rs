@@ -48,12 +48,15 @@ jobs:
             git push --force -u origin get-latest
 
             for VALUE in ${CHANGED[@]}; do
+              COMMIT_MESSAGE="chore: update ${VALUE}"
+              echo "${COMMIT_MESSAGE}"
+
               base64 -w0 "${VALUE}" > "${VALUE}.base64"
               RESET_REV=$(gh api graphql \
                 -F githubRepository=${GITHUB_REPOSITORY} \
                 -F branchName=get-latest \
                 -F expectedHeadOid=${RESET_REV} \
-                -F "commitMessage=chore: update ${VALUE}" \
+                -F "commitMessage=${COMMIT_MESSAGE}" \
                 -F query=@.github/api/createCommitOnBranch.graphql \
                 -F "files[][path]=${VALUE}" \
                 -F "files[][contents]=@${VALUE}.base64" \
