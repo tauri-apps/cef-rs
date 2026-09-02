@@ -172,7 +172,7 @@ fn main() -> Result<()> {
                 let common_opts = ["--strip", "footer", "--include-path", "Cargo.toml"];
 
                 let export_cef_dir_opts = Opt {
-                    config: config_path.clone(),
+                    config: Some(config_path.clone()),
                     range: Some("export-cef-dir-v138.2.0+138.0.21..".to_string()),
                     ..Opt::try_parse_from(
                         common_opts.iter().chain(
@@ -191,7 +191,7 @@ fn main() -> Result<()> {
                 git_cliff::run(export_cef_dir_opts)?;
 
                 let cef_dll_sys_opts = Opt {
-                    config: config_path.clone(),
+                    config: Some(config_path.clone()),
                     range: Some("cef-dll-sys-v138.2.0+138.0.21..".to_string()),
                     ..Opt::try_parse_from(
                         common_opts.iter().chain(
@@ -210,7 +210,7 @@ fn main() -> Result<()> {
                 git_cliff::run(cef_dll_sys_opts)?;
 
                 let cef_opts = Opt {
-                    config: config_path,
+                    config: Some(config_path),
                     range: Some("cef-v138.2.0+138.0.21..".to_string()),
                     ..Opt::try_parse_from(
                         common_opts.iter().chain(
