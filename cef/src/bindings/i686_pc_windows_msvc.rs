@@ -11174,6 +11174,9 @@ impl ContentSettingTypes {
     #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_INLINE_CUE_MENU`] for more documentation."]
     pub const INLINE_CUE_MENU: Self =
         Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_INLINE_CUE_MENU);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SUSPICIOUS_SITE_WARNING_DATA`] for more documentation."]
+    pub const SUSPICIOUS_SITE_WARNING_DATA: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SUSPICIOUS_SITE_WARNING_DATA);
     #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self =
         Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_NUM_VALUES);
@@ -12032,6 +12035,8 @@ impl Errorcode {
         Self(cef_errorcode_t::ERR_PROXY_DELEGATE_CANCELED_CONNECT_RESPONSE);
     #[doc = "See [`cef_errorcode_t::ERR_CONTROL_MSG_TOO_BIG`] for more documentation."]
     pub const CONTROL_MSG_TOO_BIG: Self = Self(cef_errorcode_t::ERR_CONTROL_MSG_TOO_BIG);
+    #[doc = "See [`cef_errorcode_t::ERR_MULTICAST_NOT_ALLOWED`] for more documentation."]
+    pub const MULTICAST_NOT_ALLOWED: Self = Self(cef_errorcode_t::ERR_MULTICAST_NOT_ALLOWED);
     #[doc = "See [`cef_errorcode_t::ERR_CERT_COMMON_NAME_INVALID`] for more documentation."]
     pub const CERT_COMMON_NAME_INVALID: Self = Self(cef_errorcode_t::ERR_CERT_COMMON_NAME_INVALID);
     #[doc = "See [`cef_errorcode_t::ERR_CERT_DATE_INVALID`] for more documentation."]
@@ -16262,6 +16267,12 @@ impl ChromePageActionIconType {
     #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_MULTISTEP_FILTER`] for more documentation."]
     pub const MULTISTEP_FILTER: Self =
         Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_MULTISTEP_FILTER);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_PAYMENTS_CHURNED_USERS`] for more documentation."]
+    pub const PAYMENTS_CHURNED_USERS: Self =
+        Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_PAYMENTS_CHURNED_USERS);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_FAKE_PAGE_ACTION_FOR_DEBUG`] for more documentation."]
+    pub const FAKE_PAGE_ACTION_FOR_DEBUG: Self =
+        Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_FAKE_PAGE_ACTION_FOR_DEBUG);
     #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_NUM_VALUES);
 }
@@ -18869,12 +18880,41 @@ impl ColorId {
     #[doc = "See [`cef_color_id_t::CEF_ColorAvatarFillForContrast`] for more documentation."]
     pub const COLOR_AVATAR_FILL_FOR_CONTRAST: Self =
         Self(cef_color_id_t::CEF_ColorAvatarFillForContrast);
-    #[doc = "See [`cef_color_id_t::CEF_ColorAiSubscriptionRingGradientStart`] for more documentation."]
-    pub const COLOR_AI_SUBSCRIPTION_RING_GRADIENT_START: Self =
-        Self(cef_color_id_t::CEF_ColorAiSubscriptionRingGradientStart);
-    #[doc = "See [`cef_color_id_t::CEF_ColorAiSubscriptionRingGradientEnd`] for more documentation."]
-    pub const COLOR_AI_SUBSCRIPTION_RING_GRADIENT_END: Self =
-        Self(cef_color_id_t::CEF_ColorAiSubscriptionRingGradientEnd);
+    #[doc = "See [`cef_color_id_t::CEF_ColorAvatarRingGradientStart`] for more documentation."]
+    pub const COLOR_AVATAR_RING_GRADIENT_START: Self =
+        Self(cef_color_id_t::CEF_ColorAvatarRingGradientStart);
+    #[doc = "See [`cef_color_id_t::CEF_ColorAvatarRingGradientEnd`] for more documentation."]
+    pub const COLOR_AVATAR_RING_GRADIENT_END: Self =
+        Self(cef_color_id_t::CEF_ColorAvatarRingGradientEnd);
+    #[doc = "See [`cef_color_id_t::CEF_ColorAvatarBadgeWaveBase0`] for more documentation."]
+    pub const COLOR_AVATAR_BADGE_WAVE_BASE0: Self =
+        Self(cef_color_id_t::CEF_ColorAvatarBadgeWaveBase0);
+    #[doc = "See [`cef_color_id_t::CEF_ColorAvatarBadgeWaveBase1`] for more documentation."]
+    pub const COLOR_AVATAR_BADGE_WAVE_BASE1: Self =
+        Self(cef_color_id_t::CEF_ColorAvatarBadgeWaveBase1);
+    #[doc = "See [`cef_color_id_t::CEF_ColorAvatarBadgeWaveBase2`] for more documentation."]
+    pub const COLOR_AVATAR_BADGE_WAVE_BASE2: Self =
+        Self(cef_color_id_t::CEF_ColorAvatarBadgeWaveBase2);
+    #[doc = "See [`cef_color_id_t::CEF_ColorAvatarBadgeWaveBase3`] for more documentation."]
+    pub const COLOR_AVATAR_BADGE_WAVE_BASE3: Self =
+        Self(cef_color_id_t::CEF_ColorAvatarBadgeWaveBase3);
+    #[doc = "See [`cef_color_id_t::CEF_ColorAvatarBadgeWaveOverlay0`] for more documentation."]
+    pub const COLOR_AVATAR_BADGE_WAVE_OVERLAY0: Self =
+        Self(cef_color_id_t::CEF_ColorAvatarBadgeWaveOverlay0);
+    #[doc = "See [`cef_color_id_t::CEF_ColorAvatarBadgeWaveOverlay1`] for more documentation."]
+    pub const COLOR_AVATAR_BADGE_WAVE_OVERLAY1: Self =
+        Self(cef_color_id_t::CEF_ColorAvatarBadgeWaveOverlay1);
+    #[doc = "See [`cef_color_id_t::CEF_ColorAvatarBadgeWaveOverlay2`] for more documentation."]
+    pub const COLOR_AVATAR_BADGE_WAVE_OVERLAY2: Self =
+        Self(cef_color_id_t::CEF_ColorAvatarBadgeWaveOverlay2);
+    #[doc = "See [`cef_color_id_t::CEF_ColorAvatarBadgeWaveOverlay3`] for more documentation."]
+    pub const COLOR_AVATAR_BADGE_WAVE_OVERLAY3: Self =
+        Self(cef_color_id_t::CEF_ColorAvatarBadgeWaveOverlay3);
+    #[doc = "See [`cef_color_id_t::CEF_ColorAvatarBadgeShadow`] for more documentation."]
+    pub const COLOR_AVATAR_BADGE_SHADOW: Self = Self(cef_color_id_t::CEF_ColorAvatarBadgeShadow);
+    #[doc = "See [`cef_color_id_t::CEF_ColorAvatarBadgeBackground`] for more documentation."]
+    pub const COLOR_AVATAR_BADGE_BACKGROUND: Self =
+        Self(cef_color_id_t::CEF_ColorAvatarBadgeBackground);
     #[doc = "See [`cef_color_id_t::CEF_ColorBookmarkManagerItemBackgroundSelected`] for more documentation."]
     pub const COLOR_BOOKMARK_MANAGER_ITEM_BACKGROUND_SELECTED: Self =
         Self(cef_color_id_t::CEF_ColorBookmarkManagerItemBackgroundSelected);
@@ -20248,30 +20288,6 @@ impl ColorId {
     #[doc = "See [`cef_color_id_t::CEF_ColorProfilesReauthDialogBorder`] for more documentation."]
     pub const COLOR_PROFILES_REAUTH_DIALOG_BORDER: Self =
         Self(cef_color_id_t::CEF_ColorProfilesReauthDialogBorder);
-    #[doc = "See [`cef_color_id_t::CEF_ColorProjectsPanelBackground`] for more documentation."]
-    pub const COLOR_PROJECTS_PANEL_BACKGROUND: Self =
-        Self(cef_color_id_t::CEF_ColorProjectsPanelBackground);
-    #[doc = "See [`cef_color_id_t::CEF_ColorProjectsPanelButtonDisabledIcon`] for more documentation."]
-    pub const COLOR_PROJECTS_PANEL_BUTTON_DISABLED_ICON: Self =
-        Self(cef_color_id_t::CEF_ColorProjectsPanelButtonDisabledIcon);
-    #[doc = "See [`cef_color_id_t::CEF_ColorProjectsPanelButtonHoverBackground`] for more documentation."]
-    pub const COLOR_PROJECTS_PANEL_BUTTON_HOVER_BACKGROUND: Self =
-        Self(cef_color_id_t::CEF_ColorProjectsPanelButtonHoverBackground);
-    #[doc = "See [`cef_color_id_t::CEF_ColorProjectsPanelButtonIcon`] for more documentation."]
-    pub const COLOR_PROJECTS_PANEL_BUTTON_ICON: Self =
-        Self(cef_color_id_t::CEF_ColorProjectsPanelButtonIcon);
-    #[doc = "See [`cef_color_id_t::CEF_ColorProjectsPanelListsSeparator`] for more documentation."]
-    pub const COLOR_PROJECTS_PANEL_LISTS_SEPARATOR: Self =
-        Self(cef_color_id_t::CEF_ColorProjectsPanelListsSeparator);
-    #[doc = "See [`cef_color_id_t::CEF_ColorProjectsPanelNoTabGroupsText`] for more documentation."]
-    pub const COLOR_PROJECTS_PANEL_NO_TAB_GROUPS_TEXT: Self =
-        Self(cef_color_id_t::CEF_ColorProjectsPanelNoTabGroupsText);
-    #[doc = "See [`cef_color_id_t::CEF_ColorProjectsPanelTabGroupsDragPlaceholder`] for more documentation."]
-    pub const COLOR_PROJECTS_PANEL_TAB_GROUPS_DRAG_PLACEHOLDER: Self =
-        Self(cef_color_id_t::CEF_ColorProjectsPanelTabGroupsDragPlaceholder);
-    #[doc = "See [`cef_color_id_t::CEF_ColorProjectsPanelTabGroupsDropIndicator`] for more documentation."]
-    pub const COLOR_PROJECTS_PANEL_TAB_GROUPS_DROP_INDICATOR: Self =
-        Self(cef_color_id_t::CEF_ColorProjectsPanelTabGroupsDropIndicator);
     #[doc = "See [`cef_color_id_t::CEF_ColorPwaBackground`] for more documentation."]
     pub const COLOR_PWA_BACKGROUND: Self = Self(cef_color_id_t::CEF_ColorPwaBackground);
     #[doc = "See [`cef_color_id_t::CEF_ColorPwaMenuButtonIcon`] for more documentation."]
