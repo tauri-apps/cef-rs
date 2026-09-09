@@ -11,9 +11,19 @@ Use CEF in Rust.
 
 ## Usage
 
+### Nix (on Linux)
+
+If you are using Nix on Linux with the `nixpkgs` channel configured, you can take advantage of the `cef-binary` package to share the CEF binaries across your system. Just set the `NIX_CEF_BINARY` environment variable before running any of these `cargo` commands.
+
+```sh
+export NIX_CEF_BINARY=1
+```
+
+You can still run `export-cef-dir` and set the `CEF_PATH` environment variable if you prefer, e.g., for build output caching, but it is not necessary. If you combine `NIX_CEF_BINARY` with `export-cef-dir`, even `export-cef-dir` will use Nix instead of directly downloading the CEF binaries.
+
 ### Install Shared CEF Binaries
 
-This step is optional, but it will make all other builds of the `cef` crate much faster. If you don't do this, the `cef-dll-sys` crate `build.rs` script will download and extract the same files under its `OUT_DIR` directory. You should repeat this step each time you upgrade to a new version of the `cef` crate.
+This step is optional, but it will make all other builds of the `cef` crate much faster (when not using `NIX_CEF_BINARY`). If you don't do this, the `cef-dll-sys` crate `build.rs` script will download and extract the same files under its `OUT_DIR` directory. You should repeat this step each time you upgrade to a new version of the `cef` crate.
 
 #### Linux or macOS:
 

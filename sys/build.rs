@@ -1,6 +1,6 @@
 #[cfg(not(feature = "dox"))]
 fn main() -> anyhow::Result<()> {
-    use download_cef::{CefIndex, OsAndArch};
+    use download_cef::OsAndArch;
     use std::{
         env, fs,
         path::{Path, PathBuf},
@@ -12,6 +12,7 @@ fn main() -> anyhow::Result<()> {
     let os_arch = OsAndArch::try_from(target.as_str())?;
 
     println!("cargo::rerun-if-env-changed=FLATPAK");
+    println!("cargo::rerun-if-env-changed=NIX_CEF_BINARY");
     println!("cargo::rerun-if-env-changed=CEF_PATH");
     let package_version = env::var("CARGO_PKG_VERSION")?;
     let cef_version = download_cef::default_version(&package_version);
@@ -25,23 +26,29 @@ fn main() -> anyhow::Result<()> {
         let cef_dir = location.join(os_arch.to_string());
 
         if !fs::exists(&cef_dir)? {
-            let download_url = download_cef::default_download_url();
-            let index = CefIndex::download_from(&download_url)?;
-            let platform = index.platform(&target)?;
-            let version = platform.version(&cef_version)?;
+            if env::var("NIX_CEF_BINARY").is_ok() {
+                download_cef::install_nix_cef(&cef_version, &cef_dir, false)?;
+            } else {
+                use download_cef::CefIndex;
 
-            let archive = version.download_archive_from(&download_url, location, false)?;
-            let extracted_dir =
-                download_cef::extract_target_archive(&target, &archive, location, false)?;
-            let extracted_dir_canonical = fs::canonicalize(&extracted_dir)?;
-            let cef_dir_canonical = fs::canonicalize(&cef_dir)?;
-            if extracted_dir_canonical != cef_dir_canonical {
-                return Err(anyhow::anyhow!(
-                    "extracted dir {extracted_dir_canonical:?} does not match cef_dir {cef_dir_canonical:?}",
-                ));
+                let download_url = download_cef::default_download_url();
+                let index = CefIndex::download_from(&download_url)?;
+                let platform = index.platform(&target)?;
+                let version = platform.version(&cef_version)?;
+
+                let archive = version.download_archive_from(&download_url, location, false)?;
+                let extracted_dir =
+                    download_cef::extract_target_archive(&target, &archive, location, false)?;
+                let extracted_dir_canonical = fs::canonicalize(&extracted_dir)?;
+                let cef_dir_canonical = fs::canonicalize(&cef_dir)?;
+                if extracted_dir_canonical != cef_dir_canonical {
+                    return Err(anyhow::anyhow!(
+                        "extracted dir {extracted_dir_canonical:?} does not match cef_dir {cef_dir_canonical:?}",
+                    ));
+                }
+
+                version.write_archive_json(extracted_dir)?;
             }
-
-            version.write_archive_json(extracted_dir)?;
         }
 
         Ok(cef_dir)
@@ -247,7 +254,11 @@ fn copy_directory(src: &std::path::Path, dest: &std::path::Path) -> Result<(), s
     for entry in std::fs::read_dir(src)? {
         let entry = entry?;
         if entry.path().is_file() {
-            std::fs::copy(entry.path(), dest.join(entry.file_name()))?;
+            let dest = dest.join(entry.file_name());
+            if dest.is_file() {
+                std::fs::remove_file(&dest)?;
+            }
+            std::fs::copy(entry.path(), dest)?;
         }
     }
     Ok(())
