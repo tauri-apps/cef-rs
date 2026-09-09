@@ -40,7 +40,6 @@ pub use aarch64_apple_darwin::*;
 
 #[cfg(test)]
 mod test {
-    use super::*;
     use crate::*;
     use std::cell::RefCell;
 
