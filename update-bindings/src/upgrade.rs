@@ -19,6 +19,8 @@ const TARGETS: &[&str] = &[
     "arm-unknown-linux-gnueabi",
 ];
 
+// Opaque C handle structs that wrapper code passes by value when converting
+// borrowed FFI parameters. Add entries only for zero-sized opaque handle types.
 const OPAQUE_COPY_HANDLES: &[&str] = &[
     "_cef_string_list_t",
     "_cef_string_map_t",
@@ -105,8 +107,8 @@ struct OpaqueHandleDerives;
 
 impl ParseCallbacks for OpaqueHandleDerives {
     fn add_derives(&self, info: &DeriveInfo<'_>) -> Vec<String> {
-        // These opaque C handles are passed through safe wrappers that copy the raw handle value.
         if OPAQUE_COPY_HANDLES.contains(&info.name) {
+            // Bindgen de-duplicates custom derives against its own derived traits.
             vec!["Copy".into(), "Clone".into()]
         } else {
             Vec::new()
