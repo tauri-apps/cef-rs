@@ -1,6 +1,6 @@
 use crate::dirs;
+use bindgen::callbacks::{DeriveInfo, ParseCallbacks};
 use std::{
-    fs,
     path::{Path, PathBuf},
     process::Command,
 };
@@ -17,6 +17,14 @@ const TARGETS: &[&str] = &[
     "x86_64-unknown-linux-gnu",
     "aarch64-unknown-linux-gnu",
     "arm-unknown-linux-gnueabi",
+];
+
+const OPAQUE_COPY_HANDLES: &[&str] = &[
+    "_cef_string_list_t",
+    "_cef_string_map_t",
+    "_cef_string_multimap_t",
+    "_XEvent",
+    "_XDisplay",
 ];
 
 pub fn download(url: &str, target: &str, version: &str) -> PathBuf {
@@ -65,6 +73,7 @@ fn bindgen(target: &str, cef_path: &Path) -> crate::Result<()> {
         .bitfield_enum(".*_mask_t")
         .bitfield_enum(".*_flags_t")
         .bitfield_enum("cef_v8_propertyattribute_t")
+        .parse_callbacks(Box::new(OpaqueHandleDerives))
         .clang_args([
             format!("-I{}", cef_path.display()),
             format!("--target={target}"),
@@ -88,26 +97,21 @@ fn bindgen(target: &str, cef_path: &Path) -> crate::Result<()> {
     let bindings = bindings.generate()?;
 
     bindings.write_to_file(&sys_bindings)?;
-    restore_opaque_handle_derives(&sys_bindings)?;
     Ok(())
 }
 
-fn restore_opaque_handle_derives(sys_bindings: &Path) -> crate::Result<()> {
-    let mut bindings = fs::read_to_string(sys_bindings)?;
-    for name in [
-        "_cef_string_list_t",
-        "_cef_string_map_t",
-        "_cef_string_multimap_t",
-        "_XEvent",
-        "_XDisplay",
-    ] {
-        bindings = bindings.replace(
-            &format!("#[repr(C)]\n#[derive(Debug)]\npub struct {name} {{"),
-            &format!("#[repr(C)]\n#[derive(Debug, Copy, Clone)]\npub struct {name} {{"),
-        );
+#[derive(Debug)]
+struct OpaqueHandleDerives;
+
+impl ParseCallbacks for OpaqueHandleDerives {
+    fn add_derives(&self, info: &DeriveInfo<'_>) -> Vec<String> {
+        // These opaque C handles are passed through safe wrappers that copy the raw handle value.
+        if OPAQUE_COPY_HANDLES.contains(&info.name) {
+            vec!["Copy".into(), "Clone".into()]
+        } else {
+            Vec::new()
+        }
     }
-    fs::write(sys_bindings, bindings)?;
-    Ok(())
 }
 
 fn target_to_os_arch(target: &str) -> (&str, &str) {
