@@ -16984,7 +16984,7 @@ pub type cef_char_t = char16_t;
 pub type cef_string_userfree_t = cef_string_userfree_utf16_t;
 pub type cef_string_t = cef_string_utf16_t;
 #[repr(C)]
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct _cef_string_list_t {
     _unused: [u8; 0],
 }
@@ -17023,7 +17023,7 @@ unsafe extern "C" {
     pub fn cef_string_list_copy(list: cef_string_list_t) -> cef_string_list_t;
 }
 #[repr(C)]
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct _cef_string_map_t {
     _unused: [u8; 0],
 }
@@ -17078,7 +17078,7 @@ unsafe extern "C" {
     pub fn cef_string_map_free(map: cef_string_map_t);
 }
 #[repr(C)]
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct _cef_string_multimap_t {
     _unused: [u8; 0],
 }
@@ -17688,13 +17688,13 @@ pub enum cef_runtime_style_t {
     CEF_RUNTIME_STYLE_ALLOY = 2,
 }
 #[repr(C)]
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct _XEvent {
     _unused: [u8; 0],
 }
 pub type XEvent = _XEvent;
 #[repr(C)]
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct _XDisplay {
     _unused: [u8; 0],
 }

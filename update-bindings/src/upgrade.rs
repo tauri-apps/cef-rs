@@ -1,5 +1,6 @@
 use crate::dirs;
 use std::{
+    fs,
     path::{Path, PathBuf},
     process::Command,
 };
@@ -87,6 +88,25 @@ fn bindgen(target: &str, cef_path: &Path) -> crate::Result<()> {
     let bindings = bindings.generate()?;
 
     bindings.write_to_file(&sys_bindings)?;
+    restore_opaque_handle_derives(&sys_bindings)?;
+    Ok(())
+}
+
+fn restore_opaque_handle_derives(sys_bindings: &Path) -> crate::Result<()> {
+    let mut bindings = fs::read_to_string(sys_bindings)?;
+    for name in [
+        "_cef_string_list_t",
+        "_cef_string_map_t",
+        "_cef_string_multimap_t",
+        "_XEvent",
+        "_XDisplay",
+    ] {
+        bindings = bindings.replace(
+            &format!("#[repr(C)]\n#[derive(Debug)]\npub struct {name} {{"),
+            &format!("#[repr(C)]\n#[derive(Debug, Copy, Clone)]\npub struct {name} {{"),
+        );
+    }
+    fs::write(sys_bindings, bindings)?;
     Ok(())
 }
 
