@@ -30,7 +30,7 @@ const OPAQUE_STRING_COPY_HANDLES: &[&str] = &[
     "_cef_string_multimap_t",
 ];
 
-const OPAQUE_X11_COPY_HANDLES: &[&str] = &["_XEvent", "_XDisplay"];
+const OPAQUE_X11_COPY_HANDLES: &[&str] = &["_XEvent"];
 
 pub fn download(url: &str, target: &str, version: &str) -> PathBuf {
     assert!(TARGETS.contains(&target), "unsupported target {target}");
@@ -111,17 +111,17 @@ fn bindgen(target: &str, cef_path: &Path) -> crate::Result<()> {
     Ok(())
 }
 
-fn opaque_copy_handles(target: &str) -> Vec<&'static str> {
-    let mut handles = OPAQUE_STRING_COPY_HANDLES.to_vec();
+fn opaque_copy_handles(target: &str) -> BTreeSet<&'static str> {
+    let mut handles: BTreeSet<_> = OPAQUE_STRING_COPY_HANDLES.iter().copied().collect();
     if target.contains("-linux-") {
-        handles.extend_from_slice(OPAQUE_X11_COPY_HANDLES);
+        handles.extend(OPAQUE_X11_COPY_HANDLES.iter().copied());
     }
     handles
 }
 
 fn warn_unmatched_opaque_copy_handles(
     target: &str,
-    handles: &[&'static str],
+    handles: &BTreeSet<&'static str>,
     matched: &Arc<Mutex<BTreeSet<&'static str>>>,
 ) {
     let matched = matched.lock().expect("opaque copy handle matches poisoned");
@@ -134,7 +134,7 @@ fn warn_unmatched_opaque_copy_handles(
 
 #[derive(Debug)]
 struct OpaqueHandleDerives {
-    handles: Vec<&'static str>,
+    handles: BTreeSet<&'static str>,
     matched: Arc<Mutex<BTreeSet<&'static str>>>,
 }
 
@@ -144,12 +144,7 @@ impl ParseCallbacks for OpaqueHandleDerives {
             return Vec::new();
         }
 
-        if let Some(handle) = self
-            .handles
-            .iter()
-            .copied()
-            .find(|handle| *handle == info.name)
-        {
+        if let Some(handle) = self.handles.get(info.name).copied() {
             self.matched
                 .lock()
                 .expect("opaque copy handle matches poisoned")

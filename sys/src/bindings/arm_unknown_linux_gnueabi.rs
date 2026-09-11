@@ -17694,7 +17694,7 @@ pub struct _XEvent {
 }
 pub type XEvent = _XEvent;
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug)]
 pub struct _XDisplay {
     _unused: [u8; 0],
 }
