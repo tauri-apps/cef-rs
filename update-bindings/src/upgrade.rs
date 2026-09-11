@@ -21,12 +21,6 @@ const TARGETS: &[&str] = &[
     "arm-unknown-linux-gnueabi",
 ];
 
-const LINUX_TARGETS: &[&str] = &[
-    "x86_64-unknown-linux-gnu",
-    "aarch64-unknown-linux-gnu",
-    "arm-unknown-linux-gnueabi",
-];
-
 // Opaque C handle structs that bindgen 0.73.2 otherwise emits without
 // `Copy, Clone`, but wrapper code passes by value when converting borrowed FFI
 // parameters. Add entries only for zero-sized opaque handle types.
@@ -119,7 +113,7 @@ fn bindgen(target: &str, cef_path: &Path) -> crate::Result<()> {
 
 fn opaque_copy_handles(target: &str) -> Vec<&'static str> {
     let mut handles = OPAQUE_STRING_COPY_HANDLES.to_vec();
-    if LINUX_TARGETS.contains(&target) {
+    if target.contains("-linux-") {
         handles.extend_from_slice(OPAQUE_X11_COPY_HANDLES);
     }
     handles
@@ -146,16 +140,16 @@ struct OpaqueHandleDerives {
 
 impl ParseCallbacks for OpaqueHandleDerives {
     fn add_derives(&self, info: &DeriveInfo<'_>) -> Vec<String> {
-        let handle = (info.kind == TypeKind::Struct)
-            .then(|| {
-                self.handles
-                    .iter()
-                    .copied()
-                    .find(|handle| *handle == info.name)
-            })
-            .flatten();
+        if info.kind != TypeKind::Struct {
+            return Vec::new();
+        }
 
-        if let Some(handle) = handle {
+        if let Some(handle) = self
+            .handles
+            .iter()
+            .copied()
+            .find(|handle| *handle == info.name)
+        {
             self.matched
                 .lock()
                 .expect("opaque copy handle matches poisoned")
