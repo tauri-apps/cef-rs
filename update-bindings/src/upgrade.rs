@@ -109,7 +109,7 @@ struct OpaqueHandleDerives;
 impl ParseCallbacks for OpaqueHandleDerives {
     fn add_derives(&self, info: &DeriveInfo<'_>) -> Vec<String> {
         if OPAQUE_COPY_HANDLES.contains(&info.name) {
-            // Bindgen 0.73.2's append_custom_derives de-duplicates custom derives.
+            // Safe if bindgen also derives one later; bindgen 0.73.2 de-duplicates custom derives.
             vec!["Copy".into(), "Clone".into()]
         } else {
             Vec::new()
