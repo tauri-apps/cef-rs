@@ -297,7 +297,7 @@ impl ApplicationHandler for App {
         let browser = cef::browser_host_create_browser_sync(
             Some(&window_info),
             Some(&mut ClientBuilder::build(render_handler)),
-            Some(&"https:://github.com".into()),
+            Some(&"https://github.com".into()),
             Some(&browser_settings),
             None,
             context.as_mut(),
