@@ -1,5 +1,5 @@
 use crate::dirs;
-use bindgen::callbacks::{DeriveInfo, ParseCallbacks};
+use bindgen::callbacks::{DeriveInfo, ParseCallbacks, TypeKind};
 use std::{
     collections::BTreeSet,
     path::{Path, PathBuf},
@@ -16,6 +16,12 @@ const TARGETS: &[&str] = &[
     "aarch64-pc-windows-msvc",
     "i686-pc-windows-msvc",
     // linux
+    "x86_64-unknown-linux-gnu",
+    "aarch64-unknown-linux-gnu",
+    "arm-unknown-linux-gnueabi",
+];
+
+const LINUX_TARGETS: &[&str] = &[
     "x86_64-unknown-linux-gnu",
     "aarch64-unknown-linux-gnu",
     "arm-unknown-linux-gnueabi",
@@ -105,7 +111,7 @@ fn bindgen(target: &str, cef_path: &Path) -> crate::Result<()> {
     }
 
     let bindings = bindings.generate()?;
-    warn_unmatched_opaque_copy_handles(&opaque_copy_handles, &matched_opaque_copy_handles);
+    warn_unmatched_opaque_copy_handles(target, &opaque_copy_handles, &matched_opaque_copy_handles);
 
     bindings.write_to_file(&sys_bindings)?;
     Ok(())
@@ -113,20 +119,21 @@ fn bindgen(target: &str, cef_path: &Path) -> crate::Result<()> {
 
 fn opaque_copy_handles(target: &str) -> Vec<&'static str> {
     let mut handles = OPAQUE_STRING_COPY_HANDLES.to_vec();
-    if target.contains("linux") {
+    if LINUX_TARGETS.contains(&target) {
         handles.extend_from_slice(OPAQUE_X11_COPY_HANDLES);
     }
     handles
 }
 
 fn warn_unmatched_opaque_copy_handles(
+    target: &str,
     handles: &[&'static str],
     matched: &Arc<Mutex<BTreeSet<&'static str>>>,
 ) {
     let matched = matched.lock().expect("opaque copy handle matches poisoned");
     for handle in handles {
         if !matched.contains(handle) {
-            eprintln!("warning: bindgen did not emit opaque handle {handle}; Copy/Clone derives were not added");
+            eprintln!("warning: bindgen did not emit opaque handle {handle} for {target}; Copy/Clone derives were not added");
         }
     }
 }
@@ -139,12 +146,16 @@ struct OpaqueHandleDerives {
 
 impl ParseCallbacks for OpaqueHandleDerives {
     fn add_derives(&self, info: &DeriveInfo<'_>) -> Vec<String> {
-        if let Some(handle) = self
-            .handles
-            .iter()
-            .copied()
-            .find(|handle| *handle == info.name)
-        {
+        let handle = (info.kind == TypeKind::Struct)
+            .then(|| {
+                self.handles
+                    .iter()
+                    .copied()
+                    .find(|handle| *handle == info.name)
+            })
+            .flatten();
+
+        if let Some(handle) = handle {
             self.matched
                 .lock()
                 .expect("opaque copy handle matches poisoned")
