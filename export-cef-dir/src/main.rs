@@ -3,7 +3,7 @@
 use clap::Parser;
 use download_cef::{CefFile, CefIndex, OsAndArch, DEFAULT_TARGET};
 use std::{
-    fs,
+    env, fs,
     path::{Path, PathBuf},
     sync::OnceLock,
     time::Duration,
@@ -30,6 +30,8 @@ struct Args {
     force: bool,
     #[arg(short, long)]
     save_archive: bool,
+    #[arg(short, long, default_value_t = env::var("NIX_CEF_BINARY").is_ok())]
+    nix: bool,
     #[arg(short, long, default_value = DEFAULT_TARGET)]
     target: String,
     #[arg(short, long, default_value = default_version())]
@@ -95,27 +97,32 @@ fn main() -> anyhow::Result<()> {
         }
         None => {
             let cef_version = args.version.as_str();
-            let index = CefIndex::download_from(url)?;
-            let platform = index.platform(target)?;
-            let version = platform.version(cef_version)?;
 
-            let archive = version.download_archive_with_retry_from(
-                url,
-                &parent,
-                true,
-                Duration::from_secs(15),
-                3,
-            )?;
-            let extracted_dir =
-                download_cef::extract_target_archive(target, &archive, &parent, true)?;
+            if args.nix {
+                return Ok(download_cef::install_nix_cef(&cef_version, &output, false)?);
+            } else {
+                let index = CefIndex::download_from(url)?;
+                let platform = index.platform(target)?;
+                let version = platform.version(cef_version)?;
 
-            if !args.save_archive {
-                println!("Cleaning up: {}", archive.display());
-                fs::remove_file(archive)?;
+                let archive = version.download_archive_with_retry_from(
+                    url,
+                    &parent,
+                    true,
+                    Duration::from_secs(15),
+                    3,
+                )?;
+                let extracted_dir =
+                    download_cef::extract_target_archive(target, &archive, &parent, true)?;
+
+                if !args.save_archive {
+                    println!("Cleaning up: {}", archive.display());
+                    fs::remove_file(archive)?;
+                }
+
+                let archive = version.minimal()?.clone();
+                (archive, extracted_dir)
             }
-
-            let archive = version.minimal()?.clone();
-            (archive, extracted_dir)
         }
     };
 

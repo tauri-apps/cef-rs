@@ -57,6 +57,8 @@ pub enum Error {
     },
     #[error("Invalid regex pattern: {0}")]
     InvalidRegexPattern(#[from] regex::Error),
+    #[error("Failed to install CEF via Nix: {0}")]
+    NixFailed(std::process::ExitStatus),
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
@@ -559,6 +561,44 @@ where
     fs_err::remove_dir_all(old_dir)?;
 
     Ok(cef_dir)
+}
+
+/// Installs CEF via Nix and `nixpkgs` into the specified location.
+pub fn install_nix_cef<P>(cef_version: &str, location: P, show_progress: bool) -> Result<()>
+where
+    P: AsRef<Path>,
+{
+    use std::process::{Command, Stdio};
+
+    let cef_version = format!(r#""{cef_version}""#);
+    let nix_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("nix")
+        .display()
+        .to_string();
+    let out_link = location.as_ref().display().to_string();
+    let output = Command::new("nix-build")
+        .args([
+            &nix_dir,
+            "--arg",
+            "version",
+            &cef_version,
+            "--out-link",
+            &out_link,
+        ])
+        .stdin(Stdio::null())
+        .stdout(if show_progress {
+            Stdio::inherit()
+        } else {
+            Stdio::null()
+        })
+        .stderr(Stdio::inherit())
+        .output()?;
+
+    if !output.status.success() {
+        return Err(Error::NixFailed(output.status));
+    }
+
+    Ok(())
 }
 
 fn calculate_file_sha1(path: &Path) -> String {
