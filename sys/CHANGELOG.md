@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [152.2.0+152.0.6](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v152.1.0+152.0.6...cef-dll-sys-v152.2.0+152.0.6) - 2026-09-12
+
+### Added
+
+- Nix support (#426, #467)
+
+### Fixed
+
+- preserve traits on _XDisplay to keep ABI compat ([#480](https://github.com/tauri-apps/cef-rs/pull/480))
+
+### Other
+
+- update bindings ([#479](https://github.com/tauri-apps/cef-rs/pull/479))
+
 ## [151.8.1+151.3.24](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v151.8.0+151.3.24...cef-dll-sys-v151.8.1+151.3.24) - 2026-09-03
 
 ### Fixed
