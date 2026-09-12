@@ -30,7 +30,7 @@ const OPAQUE_STRING_COPY_HANDLES: &[&str] = &[
     "_cef_string_multimap_t",
 ];
 
-const OPAQUE_X11_COPY_HANDLES: &[&str] = &["_XEvent"];
+const OPAQUE_X11_COPY_HANDLES: &[&str] = &["_XEvent", "_XDisplay"];
 
 pub fn download(url: &str, target: &str, version: &str) -> PathBuf {
     assert!(TARGETS.contains(&target), "unsupported target {target}");
