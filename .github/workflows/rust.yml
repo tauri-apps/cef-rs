@@ -68,3 +68,45 @@ jobs:
 
       - name: Run tests
         run: cargo test --verbose
+
+  cross-compile-windows:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install dependencies
+        run: |
+          # The MSVC STL headers require Clang 19 or newer, ubuntu-latest ships 18.
+          wget -qO llvm.sh https://apt.llvm.org/llvm.sh
+          sudo bash llvm.sh 20
+          sudo apt-get install -yq llvm-20 ninja-build
+          echo "/usr/lib/llvm-20/bin" >> "$GITHUB_PATH"
+          rustup target add x86_64-pc-windows-msvc
+          pipx install cargo-xwin
+          echo "CARGO_XWIN_VERSION=$(cargo xwin --version | awk '{print $NF}')" >> "$GITHUB_ENV"
+
+      - name: Cache CEF
+        id: cache-cef
+        uses: actions/cache@v6.1.0
+        with:
+          path: ~/.local/share/cef
+          key: cef-cross-windows-${{ hashFiles('Cargo.toml') }}
+
+      # Like the native jobs, export the distribution ahead of the build so the cache
+      # holds only the extracted files and not the downloaded archive as well.
+      - name: Export CEF
+        if: steps.cache-cef.outputs.cache-hit != 'true'
+        run: cargo run -p export-cef-dir -- --target x86_64-pc-windows-msvc "$HOME/.local/share/cef"
+
+      # Only the SDK itself: cargo-xwin symlinks `clang-cl` to the `clang` found on PATH
+      # next to it, and that must be recreated for the toolchain installed above. The
+      # SDK and CRT versions come from the cargo-xwin release, so key on it.
+      - name: Cache Windows SDK
+        uses: actions/cache@v6.1.0
+        with:
+          path: ~/.cache/cargo-xwin/xwin
+          key: cargo-xwin-sdk-${{ runner.os }}-${{ env.CARGO_XWIN_VERSION }}
+
+      - name: Build
+        run: CEF_PATH="$HOME/.local/share/cef" cargo xwin build -p cefsimple --target x86_64-pc-windows-msvc --verbose

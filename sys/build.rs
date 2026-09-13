@@ -175,33 +175,38 @@ fn main() -> anyhow::Result<()> {
             // On macOS it's more complicated so we'll leave it to tools like tauri-cli for now.
             copy_cef_runtime_files(&cef_dir, target_dir)?;
 
+            // Windows SDK import libraries used by the wrapper. These used to be merged into
+            // libcef_dll_wrapper.lib through CMAKE_STATIC_LINKER_FLAGS, but llvm-lib (used when
+            // cross-compiling with cargo-xwin) can't read the XFG hash map member of current SDK
+            // import libraries, so pass them to the final link through cargo instead.
             let sdk_libs = [
-                "comctl32.lib",
-                "delayimp.lib",
-                "mincore.lib",
-                "powrprof.lib",
-                "propsys.lib",
-                "runtimeobject.lib",
-                "setupapi.lib",
-                "shcore.lib",
-                "shell32.lib",
-                "shlwapi.lib",
-                "user32.lib",
-                "version.lib",
-                "wbemuuid.lib",
-                "winmm.lib",
-            ]
-            .join(" ");
+                "comctl32",
+                "delayimp",
+                "mincore",
+                "powrprof",
+                "propsys",
+                "runtimeobject",
+                "setupapi",
+                "shcore",
+                "shell32",
+                "shlwapi",
+                "user32",
+                "version",
+                "wbemuuid",
+                "winmm",
+            ];
+            for lib in sdk_libs {
+                println!("cargo::rustc-link-lib=dylib={lib}");
+            }
 
-            let build_dir = cef_dll_wrapper
+            cef_dll_wrapper
                 .define("CMAKE_MSVC_RUNTIME_LIBRARY", "MultiThreaded")
                 .define("CMAKE_OBJECT_PATH_MAX", "500")
-                .define("CMAKE_STATIC_LINKER_FLAGS", &sdk_libs)
                 .define("PROJECT_ARCH", project_arch)
-                .define("USE_SANDBOX", sandbox)
-                .build()
-                .to_string_lossy()
-                .into_owned();
+                .define("USE_SANDBOX", sandbox);
+            configure_clang_cl(&mut cef_dll_wrapper, &cef_dir, &out_dir)?;
+
+            let build_dir = cef_dll_wrapper.build().to_string_lossy().into_owned();
 
             println!("cargo::rustc-link-search=native={build_dir}/build/libcef_dll_wrapper");
             println!("cargo::rustc-link-lib=static=libcef_dll_wrapper");
@@ -225,6 +230,153 @@ fn main() -> anyhow::Result<()> {
     }
 
     Ok(())
+}
+
+/// Cross-compiling to Windows from another host (e.g. with `cargo xwin`) uses `clang-cl`, which
+/// needs a few adjustments to CEF's MSVC-oriented CMake configuration. This is a no-op when the
+/// C++ compiler for the target isn't `clang-cl`.
+#[cfg(not(feature = "dox"))]
+fn configure_clang_cl(
+    config: &mut cmake::Config,
+    cef_dir: &std::path::Path,
+    out_dir: &std::path::Path,
+) -> anyhow::Result<()> {
+    use std::{fs, path::PathBuf};
+
+    // Only the flags from the CXXFLAGS environment (e.g. cargo-xwin's `--target` and `/imsvc`
+    // include paths) are needed here; the cmake crate takes care of everything else.
+    let compiler = cc::Build::new()
+        .cpp(true)
+        .no_default_flags(true)
+        .try_get_compiler()?;
+    if !compiler.is_like_clang_cl() {
+        return Ok(());
+    }
+
+    // CMake de-duplicates compile options, which would drop the repeated `/imsvc` of options that
+    // take their value as a separate argument (`/imsvc <dir>`), so join those into one token.
+    let mut flags: Vec<String> = Vec::new();
+    let mut args = compiler
+        .args()
+        .iter()
+        .map(|arg| arg.to_string_lossy().into_owned());
+    while let Some(arg) = args.next() {
+        let flag = match arg.as_str() {
+            "/imsvc" | "-imsvc" | "/I" | "-I" | "-isystem" | "/external:I" => match args.next() {
+                Some(value) => format!("{arg}{value}"),
+                None => arg,
+            },
+            _ => arg,
+        };
+        flags.push(flag);
+    }
+
+    // clang-cl reports diagnostics that MSVC doesn't (`/MP` is unsupported, `/W4` enables extra
+    // warnings), which CEF's `/WX` would turn into errors.
+    for flag in [
+        "-Wno-unused-command-line-argument",
+        "-Wno-missing-field-initializers",
+        "-Wno-undefined-var-template",
+        "/WX-",
+    ] {
+        if !flags.iter().any(|existing| existing == flag) {
+            flags.push(flag.to_owned());
+        }
+    }
+
+    // The Windows SDK relies on case-insensitive file names, which doesn't hold on other hosts:
+    // e.g. the wrapper includes `Softpub.h` while the SDK ships `SoftPub.h`. Provide copies with
+    // the expected casing in an extra include directory.
+    let include_dirs: Vec<PathBuf> = flags
+        .iter()
+        .filter_map(|flag| {
+            flag.strip_prefix("/imsvc")
+                .or_else(|| flag.strip_prefix("-imsvc"))
+        })
+        .map(PathBuf::from)
+        .collect();
+    let shim_dir = out_dir.join("include-shim");
+    fs::create_dir_all(&shim_dir)?;
+    for header in system_includes(cef_dir)? {
+        if include_dirs.iter().any(|dir| dir.join(&header).is_file()) {
+            continue;
+        }
+        if let Some(found) = include_dirs
+            .iter()
+            .find_map(|dir| find_case_insensitive(dir, &header))
+        {
+            fs::copy(found, shim_dir.join(&header))?;
+        }
+    }
+    flags.push(format!("/imsvc{}", shim_dir.display()));
+
+    // CEF clears CMAKE_CXX_FLAGS when using the Ninja generator (see cef_variables.cmake), which
+    // would drop all of the above, so pass them through CEF's own flag lists instead. Those are
+    // appended after CEF's flags, so they can also override `/WX`.
+    let flags = flags.join(";");
+    config
+        .define("CEF_C_COMPILER_FLAGS", &flags)
+        .define("CEF_CXX_COMPILER_FLAGS", &flags);
+
+    Ok(())
+}
+
+/// Collects the file names used in `#include <...>` directives (without directory components) by
+/// the CEF headers and wrapper sources.
+#[cfg(not(feature = "dox"))]
+fn system_includes(
+    cef_dir: &std::path::Path,
+) -> Result<std::collections::BTreeSet<String>, std::io::Error> {
+    fn visit(
+        dir: &std::path::Path,
+        includes: &mut std::collections::BTreeSet<String>,
+    ) -> Result<(), std::io::Error> {
+        for entry in std::fs::read_dir(dir)? {
+            let path = entry?.path();
+            if path.is_dir() {
+                visit(&path, includes)?;
+                continue;
+            }
+            let Ok(source) = std::fs::read_to_string(&path) else {
+                continue;
+            };
+            for line in source.lines() {
+                let Some(directive) = line.trim_start().strip_prefix("#include") else {
+                    continue;
+                };
+                let Some((name, _)) = directive
+                    .trim_start()
+                    .strip_prefix('<')
+                    .and_then(|rest| rest.split_once('>'))
+                else {
+                    continue;
+                };
+                if !name.contains('/') {
+                    includes.insert(name.to_owned());
+                }
+            }
+        }
+        Ok(())
+    }
+
+    let mut includes = std::collections::BTreeSet::new();
+    for dir in ["include", "libcef_dll"] {
+        visit(&cef_dir.join(dir), &mut includes)?;
+    }
+    Ok(includes)
+}
+
+#[cfg(not(feature = "dox"))]
+fn find_case_insensitive(dir: &std::path::Path, name: &str) -> Option<std::path::PathBuf> {
+    std::fs::read_dir(dir)
+        .ok()?
+        .flatten()
+        .map(|entry| entry.path())
+        .find(|path| {
+            path.file_name()
+                .and_then(|file_name| file_name.to_str())
+                .is_some_and(|file_name| file_name.eq_ignore_ascii_case(name))
+        })
 }
 
 /// `CEF_API_VERSION_LAST` from the distribution's generated

@@ -116,6 +116,18 @@ cargo run --bin bundle-cef-app -- cefsimple -o ./target/bundle
 ./target/bundle/cefsimple.exe
 ```
 
+### Cross-compiling to Windows
+
+The `cef-dll-sys` crate can be cross-compiled to `x86_64-pc-windows-msvc` from Linux with [cargo-xwin](https://github.com/rust-cross/cargo-xwin), which downloads the Windows SDK and sets up a `clang-cl` toolchain for both Rust and CMake. Install `clang`, `lld`, `llvm` and `ninja` from your package manager (the MSVC STL headers require Clang 19 or newer; on Ubuntu 24.04 use [apt.llvm.org](https://apt.llvm.org/)), then:
+
+```sh
+rustup target add x86_64-pc-windows-msvc
+cargo install cargo-xwin
+cargo xwin build --target x86_64-pc-windows-msvc
+```
+
+The `libcef_dll_wrapper` static library is built with `clang-cl` and the CEF runtime files are copied next to the output binaries, exactly like a native Windows build. The `CEF_PATH` environment variable works the same way as well: the Windows CEF binaries are downloaded into their own `cef_windows_x86_64` directory next to the host ones.
+
 ## Contributing
 
 Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.

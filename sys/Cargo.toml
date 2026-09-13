@@ -21,6 +21,7 @@ features = ["dox"]
 
 [build-dependencies]
 anyhow.workspace = true
+cc.workspace = true
 cmake.workspace = true
 download-cef.workspace = true
 serde_json.workspace = true
