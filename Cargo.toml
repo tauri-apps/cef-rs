@@ -60,6 +60,8 @@ tracing = "0.1"
 wgpu = "30"
 winres = "0.1"
 x11-dl = "2"
+dawn-rs = { git = "https://github.com/csmoe/dawn-rs", "branch" = "wire" }
+dawn-wgpu = { git = "https://github.com/csmoe/dawn-rs", "branch" = "wire" }
 
 [workspace.dependencies.windows-sys]
 version = "0.61"

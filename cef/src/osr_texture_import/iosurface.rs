@@ -34,6 +34,16 @@ impl TextureImporter for IOSurfaceImporter {
     fn import_to_wgpu(&self, device: &wgpu::Device) -> TextureImportResult {
         // Try hardware acceleration first
         if self.supports_hardware_acceleration(device) {
+            #[cfg(feature = "accelerated_osr_dawn")]
+            match self.import_via_dawn(device) {
+                Ok(texture) => {
+                    tracing::trace!("Successfully imported IOSurface texture via Dawn");
+                    return Ok(texture);
+                }
+                Err(e) => {
+                    tracing::debug!("Failed to import IOSurface via Dawn: {}", e);
+                }
+            }
             match self.import_via_metal(device) {
                 Ok(texture) => {
                     tracing::trace!("Successfully imported IOSurface texture via Metal");
@@ -64,12 +74,101 @@ impl TextureImporter for IOSurfaceImporter {
             return false;
         }
 
+        #[cfg(feature = "accelerated_osr_dawn")]
+        if dawn_wgpu::Compat::<dawn_rs::Device>::try_from(device).is_ok() {
+            return true;
+        }
+
         // Check if wgpu is using Metal backend
         self.is_metal_backend(device)
     }
 }
 
 impl IOSurfaceImporter {
+    #[cfg(feature = "accelerated_osr_dawn")]
+    fn cef_to_dawn(format: cef_color_type_t) -> dawn_rs::TextureFormat {
+        match format {
+            cef_color_type_t::CEF_COLOR_TYPE_RGBA_8888 => dawn_rs::TextureFormat::Rgba8Unorm,
+            _ => dawn_rs::TextureFormat::Bgra8Unorm,
+        }
+    }
+
+    #[cfg(feature = "accelerated_osr_dawn")]
+    fn import_via_dawn(&self, device: &wgpu::Device) -> TextureImportResult {
+        use dawn_wgpu::{Compat, CompatTexture};
+
+        if self.handle.is_null() {
+            return Err(TextureImportError::InvalidHandle(
+                "Invalid IOSurface handle".to_string(),
+            ));
+        }
+
+        let dawn_device = Compat::<dawn_rs::Device>::try_from(device)
+            .map_err(|_| TextureImportError::HardwareUnavailable {
+                reason: "wgpu device is not backed by dawn-wgpu".into(),
+            })?
+            .into_inner();
+        if !dawn_device.has_feature(dawn_rs::FeatureName::SharedTextureMemoryIOSurface) {
+            return Err(TextureImportError::HardwareUnavailable {
+                reason: "SharedTextureMemoryIOSurface feature is unavailable".into(),
+            });
+        }
+
+        let mut iosurface_desc = dawn_rs::SharedTextureMemoryIOSurfaceDescriptor::new();
+        iosurface_desc.io_surface = Some(self.handle.cast());
+        iosurface_desc.allow_storage_binding = Some(false);
+        let shared_desc =
+            dawn_rs::SharedTextureMemoryDescriptor::new().with_extension(iosurface_desc.into());
+        let shared_memory = dawn_device.import_shared_texture_memory(&shared_desc);
+
+        let mut properties = dawn_rs::SharedTextureMemoryProperties::new();
+        let properties_status = shared_memory.get_properties(&mut properties);
+        if properties_status != dawn_rs::Status::Success {
+            return Err(TextureImportError::PlatformError {
+                message: format!(
+                    "Dawn IOSurface get_properties failed with {:?}",
+                    properties_status
+                ),
+            });
+        }
+
+        let mut dawn_texture_desc = dawn_rs::TextureDescriptor::new();
+        dawn_texture_desc.dimension = Some(dawn_rs::TextureDimension::D2);
+        dawn_texture_desc.format = properties.format.or(Some(Self::cef_to_dawn(self.format)));
+        let usage = properties
+            .usage
+            .unwrap_or(dawn_rs::TextureUsage::TEXTURE_BINDING)
+            | dawn_rs::TextureUsage::TEXTURE_BINDING;
+        dawn_texture_desc.usage = Some(usage);
+        dawn_texture_desc.size = properties.size.or(Some(dawn_rs::Extent3D {
+            width: Some(self.width),
+            height: Some(self.height),
+            depth_or_array_layers: Some(1),
+        }));
+
+        let dawn_texture = shared_memory.create_texture(Some(&dawn_texture_desc));
+
+        let mut begin_desc = dawn_rs::SharedTextureMemoryBeginAccessDescriptor::new();
+        begin_desc.initialized = Some(true);
+        begin_desc.concurrent_read = Some(false);
+        let status = shared_memory.begin_access(dawn_texture.clone(), &begin_desc);
+        if status != dawn_rs::Status::Success {
+            return Err(TextureImportError::PlatformError {
+                message: format!(
+                    "Dawn IOSurface begin_access failed with {:?} (initialized=true, concurrent_read=false)",
+                    status
+                ),
+            });
+        }
+
+        let texture_desc = self.get_texture_desc();
+        let texture = wgpu::Texture::from(CompatTexture::new(dawn_texture.clone(), &texture_desc));
+
+        let _ = shared_memory;
+
+        Ok(texture)
+    }
+
     fn get_texture_desc(&self) -> TextureDescriptor<'_> {
         use wgpu::{Extent3d, TextureDimension, TextureUsages};
 
