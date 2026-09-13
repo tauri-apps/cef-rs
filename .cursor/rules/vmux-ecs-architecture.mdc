@@ -1,0 +1,41 @@
+---
+description: vmux — prefer ECS systems/components; NonSend only for CEF-bound handles
+globs: examples/vmux/**/*.rs
+alwaysApply: false
+---
+
+# vmux: ECS-first shell, CEF in NonSend
+
+## Goal
+
+Put **application logic** in Bevy **systems** (and **components** / **events** where it fits). Use **`NonSend` / `NonSendMut` resources** only for types that are **not `Send`** or are **CEF / winit-adjacent** in a way that must stay on one thread with the CEF client.
+
+## CEF vs renderer vs input (`browser`)
+
+The **`browser/`** tree is intentionally thin: only [`browser.rs`](examples/vmux/src/browser.rs) (`BrowserPlugin`), [`event.rs`](examples/vmux/src/browser/event.rs), [`system.rs`](examples/vmux/src/browser/system.rs), [`cef.rs`](examples/vmux/src/browser/cef.rs) + [`cef/`](examples/vmux/src/browser/cef/).
+
+- **`browser::cef`** — CEF lifecycle (bootstrap, pump, runtime globals, threads), **OSR** (`cef::osr`), **winit/OSR host** (`cef::shell`, `cef::stage`, …), **presentation** (`cef::renderer`, `cef/shader.wgsl`), **winit→CEF input** (`cef::input` / `cef/input/*`), plus modules like `facet`, `entity`, `client`, `queue`, `focus`, `lifecycle`, `context`, `active` (see [`vmux-cef-modules.mdc`](vmux-cef-modules.mdc)). Use the **`::cef::`** crate for CEF APIs; vmux’s `browser::cef` module is the integration layer.
+
+## What belongs where
+
+- **`NonSendResource` (`ShellState`)** — CEF-facing handles only, e.g. `Rc<RefCell<Option<cef::Client>>>`, `CefAttach` (windows store + shell wiring), `EditableFocusQueues`, `BrowserUiOpQueue`. Anything that must be touched from the same place as `browser_host_*` / pump integration.
+- **Send `Resource`** — cross-thread–safe app state: `SettingsResource`, `ActiveBrowserId`, `GpuResource` / hub / device scale, queue resources built on `Arc<Mutex<…>>` if they remain as queues, and (target) **`RuntimeState`** once lifted out of `ShellState`.
+- **ECS** — per-browser **`Entity`** + `BrowserId` / `BrowserWindowId`; **`Query`** to resolve window → browser; **Bevy `Event`s** in [`event.rs`](examples/vmux/src/browser/event.rs) for deferred CEF work; **systems** in [`system.rs`](examples/vmux/src/browser/system.rs) apply side effects.
+
+## `RuntimeState`
+
+[`RuntimeState`](examples/vmux/src/runtime/event.rs) in **`crate::runtime`** is a **single flat** `Resource`: modifiers/cursor/wheel, lifecycle fields (`started`, `quit_requested`, macOS refocus, `cef_post_create_pumps_remaining`), and pending queues (`pending_browser_hosts`, `pending_find_mode_keys`) — **not** nested sub-resources. Per-browser data belongs on ECS entities (`BrowserId`, etc.). Registered via `RuntimePlugin::build` (`init_resource`). The winit runner uses `runtime::with_osr_host_runtime` for `OsrHostState` + `RuntimeState` without overlapping `World` borrows; [`VimiumStateResource`](examples/vmux/src/vimium/state.rs) is owned by [`VimiumPlugin`](examples/vmux/src/vimium.rs). Chrome-like shortcut **Bevy** events (`ShortcutKeyReplayEvent`, link hints, …) live in [`browser/event.rs`](examples/vmux/src/browser/event.rs); winit bridges them via `UserEvent::Input` (`ShellInputEvent`).
+
+## Anti-patterns
+
+- Duplicating “which browsers exist” in a legacy CEF handler list and ECS — prefer ECS as the **identity** index and CEF/UI-thread maps for **`Browser` handles** only (see existing roadmap comments on UI thread).
+- Growing **`ShellState`** methods for behavior that does not touch CEF — **extract** to systems + `ResMut`/`Query`.
+
+## References
+
+- `examples/vmux/src/browser/cef/` — integration: `cef.rs`, `cef/shader.wgsl`, `cef/input.rs` + `cef/input/`, `cef/shell.rs`, `cef/stage.rs`, … (see [`vmux-cef-modules.mdc`](vmux-cef-modules.mdc)).
+- `examples/vmux/src/browser/event.rs` — browser-domain Bevy `Event` types and attach-queue resources.
+- `examples/vmux/src/browser/system.rs` — `Update` systems and CEF UI-thread helpers for those events.
+- `examples/vmux/src/runtime.rs` + `runtime/` (`event`, `runner`, `systems`, `ffi_callbacks`) — winit user events, winit proxy, GPU/OSR `OnceLock`s; `RuntimePlugin`, `Update` systems order. Browser handle / lifecycle / `CefAttach` `OnceLock`s live in [`browser/cef/ffi.rs`](examples/vmux/src/browser/cef/ffi.rs).
+- `examples/vmux/src/window.rs` — `WindowsPlugin` only at module root; `window/event.rs`, `window/system.rs`, `registry`, `dispatch`, tiling / WM (`wm`, `wm_tree`, …). See [`vmux-bevy-module-entry.mdc`](vmux-bevy-module-entry.mdc).
+- `.cursor/rules/cef-vmux-and-osr-roadmap.mdc` — CEF threading and shutdown.

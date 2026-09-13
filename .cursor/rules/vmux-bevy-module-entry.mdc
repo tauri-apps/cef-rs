@@ -1,0 +1,41 @@
+---
+description: vmux — domain entry `foo.rs` exposes only Bevy Plugin; split like bevy_window
+globs: examples/vmux/src/**/*.rs
+alwaysApply: false
+---
+
+# vmux: Bevy-style module roots (`foo.rs` + `foo/`)
+
+## Entry file (`examples/vmux/src/<name>.rs` or `examples/vmux/src/<domain>/<name>.rs`)
+
+When a module has a **directory sibling** (`foo/` with `foo.rs` as the parent module root in the parent’s `mod foo;` declaration):
+
+- The **`foo.rs` file MUST only expose the domain’s Bevy `Plugin` type** (e.g. `WindowsPlugin`, `BrowserPlugin`) as `pub`.
+- **Do not** add `pub use …` re-exports of helpers, free functions, sibling `Plugin`s, or types from `foo/` on that entry file. Callers inside the crate import from **`crate::<path>::<submodule>::…`** (e.g. `crate::window::registry::track_window`).
+- **Do not** use `mod.rs` for modules; use `foo.rs` + `foo/bar.rs` (see [`no-mod-rs-modules.mdc`](no-mod-rs-modules.mdc)).
+
+Submodules under `foo/` may use plain **`pub fn` / `pub struct`** for items that are only reachable through a **non-`pub mod`** path (still crate-internal unless the parent re-exports). Prefer **`mod` (private)** for leaf modules when nothing outside the parent needs the path. Use **`pub`** for **Bevy `Event` types** and other **ECS contracts** consumed across plugins (e.g. **`browser/event.rs`** as **`pub mod event`**). Avoid **`pub(crate)`** as the default for new code — it couples unrelated siblings. **`crate::input::shell`** holds traits that let **`window`** call into vimium without importing **`crate::vimium`**.
+
+## Layout (mirror [bevy_window](https://github.com/bevyengine/bevy/tree/main/crates/bevy_window/src))
+
+Prefer splitting the `foo/` tree along the same lines as **`bevy_window`**:
+
+| File / area | Role |
+|-------------|------|
+| `event.rs` | Bevy `Event` types and small event-related types for this domain |
+| `system.rs` | ECS systems (`pub fn …_system`); schedule wiring stays in the `Plugin` |
+| Other focused files | e.g. `registry.rs`, `dispatch.rs`, `wm.rs` — cohesive subdomains |
+
+Reference: [bevy_window `src/`](https://github.com/bevyengine/bevy/tree/main/crates/bevy_window/src) (`event.rs`, `system.rs`, `window.rs`, etc.).
+
+## vmux `window` crate root
+
+- **`window.rs`**: `WindowsPlugin` only at `pub` API of that file; `pub(crate) mod …` where **`runtime`** or other crate roots must reach submodules (`event`, `system`, …).
+- **`window/event.rs`**: windowing-related Bevy events (e.g. OSR host winit dispatch).
+- **`window/system.rs`**: winit queue ingest / OSR dispatch apply systems and related `Resource`s used only by those systems.
+- **Vimium**: shell keyboard / IME goes through **`ShellKeyboardHandler`** in **`input/shell.rs`** (not `window` → `vimium` imports).
+
+## vmux `browser` domain
+
+- **`browser.rs`**: `BrowserPlugin` at `pub` API; **`pub mod event`** for cross-plugin **`Event`** / batch types (`NavigateBrowserEvent`, `BrowserEventBatch`, …).
+- **CEF helpers** split by concern (e.g. **`cef/lookup.rs`**, **`cef/frames.rs`**, **`cef/closeall.rs`**, **`cef/hintsfeed.rs`**) so **`cef/client`** does not depend on **`browser::system`** for lookup / close-all / synchronous link-hint key feed.
