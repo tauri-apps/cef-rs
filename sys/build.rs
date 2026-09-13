@@ -175,35 +175,40 @@ fn main() -> anyhow::Result<()> {
             // On macOS it's more complicated so we'll leave it to tools like tauri-cli for now.
             copy_cef_runtime_files(&cef_dir, target_dir)?;
 
-            let sdk_libs = [
-                "comctl32.lib",
-                "delayimp.lib",
-                "mincore.lib",
-                "powrprof.lib",
-                "propsys.lib",
-                "runtimeobject.lib",
-                "setupapi.lib",
-                "shcore.lib",
-                "shell32.lib",
-                "shlwapi.lib",
-                "user32.lib",
-                "version.lib",
-                "wbemuuid.lib",
-                "winmm.lib",
-            ]
-            .join(" ");
+            if let Ok(wrapper_path) = std::env::var("CEF_RS_LIBCEF_DLL_WRAPPER_PATH") {
+                println!("cargo::rustc-link-search=native={wrapper_path}");
+            } else {
+                let sdk_libs = [
+                    "comctl32.lib",
+                    "delayimp.lib",
+                    "mincore.lib",
+                    "powrprof.lib",
+                    "propsys.lib",
+                    "runtimeobject.lib",
+                    "setupapi.lib",
+                    "shcore.lib",
+                    "shell32.lib",
+                    "shlwapi.lib",
+                    "user32.lib",
+                    "version.lib",
+                    "wbemuuid.lib",
+                    "winmm.lib",
+                ]
+                .join(" ");
 
-            let build_dir = cef_dll_wrapper
-                .define("CMAKE_MSVC_RUNTIME_LIBRARY", "MultiThreaded")
-                .define("CMAKE_OBJECT_PATH_MAX", "500")
-                .define("CMAKE_STATIC_LINKER_FLAGS", &sdk_libs)
-                .define("PROJECT_ARCH", project_arch)
-                .define("USE_SANDBOX", sandbox)
-                .build()
-                .to_string_lossy()
-                .into_owned();
+                let build_dir = cef_dll_wrapper
+                    .define("CMAKE_MSVC_RUNTIME_LIBRARY", "MultiThreaded")
+                    .define("CMAKE_OBJECT_PATH_MAX", "500")
+                    .define("CMAKE_STATIC_LINKER_FLAGS", &sdk_libs)
+                    .define("PROJECT_ARCH", project_arch)
+                    .define("USE_SANDBOX", sandbox)
+                    .build()
+                    .to_string_lossy()
+                    .into_owned();
 
-            println!("cargo::rustc-link-search=native={build_dir}/build/libcef_dll_wrapper");
+                println!("cargo::rustc-link-search=native={build_dir}/build/libcef_dll_wrapper");
+            }
+
             println!("cargo::rustc-link-lib=static=libcef_dll_wrapper");
 
             println!("cargo::rustc-link-lib=dylib=libcef");
