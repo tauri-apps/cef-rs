@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [152.3.0+152.0.6](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v152.2.0+152.0.6...cef-dll-sys-v152.3.0+152.0.6) - 2026-09-14
+
+### Added
+
+- *(sys)* support cross-compiling to Windows with cargo-xwin ([#462](https://github.com/tauri-apps/cef-rs/pull/462))
+
 ## [152.2.0+152.0.6](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v152.1.0+152.0.6...cef-dll-sys-v152.2.0+152.0.6) - 2026-09-12
 
 ### Added
