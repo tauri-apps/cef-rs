@@ -16273,6 +16273,9 @@ impl ChromePageActionIconType {
     #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_FAKE_PAGE_ACTION_FOR_DEBUG`] for more documentation."]
     pub const FAKE_PAGE_ACTION_FOR_DEBUG: Self =
         Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_FAKE_PAGE_ACTION_FOR_DEBUG);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_WALLET_REMINDER_NOTICE`] for more documentation."]
+    pub const WALLET_REMINDER_NOTICE: Self =
+        Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_WALLET_REMINDER_NOTICE);
     #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_NUM_VALUES);
 }
@@ -18804,9 +18807,42 @@ impl ColorId {
     #[doc = "See [`cef_color_id_t::CEF_ColorAppMenuChipInkDropRipple`] for more documentation."]
     pub const COLOR_APP_MENU_CHIP_INK_DROP_RIPPLE: Self =
         Self(cef_color_id_t::CEF_ColorAppMenuChipInkDropRipple);
+    #[doc = "See [`cef_color_id_t::CEF_ColorAppMenuYourChromeBackground`] for more documentation."]
+    pub const COLOR_APP_MENU_YOUR_CHROME_BACKGROUND: Self =
+        Self(cef_color_id_t::CEF_ColorAppMenuYourChromeBackground);
+    #[doc = "See [`cef_color_id_t::CEF_ColorAppMenuToolsAndActionsBackground`] for more documentation."]
+    pub const COLOR_APP_MENU_TOOLS_AND_ACTIONS_BACKGROUND: Self =
+        Self(cef_color_id_t::CEF_ColorAppMenuToolsAndActionsBackground);
+    #[doc = "See [`cef_color_id_t::CEF_ColorAppMenuBlockButtonBackground`] for more documentation."]
+    pub const COLOR_APP_MENU_BLOCK_BUTTON_BACKGROUND: Self =
+        Self(cef_color_id_t::CEF_ColorAppMenuBlockButtonBackground);
+    #[doc = "See [`cef_color_id_t::CEF_ColorAppMenuBlockButtonBackgroundHovered`] for more documentation."]
+    pub const COLOR_APP_MENU_BLOCK_BUTTON_BACKGROUND_HOVERED: Self =
+        Self(cef_color_id_t::CEF_ColorAppMenuBlockButtonBackgroundHovered);
+    #[doc = "See [`cef_color_id_t::CEF_ColorAppMenuBlockButtonBorder`] for more documentation."]
+    pub const COLOR_APP_MENU_BLOCK_BUTTON_BORDER: Self =
+        Self(cef_color_id_t::CEF_ColorAppMenuBlockButtonBorder);
+    #[doc = "See [`cef_color_id_t::CEF_ColorAppMenuBlockButtonForeground`] for more documentation."]
+    pub const COLOR_APP_MENU_BLOCK_BUTTON_FOREGROUND: Self =
+        Self(cef_color_id_t::CEF_ColorAppMenuBlockButtonForeground);
+    #[doc = "See [`cef_color_id_t::CEF_ColorAppMenuFooterButtonForeground`] for more documentation."]
+    pub const COLOR_APP_MENU_FOOTER_BUTTON_FOREGROUND: Self =
+        Self(cef_color_id_t::CEF_ColorAppMenuFooterButtonForeground);
+    #[doc = "See [`cef_color_id_t::CEF_ColorAppMenuFooterButtonForegroundHovered`] for more documentation."]
+    pub const COLOR_APP_MENU_FOOTER_BUTTON_FOREGROUND_HOVERED: Self =
+        Self(cef_color_id_t::CEF_ColorAppMenuFooterButtonForegroundHovered);
+    #[doc = "See [`cef_color_id_t::CEF_ColorAppMenuFooterButtonBackgroundHovered`] for more documentation."]
+    pub const COLOR_APP_MENU_FOOTER_BUTTON_BACKGROUND_HOVERED: Self =
+        Self(cef_color_id_t::CEF_ColorAppMenuFooterButtonBackgroundHovered);
+    #[doc = "See [`cef_color_id_t::CEF_ColorActorUiHandoffButtonBackground`] for more documentation."]
+    pub const COLOR_ACTOR_UI_HANDOFF_BUTTON_BACKGROUND: Self =
+        Self(cef_color_id_t::CEF_ColorActorUiHandoffButtonBackground);
     #[doc = "See [`cef_color_id_t::CEF_ColorActorUiHandoffButtonBorder`] for more documentation."]
     pub const COLOR_ACTOR_UI_HANDOFF_BUTTON_BORDER: Self =
         Self(cef_color_id_t::CEF_ColorActorUiHandoffButtonBorder);
+    #[doc = "See [`cef_color_id_t::CEF_ColorActorUiHandoffButtonForeground`] for more documentation."]
+    pub const COLOR_ACTOR_UI_HANDOFF_BUTTON_FOREGROUND: Self =
+        Self(cef_color_id_t::CEF_ColorActorUiHandoffButtonForeground);
     #[doc = "See [`cef_color_id_t::CEF_ColorActorUiOverlayBorder`] for more documentation."]
     pub const COLOR_ACTOR_UI_OVERLAY_BORDER: Self =
         Self(cef_color_id_t::CEF_ColorActorUiOverlayBorder);
@@ -19301,6 +19337,21 @@ impl ColorId {
     #[doc = "See [`cef_color_id_t::CEF_ColorIntentPickerItemBackgroundSelected`] for more documentation."]
     pub const COLOR_INTENT_PICKER_ITEM_BACKGROUND_SELECTED: Self =
         Self(cef_color_id_t::CEF_ColorIntentPickerItemBackgroundSelected);
+    #[doc = "See [`cef_color_id_t::CEF_ColorIsolatedTabPageBackground`] for more documentation."]
+    pub const COLOR_ISOLATED_TAB_PAGE_BACKGROUND: Self =
+        Self(cef_color_id_t::CEF_ColorIsolatedTabPageBackground);
+    #[doc = "See [`cef_color_id_t::CEF_ColorIsolatedTabPageCardBackground`] for more documentation."]
+    pub const COLOR_ISOLATED_TAB_PAGE_CARD_BACKGROUND: Self =
+        Self(cef_color_id_t::CEF_ColorIsolatedTabPageCardBackground);
+    #[doc = "See [`cef_color_id_t::CEF_ColorIsolatedTabPageLink`] for more documentation."]
+    pub const COLOR_ISOLATED_TAB_PAGE_LINK: Self =
+        Self(cef_color_id_t::CEF_ColorIsolatedTabPageLink);
+    #[doc = "See [`cef_color_id_t::CEF_ColorIsolatedTabPageNoticeBorder`] for more documentation."]
+    pub const COLOR_ISOLATED_TAB_PAGE_NOTICE_BORDER: Self =
+        Self(cef_color_id_t::CEF_ColorIsolatedTabPageNoticeBorder);
+    #[doc = "See [`cef_color_id_t::CEF_ColorIsolatedTabPageNoticeIcon`] for more documentation."]
+    pub const COLOR_ISOLATED_TAB_PAGE_NOTICE_ICON: Self =
+        Self(cef_color_id_t::CEF_ColorIsolatedTabPageNoticeIcon);
     #[doc = "See [`cef_color_id_t::CEF_ColorGlicBackground`] for more documentation."]
     pub const COLOR_GLIC_BACKGROUND: Self = Self(cef_color_id_t::CEF_ColorGlicBackground);
     #[doc = "See [`cef_color_id_t::CEF_ColorGlicModalBackground`] for more documentation."]
@@ -19457,6 +19508,9 @@ impl ColorId {
     #[doc = "See [`cef_color_id_t::CEF_ColorNewTabPageAddShortcutForeground`] for more documentation."]
     pub const COLOR_NEW_TAB_PAGE_ADD_SHORTCUT_FOREGROUND: Self =
         Self(cef_color_id_t::CEF_ColorNewTabPageAddShortcutForeground);
+    #[doc = "See [`cef_color_id_t::CEF_ColorNewTabPageAddShortcutBackgroundHovered`] for more documentation."]
+    pub const COLOR_NEW_TAB_PAGE_ADD_SHORTCUT_BACKGROUND_HOVERED: Self =
+        Self(cef_color_id_t::CEF_ColorNewTabPageAddShortcutBackgroundHovered);
     #[doc = "See [`cef_color_id_t::CEF_ColorNewTabPageAttributionForeground`] for more documentation."]
     pub const COLOR_NEW_TAB_PAGE_ATTRIBUTION_FOREGROUND: Self =
         Self(cef_color_id_t::CEF_ColorNewTabPageAttributionForeground);
@@ -20619,6 +20673,21 @@ impl ColorId {
     #[doc = "See [`cef_color_id_t::CEF_ColorReadAnythingPreviousReadAloudHighlightLowContrastDark`] for more documentation."]
     pub const COLOR_READ_ANYTHING_PREVIOUS_READ_ALOUD_HIGHLIGHT_LOW_CONTRAST_DARK: Self =
         Self(cef_color_id_t::CEF_ColorReadAnythingPreviousReadAloudHighlightLowContrastDark);
+    #[doc = "See [`cef_color_id_t::CEF_ColorReadAnythingAiPlaybackBackground`] for more documentation."]
+    pub const COLOR_READ_ANYTHING_AI_PLAYBACK_BACKGROUND: Self =
+        Self(cef_color_id_t::CEF_ColorReadAnythingAiPlaybackBackground);
+    #[doc = "See [`cef_color_id_t::CEF_ColorReadAnythingAiPlaybackHoverBackground`] for more documentation."]
+    pub const COLOR_READ_ANYTHING_AI_PLAYBACK_HOVER_BACKGROUND: Self =
+        Self(cef_color_id_t::CEF_ColorReadAnythingAiPlaybackHoverBackground);
+    #[doc = "See [`cef_color_id_t::CEF_ColorReadAnythingAiPlaybackIcon`] for more documentation."]
+    pub const COLOR_READ_ANYTHING_AI_PLAYBACK_ICON: Self =
+        Self(cef_color_id_t::CEF_ColorReadAnythingAiPlaybackIcon);
+    #[doc = "See [`cef_color_id_t::CEF_ColorReadAnythingAiPlaybackActiveBackground`] for more documentation."]
+    pub const COLOR_READ_ANYTHING_AI_PLAYBACK_ACTIVE_BACKGROUND: Self =
+        Self(cef_color_id_t::CEF_ColorReadAnythingAiPlaybackActiveBackground);
+    #[doc = "See [`cef_color_id_t::CEF_ColorReadAnythingAiPlaybackActiveIcon`] for more documentation."]
+    pub const COLOR_READ_ANYTHING_AI_PLAYBACK_ACTIVE_ICON: Self =
+        Self(cef_color_id_t::CEF_ColorReadAnythingAiPlaybackActiveIcon);
     #[doc = "See [`cef_color_id_t::CEF_ColorReadAnythingAudioPlayerBackground`] for more documentation."]
     pub const COLOR_READ_ANYTHING_AUDIO_PLAYER_BACKGROUND: Self =
         Self(cef_color_id_t::CEF_ColorReadAnythingAudioPlayerBackground);
@@ -20960,6 +21029,9 @@ impl ColorId {
     #[doc = "See [`cef_color_id_t::CEF_ColorSettingsInfoCardBackground`] for more documentation."]
     pub const COLOR_SETTINGS_INFO_CARD_BACKGROUND: Self =
         Self(cef_color_id_t::CEF_ColorSettingsInfoCardBackground);
+    #[doc = "See [`cef_color_id_t::CEF_ColorSettingsWebuiPageBackground`] for more documentation."]
+    pub const COLOR_SETTINGS_WEBUI_PAGE_BACKGROUND: Self =
+        Self(cef_color_id_t::CEF_ColorSettingsWebuiPageBackground);
     #[doc = "See [`cef_color_id_t::CEF_ColorShareThisTabAudioToggleBackground`] for more documentation."]
     pub const COLOR_SHARE_THIS_TAB_AUDIO_TOGGLE_BACKGROUND: Self =
         Self(cef_color_id_t::CEF_ColorShareThisTabAudioToggleBackground);
@@ -23780,32 +23852,6 @@ pub fn v8_stack_trace_get_current(frame_limit: ::std::os::raw::c_int) -> Option<
         } else {
             Some(result.wrap_result())
         }
-    }
-}
-
-/// See [`cef_register_extension`] for more documentation.
-pub fn register_extension(
-    extension_name: Option<&CefString>,
-    javascript_code: Option<&CefString>,
-    handler: Option<&mut V8Handler>,
-) -> ::std::os::raw::c_int {
-    unsafe {
-        let (arg_extension_name, arg_javascript_code, arg_handler) =
-            (extension_name, javascript_code, handler);
-        let arg_extension_name = arg_extension_name
-            .map(|arg| arg.into_raw())
-            .unwrap_or(std::ptr::null());
-        let arg_javascript_code = arg_javascript_code
-            .map(|arg| arg.into_raw())
-            .unwrap_or(std::ptr::null());
-        let arg_handler = arg_handler
-            .map(|arg| {
-                arg.add_ref();
-                ImplV8Handler::get_raw(arg)
-            })
-            .unwrap_or(std::ptr::null_mut());
-        let result = cef_register_extension(arg_extension_name, arg_javascript_code, arg_handler);
-        result.wrap_result()
     }
 }
 
