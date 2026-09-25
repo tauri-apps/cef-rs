@@ -1,12 +1,13 @@
 mod webrender;
 
-use cef::{args::Args, *};
+use cef::{args::Args, sys::cef_event_flags_t, *};
 use std::{cell::RefCell, process::ExitCode, sync::Arc, thread::sleep, time::Duration};
 use wgpu::{Backends, CurrentSurfaceTexture, util::DeviceExt};
 use winit::{
     application::ApplicationHandler,
     event::WindowEvent,
     event_loop::{ActiveEventLoop, ControlFlow, EventLoop},
+    keyboard::ModifiersKeyState,
     platform::pump_events::{EventLoopExtPumpEvents, PumpStatus},
     window::{Window, WindowAttributes, WindowId},
 };
@@ -25,6 +26,7 @@ struct State {
     surface: wgpu::Surface<'static>,
     surface_format: wgpu::TextureFormat,
     quad: Geometry,
+    keyboard_modifiers: u32,
 }
 
 impl State {
@@ -144,6 +146,7 @@ impl State {
             surface,
             surface_format,
             quad,
+            keyboard_modifiers: 0,
         };
 
         state.configure_surface();
@@ -334,6 +337,74 @@ impl ApplicationHandler for App {
                     if let Some(host) = self.browser.as_mut().and_then(|b| b.browser.host()) {
                         host.was_resized();
                     }
+                }
+            }
+
+            //// INPUT
+            WindowEvent::ModifiersChanged(modifier) => {
+                let Some(state) = self.state.as_mut() else {
+                    return;
+                };
+                //// Shift
+                if modifier.lshift_state() == ModifiersKeyState::Pressed
+                    || modifier.rshift_state() == ModifiersKeyState::Pressed
+                {
+                    state.keyboard_modifiers |= cef_event_flags_t::EVENTFLAG_SHIFT_DOWN as u32;
+                } else {
+                    state.keyboard_modifiers &= cef_event_flags_t::EVENTFLAG_SHIFT_DOWN as u32;
+                }
+                //// Alt
+                if modifier.lalt_state() == ModifiersKeyState::Pressed
+                    || modifier.ralt_state() == ModifiersKeyState::Pressed
+                {
+                    state.keyboard_modifiers |= cef_event_flags_t::EVENTFLAG_ALT_DOWN as u32;
+                } else {
+                    state.keyboard_modifiers &= cef_event_flags_t::EVENTFLAG_ALT_DOWN as u32;
+                }
+
+                //// Control
+                if modifier.lcontrol_state() == ModifiersKeyState::Pressed
+                    || modifier.rcontrol_state() == ModifiersKeyState::Pressed
+                {
+                    state.keyboard_modifiers |= cef_event_flags_t::EVENTFLAG_CONTROL_DOWN as u32;
+                } else {
+                    state.keyboard_modifiers &= cef_event_flags_t::EVENTFLAG_CONTROL_DOWN as u32;
+                }
+
+                //// Command/Meta
+                if modifier.lsuper_state() == ModifiersKeyState::Pressed
+                    || modifier.rsuper_state() == ModifiersKeyState::Pressed
+                {
+                    state.keyboard_modifiers |= cef_event_flags_t::EVENTFLAG_COMMAND_DOWN as u32;
+                } else {
+                    state.keyboard_modifiers &= cef_event_flags_t::EVENTFLAG_COMMAND_DOWN as u32;
+                }
+                if modifier.rsuper_state() == ModifiersKeyState::Pressed {
+                    state.keyboard_modifiers |= cef_event_flags_t::EVENTFLAG_IS_RIGHT as u32;
+                } else {
+                    state.keyboard_modifiers &= cef_event_flags_t::EVENTFLAG_IS_RIGHT as u32;
+                }
+                if modifier.lsuper_state() == ModifiersKeyState::Pressed {
+                    state.keyboard_modifiers |= cef_event_flags_t::EVENTFLAG_IS_LEFT as u32;
+                } else {
+                    state.keyboard_modifiers &= cef_event_flags_t::EVENTFLAG_IS_LEFT as u32;
+                }
+            }
+            WindowEvent::CursorMoved { position, .. } => {
+                let Some(state) = self.state.as_ref() else {
+                    return;
+                };
+
+                let scale = state.get_window().scale_factor();
+                let position = position.to_logical(scale);
+                if let Some(host) = self.browser.as_ref().and_then(|b| b.browser.host()) {
+                    let mouse_event = MouseEvent {
+                        x: position.x,
+                        y: position.y,
+                        modifiers: state.keyboard_modifiers,
+                    };
+                    //TODO: implement mouse leave
+                    host.send_mouse_move_event(Some(&mouse_event), 0);
                 }
             }
             _ => (),
