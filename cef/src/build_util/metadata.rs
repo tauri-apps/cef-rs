@@ -26,12 +26,23 @@ struct CargoBundleMetadata {
     #[cfg(target_os = "macos")]
     helper_name: String,
     resources_path: Option<String>,
+    /// If set (e.g. `"MainMenu"`), written as `NSMainNibFile` on the main app `Info.plist` only.
+    #[serde(default)]
+    main_nib_file: Option<String>,
+    /// If set (e.g. `"VmuxApplication"`), written as `NSPrincipalClass` on the main app only.
+    /// Required for CEF macOS embedding when the app uses an `NSApplication` subclass (`CrApp`).
+    #[serde(default)]
+    principal_class: Option<String>,
 }
 
 pub struct BundleMetadata {
     #[cfg(target_os = "macos")]
     pub helper_name: String,
     pub resources_path: Option<PathBuf>,
+    #[cfg(target_os = "macos")]
+    pub main_nib_file: Option<String>,
+    #[cfg(target_os = "macos")]
+    pub principal_class: Option<String>,
 }
 
 impl BundleMetadata {
@@ -59,6 +70,10 @@ impl BundleMetadata {
             #[cfg(target_os = "macos")]
             helper_name: package_metadata.cef.bundle.helper_name,
             resources_path,
+            #[cfg(target_os = "macos")]
+            main_nib_file: package_metadata.cef.bundle.main_nib_file.clone(),
+            #[cfg(target_os = "macos")]
+            principal_class: package_metadata.cef.bundle.principal_class.clone(),
         })
     }
 }

@@ -1,0 +1,92 @@
+# Copy to `settings.toml` in the working directory, next to the app binary, or
+# `~/.config/vmux/settings.toml`.
+
+[browser]
+# Max DOM ancestor hops when probing whether the focused context allows typing (editable / text entry).
+dom_focus_ancestor_walk_max = 64
+# First window loads this URL on startup. Omit or use "" for the built-in default (Google); empty
+# uses `about:blank` then that default. http(s) URLs load directly (no extra history entry).
+startup_url = "https://www.google.com"
+
+[vimium]
+enabled = true
+# Milliseconds between two `g` presses for scroll-to-top (`gg`).
+scroll_top_double_press_ms = 500
+
+# Chords: `key`, `shift+j`, `ctrl+k`, `alt+d`, `cmd+l` (physical keys, layout-independent).
+scroll_line_down = "j"
+scroll_line_up = "k"
+# `d` / `g` match common words (e.g. "ledger"); vmux avoids stealing them once it sees typing,
+# but you can bind to other keys if a site still mis-detects focus.
+scroll_page_down = "d"
+scroll_page_up = "u"
+scroll_top_prefix = "g"
+scroll_bottom = "shift+g"
+history_back = "shift+h"
+history_forward = "shift+l"
+# Vimium-style reload: `shift+r` (`R`). **Cmd+R** (macOS) / **Ctrl+R** (Win/Linux) reloads like Chrome
+# from `window::dispatch` (works in text fields too).
+reload = "shift+r"
+# Link hints: up to 26 targets labeled a–z; type one letter. Open with `f` (or your chord).
+# While hints show, that key is used as a hint letter — press Escape to cancel. "" / "none" disables.
+hint_links = "f"
+
+# Vimium-like modes (only when not typing in an editable field — same probe as scroll keys).
+# Insert: pass keys to the page; Esc or Ctrl+[ exits.
+mode_insert = "i"
+# Find: `/` opens a HUD; type to search, Enter accepts, Esc cancels. Then `n` / `shift+n` next/prev.
+mode_find_open = "/"
+find_next = "n"
+find_prev = "shift+n"
+# Visual: banner only; select text with the mouse, `y` copies selection, Esc exits.
+# While the left mouse button is held (e.g. drag-selecting a link), `v` is not captured as visual mode.
+mode_visual = "v"
+# Copy current page URL (clipboard API).
+yank_url = "shift+y"
+
+# Set to "" or "none" to disable a binding.
+
+# --- Window manager (tiling / stack) ---
+# **Breaking note:** prefix and WM chords moved under `[window_manager.tmux]` — migrate old flat
+# `tmux_prefix`, `new_window`, etc. from `[window_manager]` into those tables.
+#
+# `mode`: default `tmux` (alias for `manual`; split keys adjust BSP phase) or `dynamic` (auto dwindle).
+# `layout`: `tile` (non-overlapping) or `stack` (same rect; toggle at runtime with `next-layout`).
+# `tile_strategy`: optional `bsp`, `dwindle`, or `grid` (empty = derive from `mode`: manual→bsp, dynamic→dwindle).
+# Inconsistent pairs (e.g. manual + dwindle) are ignored with a log line.
+#
+# Tmux-style **leader** (see `[window_manager.tmux].prefix`, default `ctrl+b`): press leader, then a second key (not in a text field).
+# Leader+Shift+`%` = **vertical** bar (focused pane left, **new pane on the right**, tmux split -v).
+# Leader+Shift+`"` = horizontal bar (stacked top/bottom, tmux split -h).
+# Each split **opens a new shell** from the **focused** pane. `c` new
+# window (no split tree parent), `n`/`p`/`o` focus shells, arrows, `Space` toggle tile/stack.
+# Set `prefix = "none"` under `[window_manager.tmux]` to disable leader sequences.
+# Debug window-manager / tmux leader (title also shows ` · [WM …]` while armed): `RUST_LOG=vmux_wm=debug`.
+# With `mode = "tmux"` / `manual`, layout uses a **BSP pane tree** (not “always split the last
+# window by browser id”). `dynamic` / `grid` still tile but splits do not use the tree.
+[window_manager]
+mode = "tmux"
+layout = "tile"
+tile_strategy = ""
+balance_on_resize = true
+# First split axis for manual hints: `vertical` (panes beside) or `horizontal` (panes stacked).
+default_split_axis = "vertical"
+
+# Matches tmux option `prefix` (vmux chord string). `prefix_timeout_ms` is vmux-only (window after prefix);
+# it is not tmux `repeat-time`.
+[window_manager.tmux]
+prefix = "ctrl+b"
+prefix_timeout_ms = 2000
+
+# Hyphenated keys mirror tmux command names. Chords use `cmd`/`ctrl`/`shift`/`alt` like `[vimium]`.
+# Checked before Vimium. Default tmux uses prefix + `%` / `"` for splits; vmux ships **global** macOS-style chords here.
+# `split-window-v` / `split-window-h` match tmux `split-window -v` / `-h` geometry.
+[window_manager.tmux.keybindings]
+new-window = "cmd+n"
+next-layout = "cmd+shift+t"
+select-pane-next = "cmd+shift+bracketright"
+select-pane-previous = "cmd+shift+bracketleft"
+split-window-v = "cmd+ctrl+v"
+split-window-h = "cmd+ctrl+s"
+balance-panes = "cmd+ctrl+b"
+rotate-window = "cmd+ctrl+r"

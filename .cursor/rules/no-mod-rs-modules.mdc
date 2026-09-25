@@ -1,0 +1,31 @@
+---
+description: Use file-named modules; avoid mod.rs layout
+alwaysApply: true
+---
+
+# Module Layout Rule: No `mod.rs`
+
+- Do not create or keep `mod.rs` files.
+- Define modules with file-named paths:
+  - `foo.rs` for module `foo`
+  - `foo/bar.rs` for module `foo::bar`
+- In parent files, use plain declarations like `pub mod foo;` and let Rust resolve to `foo.rs`.
+- For nested modules, prefer:
+  - `foo.rs` + `foo/bar.rs`
+  - not `foo/mod.rs` + `foo/bar.rs`
+- When refactoring existing code, migrate any `mod.rs` module to `<module>.rs` and update references/paths accordingly.
+
+## Example
+
+```text
+src/
+  runtime.rs
+  runtime/event_loop.rs
+  runtime/input.rs
+```
+
+```rust
+// src/runtime.rs
+pub mod event_loop;
+pub mod input;
+```
