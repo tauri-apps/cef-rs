@@ -31,6 +31,7 @@ accelerated_osr = [
     "wgpu",
     "windows",
 ]
+accelerated_osr_dawn = ["accelerated_osr", "dep:dawn-rs", "dep:dawn-wgpu"]
 
 # Build utilities, including the bundle-cef-app tool.
 build-util = [
@@ -58,6 +59,8 @@ ash = { workspace = true, optional = true }
 thiserror = { workspace = true, optional = true }
 tracing = { workspace = true, optional = true }
 wgpu = { workspace = true, optional = true }
+dawn-rs = { workspace = true, optional = true }
+dawn-wgpu = { workspace = true, optional = true }
 
 # bundle
 anyhow = { workspace = true, optional = true }

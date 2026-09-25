@@ -50,6 +50,7 @@
 //! - `accelerated_paint_dmabuf` - Linux DMA-BUF support
 //! - `accelerated_paint_d3d11` - Windows D3D11 support
 //! - `accelerated_paint_iosurface` - macOS IOSurface support
+//! - `accelerated_osr_dawn` - Dawn-based shared texture import on macOS
 
 pub(crate) mod common;
 
