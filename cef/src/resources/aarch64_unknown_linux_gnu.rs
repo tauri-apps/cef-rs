@@ -10562,8 +10562,9 @@ pub const IDS_AUTOFILL_AT_MEMORY_SUGGESTION_SOURCE_TEXT: &CStr =
 /// `"IDS_AUTOFILL_AI_SUGGESTED_BY_GEMINI"`: Resource ID for use with [`cef_dll_sys::cef_id_for_pack_string_name`].
 pub const IDS_AUTOFILL_AI_SUGGESTED_BY_GEMINI: &CStr = c"IDS_AUTOFILL_AI_SUGGESTED_BY_GEMINI";
 
-/// `"IDS_AUTOFILL_AI_SOURCE_FROM_APP"`: Resource ID for use with [`cef_dll_sys::cef_id_for_pack_string_name`].
-pub const IDS_AUTOFILL_AI_SOURCE_FROM_APP: &CStr = c"IDS_AUTOFILL_AI_SOURCE_FROM_APP";
+/// `"IDS_AUTOFILL_AI_SUGGESTED_BY_GEMINI_WITH_SOURCES"`: Resource ID for use with [`cef_dll_sys::cef_id_for_pack_string_name`].
+pub const IDS_AUTOFILL_AI_SUGGESTED_BY_GEMINI_WITH_SOURCES: &CStr =
+    c"IDS_AUTOFILL_AI_SUGGESTED_BY_GEMINI_WITH_SOURCES";
 
 /// `"IDS_AUTOFILL_AI_SOURCE_APP_PHOTOS"`: Resource ID for use with [`cef_dll_sys::cef_id_for_pack_string_name`].
 pub const IDS_AUTOFILL_AI_SOURCE_APP_PHOTOS: &CStr = c"IDS_AUTOFILL_AI_SOURCE_APP_PHOTOS";
@@ -44614,12 +44615,6 @@ pub const IDS_GOOGLE_LENS_TITLE: &CStr = c"IDS_GOOGLE_LENS_TITLE";
 
 /// `"IDS_LENS_DEFAULT_TITLE"`: Resource ID for use with [`cef_dll_sys::cef_id_for_pack_string_name`].
 pub const IDS_LENS_DEFAULT_TITLE: &CStr = c"IDS_LENS_DEFAULT_TITLE";
-
-/// `"IDS_LENS_COBROWSE_IPH_HEADER"`: Resource ID for use with [`cef_dll_sys::cef_id_for_pack_string_name`].
-pub const IDS_LENS_COBROWSE_IPH_HEADER: &CStr = c"IDS_LENS_COBROWSE_IPH_HEADER";
-
-/// `"IDS_LENS_COBROWSE_IPH_DESCRIPTION"`: Resource ID for use with [`cef_dll_sys::cef_id_for_pack_string_name`].
-pub const IDS_LENS_COBROWSE_IPH_DESCRIPTION: &CStr = c"IDS_LENS_COBROWSE_IPH_DESCRIPTION";
 
 /// `"IDS_LENS_COBROWSE_CURRENT_TAB_IPH_DESCRIPTION"`: Resource ID for use with [`cef_dll_sys::cef_id_for_pack_string_name`].
 pub const IDS_LENS_COBROWSE_CURRENT_TAB_IPH_DESCRIPTION: &CStr =
