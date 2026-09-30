@@ -1,0 +1,53 @@
+---
+description: vmux OSR + winit + wgpu; macOS bundle launch; quit/shutdown; roadmap
+alwaysApply: true
+---
+
+# cef-rs: vmux implementation + embedding roadmap
+
+## vmux (`examples/vmux`) — OSR + winit + wgpu
+
+- **vmux** uses **off-screen rendering (OSR)**: **`Settings.windowless_rendering_enabled`**, **`external_message_pump`**, **`RenderHandler`**, **`browser_host_create_browser_sync`**, composited with **winit** + **wgpu** under **`examples/vmux/src/browser/cef/`** (e.g. **`cef::osr`**, **`cef::renderer`**, **`cef::stage`**).
+- **Tabs / windows**: each browser can map to a winit window; shortcuts (e.g. primary modifier + **N**) open another window + browser. Demo URLs and startup pages are wired from settings / CEF stage code in the same tree (see **`cef::stage`**, **`cef::app`**).
+- **Do not** change **`examples/osr`** for vmux work; use it as a **read-only** reference (pump loop, `do_message_loop_work`, optional `accelerated_osr`).
+
+## macOS — build and launch vmux (required for CEF framework path)
+
+CEF loads **`Chromium Embedded Framework.framework`** from **`Contents/Frameworks`** next to the app binary. A bare **`cargo run -p vmux`** binary under `target/debug/` has **no** framework beside it → panic or fail unless **`CEF_FRAMEWORK_PATH`** points at the framework **binary** (the file inside `…/Chromium Embedded Framework.framework/Chromium Embedded Framework`).
+
+**Preferred workflow** (from repo root):
+
+```sh
+cargo run -p cef --bin bundle-cef-app -- vmux -o target/bundle
+open -n target/bundle/vmux.app
+```
+
+- **`-p cef`** — `bundle-cef-app` is the **`cef`** crate’s binary.
+- **`open -n`** — open a **new** instance even if one is running (useful while iterating); omit **`-n`** for a normal open.
+- **Release**: add **`--release`** to the `bundle-cef-app` invocation.
+
+Helper bundling is configured in **`examples/vmux/Cargo.toml`** via **`[package.metadata.cef.bundle]`** (`helper_name = "vmux_helper"`, etc.).
+
+## macOS — quit and shutdown
+
+- **Quit menu** (`MainMenu.xib`): `terminate:` must target **`-2` (NSApplication / File’s Owner)**, not **`-1` (First Responder)`** — otherwise Chromium’s key view can handle quit and only the focused window closes.
+- **Close all browsers**: mirror the mutex discipline from legacy handlers — **clone browser IDs / handles under a short lock, release lock**, then call `close_browser` on each. **Never** hold the same mutex across `close_browser` when CEF can call `do_close` synchronously and **deadlock** re-locking. In vmux today this path lives in **`browser::cef::closeall`** and related lifecycle resources (see **`browser::system`** + **`cef::lifecycle`**).
+- **`applicationShouldTerminate`**: return **`TerminateCancel`** where applicable; with **external message pump** + winit, teardown is coordinated via **`runtime`** user events (**`AppEvent::ShutdownRequested`**), the winit runner / **`ShutdownFlag`**, and **`cef::shutdown()`** after the last browser / loop exit.
+
+## Future stack (Bevy + custom UI)
+
+- **Intent**: compose CEF into **Bevy** as a texture; **Dioxus** (or similar) for chrome — **compositing order**, **input/focus routing**, **one coordinated event loop** with CEF.
+- **OSR**: drive frames with e.g. **`send_external_begin_frame`** when using accelerated OSR; software path uses **`on_paint`** (`RenderHandler`).
+
+## References in repo
+
+- `examples/vmux/src/browser/cef/` — CEF integration: **`cef::osr`** (OSR hub / render handler), **`cef::renderer`** (wgpu composite), **`cef::stage`** (winit / pump), **`cef::shell`**, **`cef::client`**, **`cef::app`**, **`cef::macos`**, etc.
+- `examples/vmux/src/runtime/` — winit runner, **`RuntimeState`**, user events, FFI bridges to OSR / pump.
+- `examples/vmux/src/main.rs` — browser-process entry: **`cef::execute_process`**, **`cef::initialize`**, Bevy + custom winit runner.
+- `examples/vmux/src/browser/system.rs` + `examples/vmux/src/browser/system/` — Bevy systems that apply browser events and CEF UI-thread work.
+- **`browser::cef::macos`** + **`examples/vmux/resources/mac/`** — AppKit **`VmuxApplication`**, delegate, menu/quit wiring, bundled **`MainMenu.xib`**.
+- `examples/vmux/resources/mac/English.lproj/MainMenu.xib` — Quit target **`-2`**.
+- `README.md` — **`bundle-cef-app`** usage (also documents **`cefsimple`**).
+- `examples/osr/` — reference-only OSR + winit + wgpu (do not modify for vmux migration).
+- `cef/src/window_info.rs` — windowless / OSR-related `WindowInfo` fields.
+- `cef/src/library_loader.rs` — bundle-relative framework resolution; **`CEF_FRAMEWORK_PATH`** override.
