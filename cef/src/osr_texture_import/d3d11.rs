@@ -26,6 +26,19 @@ impl TextureImporter for D3D11Importer {
     fn import_to_wgpu(&self, device: &wgpu::Device) -> TextureImportResult {
         // Try hardware acceleration first
         if self.supports_hardware_acceleration(device) {
+            #[cfg(feature = "accelerated_osr_dawn")]
+            match self.import_via_dawn(device) {
+                Ok(texture) => {
+                    tracing::info!("Successfully imported D3D11 shared texture via Dawn");
+                    return Ok(texture);
+                }
+                Err(e) => {
+                    tracing::debug!(
+                        "Failed to import D3D11 via Dawn: {}, trying native fallback",
+                        e
+                    );
+                }
+            }
             // Try D3D12 first (most efficient on Windows)
             if vulkan::is_d3d12_backend(device) {
                 match self.import_via_d3d12(device) {
@@ -75,12 +88,98 @@ impl TextureImporter for D3D11Importer {
             return false;
         }
 
+        #[cfg(feature = "accelerated_osr_dawn")]
+        if dawn_wgpu::Compat::<dawn_rs::Device>::try_from(device).is_ok() {
+            return true;
+        }
+
         // Check if wgpu is using D3D12 or Vulkan backend
         vulkan::is_d3d12_backend(device) || vulkan::is_vulkan_backend(device)
     }
 }
 
 impl D3D11Importer {
+    #[cfg(feature = "accelerated_osr_dawn")]
+    fn import_via_dawn(&self, device: &wgpu::Device) -> TextureImportResult {
+        use dawn_wgpu::{Compat, CompatTexture};
+
+        let dawn_device = Compat::<dawn_rs::Device>::try_from(device)
+            .map_err(|_| TextureImportError::HardwareUnavailable {
+                reason: "wgpu device is not backed by dawn-wgpu".into(),
+            })?
+            .into_inner();
+        if !dawn_device.has_feature(dawn_rs::FeatureName::SharedTextureMemoryDXGISharedHandle) {
+            return Err(TextureImportError::HardwareUnavailable {
+                reason: "SharedTextureMemoryDXGISharedHandle feature is unavailable".into(),
+            });
+        }
+
+        let mut dxgi_desc = dawn_rs::SharedTextureMemoryDXGISharedHandleDescriptor::new();
+        dxgi_desc.handle = Some(self.handle);
+        dxgi_desc.use_keyed_mutex = Some(false);
+        let shared_desc =
+            dawn_rs::SharedTextureMemoryDescriptor::new().with_extension(dxgi_desc.into());
+        let shared_memory = dawn_device.import_shared_texture_memory(&shared_desc);
+
+        let mut properties = dawn_rs::SharedTextureMemoryProperties::new();
+        let properties_status = shared_memory.get_properties(&mut properties);
+        if properties_status != dawn_rs::Status::Success {
+            return Err(TextureImportError::PlatformError {
+                message: format!(
+                    "Dawn DXGI get_properties failed with {:?}",
+                    properties_status
+                ),
+            });
+        }
+
+        let mut dawn_texture_desc = dawn_rs::TextureDescriptor::new();
+        dawn_texture_desc.dimension = Some(dawn_rs::TextureDimension::D2);
+        dawn_texture_desc.format = properties
+            .format
+            .or(Some(format::cef_to_dawn(self.format)?));
+        let usage = properties
+            .usage
+            .unwrap_or(dawn_rs::TextureUsage::TEXTURE_BINDING)
+            | dawn_rs::TextureUsage::TEXTURE_BINDING;
+        dawn_texture_desc.usage = Some(usage);
+        dawn_texture_desc.size = properties.size.or(Some(dawn_rs::Extent3D {
+            width: Some(self.width),
+            height: Some(self.height),
+            depth_or_array_layers: Some(1),
+        }));
+
+        let dawn_texture = shared_memory.create_texture(Some(&dawn_texture_desc));
+        let mut begin_desc = dawn_rs::SharedTextureMemoryBeginAccessDescriptor::new();
+        begin_desc.initialized = Some(true);
+        begin_desc.concurrent_read = Some(false);
+        let status = shared_memory.begin_access(dawn_texture.clone(), &begin_desc);
+        if status != dawn_rs::Status::Success {
+            return Err(TextureImportError::PlatformError {
+                message: format!("Dawn DXGI begin_access failed with {:?}", status),
+            });
+        }
+
+        let texture_desc = wgpu::TextureDescriptor {
+            label: Some("CEF Dawn DXGI Texture"),
+            size: wgpu::Extent3d {
+                width: self.width,
+                height: self.height,
+                depth_or_array_layers: 1,
+            },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: format::cef_to_wgpu(self.format)?,
+            usage: wgpu::TextureUsages::TEXTURE_BINDING,
+            view_formats: &[],
+        };
+        let texture = wgpu::Texture::from(CompatTexture::new(dawn_texture.clone(), &texture_desc));
+
+        let _ = shared_memory;
+
+        Ok(texture)
+    }
+
     fn import_via_d3d12(&self, device: &wgpu::Device) -> TextureImportResult {
         // Get wgpu's D3D12 device
         use wgpu::hal::api;
