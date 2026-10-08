@@ -64,6 +64,8 @@ pub fn bundle(
     executable_name: &str,
     helper_name: &str,
     resources_path: Option<PathBuf>,
+    main_nib_file: Option<String>,
+    principal_class: Option<String>,
     bundle_info: BundleInfo,
 ) -> Result<PathBuf> {
     let main_app_path = create_app(
@@ -72,6 +74,8 @@ pub fn bundle(
         false,
         resources_path.as_deref(),
         bundle_info.clone(),
+        main_nib_file,
+        principal_class,
         &target_path.join(executable_name),
     )?;
     let cef_path = cef_dll_sys::get_cef_dir().unwrap();
@@ -80,6 +84,14 @@ pub fn bundle(
         fs::remove_dir_all(&to).unwrap();
     }
     copy_directory(&cef_path.join(FRAMEWORK), &to)?;
+    // Chromium expects `icudtl.dat` in the main app `Contents/Resources/` (see vmux bootstrap warning).
+    let icu_src = to.join("Resources").join("icudtl.dat");
+    let icu_dst = main_app_path.join(RESOURCES_PATH).join("icudtl.dat");
+    if icu_src.is_file() {
+        fs::create_dir_all(main_app_path.join(RESOURCES_PATH))?;
+        let _ = fs::remove_file(&icu_dst);
+        fs::copy(&icu_src, &icu_dst)?;
+    }
     for helper in HELPERS {
         let helper = format!("{executable_name} {helper}");
         create_app(
@@ -88,6 +100,8 @@ pub fn bundle(
             true,
             None,
             bundle_info.clone(),
+            None,
+            None,
             &target_path.join(helper_name),
         )?;
     }
@@ -119,6 +133,8 @@ pub fn build_bundle(
         executable_name,
         &bundle_metadata.helper_name,
         bundle_metadata.resources_path,
+        bundle_metadata.main_nib_file.clone(),
+        bundle_metadata.principal_class.clone(),
         bundle_info,
     )
 }
@@ -165,6 +181,10 @@ struct InfoPlist {
     camera_usage_description: String,
     #[serde(rename = "NSMicrophoneUsageDescription")]
     microphone_usage_description: String,
+    #[serde(rename = "NSMainNibFile", skip_serializing_if = "Option::is_none")]
+    main_nib_file: Option<String>,
+    #[serde(rename = "NSPrincipalClass", skip_serializing_if = "Option::is_none")]
+    principal_class: Option<String>,
 }
 
 impl InfoPlist {
@@ -173,6 +193,8 @@ impl InfoPlist {
         is_helper: bool,
         icon_file: Option<String>,
         bundle_info: BundleInfo,
+        main_nib_file: Option<String>,
+        principal_class: Option<String>,
     ) -> Self {
         Self {
             executable_name: executable_name.to_owned(),
@@ -188,7 +210,9 @@ impl InfoPlist {
             environment: [("MallocNanoZone".to_owned(), "0".to_owned())]
                 .into_iter()
                 .collect(),
-            file_quarantine_enabled: true,
+            // Main `.app`: `false` avoids Gatekeeper/quarantine oddities when opening local bundles
+            // (`open -n …/target/bundle/foo.app`). Helper bundles keep `true`.
+            file_quarantine_enabled: is_helper,
             minimum_system_version: "11.0".to_owned(),
             ui_element: if is_helper { Some("1") } else { None },
             bluetooth_always_usage_description: executable_name.to_owned(),
@@ -196,6 +220,16 @@ impl InfoPlist {
             web_browser_publickey_credential_usage_description: executable_name.to_owned(),
             camera_usage_description: executable_name.to_owned(),
             microphone_usage_description: executable_name.to_owned(),
+            main_nib_file: if is_helper {
+                None
+            } else {
+                main_nib_file
+            },
+            principal_class: if is_helper {
+                None
+            } else {
+                principal_class
+            },
             bundle_info,
         }
     }
@@ -246,6 +280,8 @@ fn create_app(
     is_helper: bool,
     resources_path: Option<&Path>,
     bundle_info: BundleInfo,
+    main_nib_file: Option<String>,
+    principal_class: Option<String>,
     bin: &Path,
 ) -> Result<PathBuf> {
     let app_path = app_path.join(executable_name).with_extension("app");
@@ -264,6 +300,8 @@ fn create_app(
         bundle_info,
         is_helper,
         icon_file,
+        main_nib_file,
+        principal_class,
     )?;
     let executable_path = app_path.join(EXEC_PATH).join(executable_name);
     fs::copy(bin, executable_path)?;
@@ -276,8 +314,17 @@ fn create_info_plist(
     bundle_info: BundleInfo,
     is_helper: bool,
     icon_file: Option<String>,
+    main_nib_file: Option<String>,
+    principal_class: Option<String>,
 ) -> Result<()> {
-    let info_plist = InfoPlist::new(executable_name, is_helper, icon_file, bundle_info);
+    let info_plist = InfoPlist::new(
+        executable_name,
+        is_helper,
+        icon_file,
+        bundle_info,
+        main_nib_file,
+        principal_class,
+    );
     plist::to_file_xml(contents_path.join("Info.plist"), &info_plist)?;
     Ok(())
 }

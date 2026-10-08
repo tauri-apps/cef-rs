@@ -1,0 +1,32 @@
+---
+description: vmux — TDD at ECS system boundary (World / App + run_system_once)
+globs: examples/vmux/**/*.rs
+alwaysApply: false
+---
+
+# vmux: ECS system–level TDD
+
+For **`examples/vmux`**, default the red/green/refactor loop to tests that exercise **real Bevy systems** (the same `pub fn …_system` shapes the app schedules, or thin **`#[cfg(test)]`** systems that call the same production helpers those systems use) against a prepared **`World`** or **`App`**.
+
+## Red → Green → Refactor (system-first)
+
+1. **Red**: Build a minimal **`World`** / **`App`**, insert **`Resource`s**, **components**, and **`Events`** as needed, run the system under test (see below), assert **postconditions** on the world (queries, resources, drained events).
+2. **Green**: Implement or fix behavior in the **scheduled code path** (systems + types they own), not only in ad-hoc test helpers.
+3. **Refactor**: Keep the system-level test green; extract pure `fn` only when it clarifies the system or enables reuse.
+
+## Running systems in tests (Bevy 0.15)
+
+- Prefer **`World::run_system_once`** with the system function (import **`bevy_ecs::system::RunSystemOnce`**).
+- One-shot runs do **not** preserve `Local` between calls and have **change-detection** limitations; if the behavior depends on those, run **`app.update()`** or a dedicated test **`Schedule`** instead.
+- When a production system takes **`NonSendMut`** (CEF / winit), either test a **Send-safe** slice via a thin system or extracted logic, or document a heavier harness per the global TDD rule — do not skip coverage for **ECS-visible** effects that can be isolated.
+
+## Composition vs behavior
+
+- **`App::new()` + plugin** checks (`is_plugin_added`, `World::contains_resource::<Events<…>>`) are **smoke / wiring** tests; they **do not replace** system-level assertions for behavior.
+- **Migrating legacy tests**: vmux **`cargo test -p vmux --lib`** unit tests use **`World::run_system_once`** + **`Resource`** inputs/outputs (or marker `Res` systems for settings-style asserts). Examples: **[`window/wm.rs`](examples/vmux/src/window/wm.rs)**, **[`settings.rs`](examples/vmux/src/settings.rs)** `#[cfg(test)]`, **[`lib.rs`](examples/vmux/src/lib.rs)** composition checks via **`EventWriter`** / **`Res`** after `VmuxPlugin`.
+
+## Running tests
+
+- **`cargo test -p vmux --bin vmux`** (and **`--lib`** if tests live on the library surface).
+
+Keep tests **fast** and **deterministic**; avoid CEF/UI in tests unless the crate already requires it.

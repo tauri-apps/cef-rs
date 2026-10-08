@@ -1,0 +1,30 @@
+---
+description: Test-driven development — red/green/refactor and regression tests
+alwaysApply: true
+---
+
+# Test-Driven Development (TDD)
+
+When the user asks for TDD, or when **implementing new behavior** or **fixing a regression**, default to this loop unless they explicitly want tests skipped.
+
+## Red → Green → Refactor
+
+1. **Red**: Add a test that fails under the current code — it should encode the desired behavior or reproduce the bug (narrow, one concern).
+2. **Green**: Make the smallest change that makes the test pass.
+3. **Refactor**: Clean up while keeping tests green; do not expand scope.
+
+If a full red step is impractical (e.g. heavy harness), still add the test **before** merging the fix and show that it would have failed without the change (or document why an integration test lives elsewhere).
+
+## What to test
+
+- **Regressions**: Prefer a test that would have caught the break (wiring, scheduling, gating flags), not only a happy-path smoke test.
+- **`examples/vmux` (Bevy / ECS)**: Prefer **system-level** tests — minimal `World` / `App`, seed resources/components/events, run production or `#[cfg(test)]` systems via `run_system_once` (or `app.update()` when locals / change detection matter), assert world state. See [.cursor/rules/vmux-ecs-system-tdd.mdc](vmux-ecs-system-tdd.mdc). **Plugin-only** checks are supplementary, not a substitute for behavior coverage.
+- **Pure logic (non-vmux or extracted helpers)**: Unit-test helpers and predicates in isolation (`#[cfg(test)] mod tests` in the same file is fine).
+- **Plugins / composition**: Where full `App` setup is cheap enough, assert critical plugins or resources are registered (e.g. `app.is_plugin_added::<…>()` in Bevy); for vmux, treat this as **composition smoke** alongside system-level tests.
+
+## Running tests (this repo)
+
+- **vmux** binary unit tests: `cargo test -p vmux --bin vmux` (many modules live under the `vmux` binary, not the almost-empty `lib`).
+- Other crates: use `cargo test -p <crate>` as appropriate.
+
+Keep tests fast and deterministic; avoid requiring CEF/UI unless the crate already does for tests.
