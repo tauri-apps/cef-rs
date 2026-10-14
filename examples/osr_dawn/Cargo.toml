@@ -1,0 +1,36 @@
+[package]
+name = "cef-osr-dawn"
+edition = "2024"
+publish = false
+
+[features]
+default = ["accelerated_osr"]
+accelerated_osr = ["cef/accelerated_osr", "cef/accelerated_osr_dawn"]
+
+[package.metadata.cef.bundle]
+helper_name = "cefsimple_helper"
+
+[dependencies]
+cef.workspace = true
+wgpu.workspace = true
+dawn-rs.workspace = true
+dawn-wgpu.workspace = true
+
+env_logger = "0.11"
+pollster = "0.4"
+tokio = { version = "1", features = ["full"] }
+winit = { version = "0.30" }
+bytemuck = "1"
+
+[target.'cfg(target_os = "windows")'.dependencies]
+windows = { workspace = true }
+# For gpu debugging on Windows with PIX
+libloading.workspace = true
+
+[target.'cfg(target_os = "macos")'.dependencies]
+metal.workspace = true
+objc.workspace = true
+io-surface.workspace = true
+
+[target.'cfg(target_os = "linux")'.dependencies]
+libc.workspace = true

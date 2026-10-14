@@ -19,6 +19,17 @@ pub mod format {
         }
     }
 
+    #[cfg(feature = "accelerated_osr_dawn")]
+    pub fn cef_to_dawn(
+        format: cef_color_type_t,
+    ) -> Result<dawn_rs::TextureFormat, TextureImportError> {
+        match format {
+            cef_color_type_t::CEF_COLOR_TYPE_BGRA_8888 => Ok(dawn_rs::TextureFormat::Bgra8Unorm),
+            cef_color_type_t::CEF_COLOR_TYPE_RGBA_8888 => Ok(dawn_rs::TextureFormat::Rgba8Unorm),
+            _ => Err(TextureImportError::UnsupportedFormat { format }),
+        }
+    }
+
     #[cfg(target_os = "linux")]
     /// Convert CEF color type to Vulkan format
     pub fn cef_to_vulkan(format: cef_color_type_t) -> Result<ash::vk::Format, TextureImportError> {

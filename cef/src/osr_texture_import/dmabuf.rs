@@ -32,6 +32,19 @@ impl TextureImporter for DmaBufImporter {
     fn import_to_wgpu(&self, device: &wgpu::Device) -> TextureImportResult {
         // Try hardware acceleration first
         if self.supports_hardware_acceleration(device) {
+            #[cfg(feature = "accelerated_osr_dawn")]
+            match self.import_via_dawn(device) {
+                Ok(texture) => {
+                    tracing::info!("Successfully imported DMA-BUF texture via Dawn");
+                    return Ok(texture);
+                }
+                Err(e) => {
+                    tracing::debug!(
+                        "Failed to import DMA-BUF via Dawn: {}, trying Vulkan fallback",
+                        e
+                    );
+                }
+            }
             match self.import_via_vulkan(device) {
                 Ok(texture) => {
                     tracing::info!("Successfully imported DMA-BUF texture via Vulkan");
@@ -74,12 +87,134 @@ impl TextureImporter for DmaBufImporter {
             }
         }
 
+        #[cfg(feature = "accelerated_osr_dawn")]
+        if dawn_wgpu::Compat::<dawn_rs::Device>::try_from(device).is_ok() {
+            return true;
+        }
+
         // Check if wgpu is using Vulkan backend
         vulkan::is_vulkan_backend(device)
     }
 }
 
 impl DmaBufImporter {
+    #[cfg(feature = "accelerated_osr_dawn")]
+    fn drm_fourcc_from_cef(&self) -> Result<u32, TextureImportError> {
+        const fn fourcc(a: u8, b: u8, c: u8, d: u8) -> u32 {
+            (a as u32) | ((b as u32) << 8) | ((c as u32) << 16) | ((d as u32) << 24)
+        }
+        match self.format {
+            // BGRA in memory usually maps to DRM AR24
+            cef_color_type_t::CEF_COLOR_TYPE_BGRA_8888 => Ok(fourcc(b'A', b'R', b'2', b'4')),
+            // RGBA in memory usually maps to DRM AB24
+            cef_color_type_t::CEF_COLOR_TYPE_RGBA_8888 => Ok(fourcc(b'A', b'B', b'2', b'4')),
+            _ => Err(TextureImportError::UnsupportedFormat {
+                format: self.format,
+            }),
+        }
+    }
+
+    #[cfg(feature = "accelerated_osr_dawn")]
+    fn import_via_dawn(&self, device: &wgpu::Device) -> TextureImportResult {
+        use dawn_wgpu::{Compat, CompatTexture};
+
+        let dawn_device = Compat::<dawn_rs::Device>::try_from(device)
+            .map_err(|_| TextureImportError::HardwareUnavailable {
+                reason: "wgpu device is not backed by dawn-wgpu".into(),
+            })?
+            .into_inner();
+        if !dawn_device.has_feature(dawn_rs::FeatureName::SharedTextureMemoryDmaBuf) {
+            return Err(TextureImportError::HardwareUnavailable {
+                reason: "SharedTextureMemoryDmaBuf feature is unavailable".into(),
+            });
+        }
+
+        let mut planes = Vec::with_capacity(self.fds.len());
+        for i in 0..self.fds.len() {
+            let dup_fd = unsafe { libc::dup(self.fds[i]) };
+            if dup_fd < 0 {
+                return Err(TextureImportError::PlatformError {
+                    message: "Failed to dup DMA-BUF file descriptor".into(),
+                });
+            }
+            let mut plane = dawn_rs::SharedTextureMemoryDmaBufPlane::new();
+            plane.fd = Some(dup_fd);
+            plane.offset = Some(self.offsets.get(i).copied().unwrap_or(0) as u64);
+            plane.stride = Some(self.strides.get(i).copied().unwrap_or(0));
+            planes.push(plane);
+        }
+
+        let mut desc = dawn_rs::SharedTextureMemoryDmaBufDescriptor::new();
+        desc.size = Some(dawn_rs::Extent3D {
+            width: Some(self.width),
+            height: Some(self.height),
+            depth_or_array_layers: Some(1),
+        });
+        desc.drm_format = Some(self.drm_fourcc_from_cef()?);
+        desc.drm_modifier = Some(self.modifier);
+        desc.planes = Some(planes);
+        let shared_desc = dawn_rs::SharedTextureMemoryDescriptor::new().with_extension(desc.into());
+        let shared_memory = dawn_device.import_shared_texture_memory(&shared_desc);
+
+        let mut properties = dawn_rs::SharedTextureMemoryProperties::new();
+        let properties_status = shared_memory.get_properties(&mut properties);
+        if properties_status != dawn_rs::Status::Success {
+            return Err(TextureImportError::PlatformError {
+                message: format!(
+                    "Dawn DMA-BUF get_properties failed with {:?}",
+                    properties_status
+                ),
+            });
+        }
+
+        let mut dawn_texture_desc = dawn_rs::TextureDescriptor::new();
+        dawn_texture_desc.dimension = Some(dawn_rs::TextureDimension::D2);
+        dawn_texture_desc.format = properties
+            .format
+            .or(Some(format::cef_to_dawn(self.format)?));
+        let usage = properties
+            .usage
+            .unwrap_or(dawn_rs::TextureUsage::TEXTURE_BINDING)
+            | dawn_rs::TextureUsage::TEXTURE_BINDING;
+        dawn_texture_desc.usage = Some(usage);
+        dawn_texture_desc.size = properties.size.or(Some(dawn_rs::Extent3D {
+            width: Some(self.width),
+            height: Some(self.height),
+            depth_or_array_layers: Some(1),
+        }));
+
+        let dawn_texture = shared_memory.create_texture(Some(&dawn_texture_desc));
+        let mut begin_desc = dawn_rs::SharedTextureMemoryBeginAccessDescriptor::new();
+        begin_desc.initialized = Some(true);
+        begin_desc.concurrent_read = Some(false);
+        let status = shared_memory.begin_access(dawn_texture.clone(), &begin_desc);
+        if status != dawn_rs::Status::Success {
+            return Err(TextureImportError::PlatformError {
+                message: format!("Dawn DMA-BUF begin_access failed with {:?}", status),
+            });
+        }
+
+        let texture_desc = wgpu::TextureDescriptor {
+            label: Some("CEF Dawn DMA-BUF Texture"),
+            size: wgpu::Extent3d {
+                width: self.width,
+                height: self.height,
+                depth_or_array_layers: 1,
+            },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: format::cef_to_wgpu(self.format)?,
+            usage: wgpu::TextureUsages::TEXTURE_BINDING,
+            view_formats: &[],
+        };
+        let texture = wgpu::Texture::from(CompatTexture::new(dawn_texture.clone(), &texture_desc));
+
+        let _ = shared_memory;
+
+        Ok(texture)
+    }
+
     fn import_via_vulkan(&self, device: &wgpu::Device) -> TextureImportResult {
         // Get wgpu's Vulkan instance and device
         use wgpu::{wgc::api::Vulkan, TextureUses};
