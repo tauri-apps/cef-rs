@@ -2,6 +2,7 @@ use crate::AcceleratedPaintInfo;
 
 use super::{TextureImportError, TextureImportResult, TextureImporter};
 
+/// Borrowed CEF frame metadata; does not retain the shared resource.
 pub enum SharedTextureHandle {
     #[cfg(target_os = "linux")]
     DmaBuf(super::dmabuf::DmaBufImporter),
@@ -30,15 +31,33 @@ impl SharedTextureHandle {
         Self::Unsupported
     }
 
-    /// Import a texture using the appropriate platform-specific importer
-    pub fn import_texture(self, device: &wgpu::Device) -> TextureImportResult {
+    /// Copy the current shared frame into an application-owned texture.
+    ///
+    /// Waits for the GPU copy so the texture can outlive the CEF callback.
+    ///
+    /// # Safety
+    ///
+    /// Call within the originating `on_accelerated_paint` callback, while the
+    /// source remains valid and available for reading. `queue` must belong to
+    /// `device`, using the same physical GPU as CEF and the same driver for Vulkan.
+    pub unsafe fn import_texture(
+        self,
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+    ) -> TextureImportResult {
         match self {
             #[cfg(target_os = "linux")]
-            SharedTextureHandle::DmaBuf(importer) => importer.import_to_wgpu(device),
+            SharedTextureHandle::DmaBuf(importer) => unsafe {
+                importer.import_to_wgpu(device, queue)
+            },
             #[cfg(target_os = "windows")]
-            SharedTextureHandle::D3D11(importer) => importer.import_to_wgpu(device),
+            SharedTextureHandle::D3D11(importer) => unsafe {
+                importer.import_to_wgpu(device, queue)
+            },
             #[cfg(target_os = "macos")]
-            SharedTextureHandle::IOSurface(importer) => importer.import_to_wgpu(device),
+            SharedTextureHandle::IOSurface(importer) => unsafe {
+                importer.import_to_wgpu(device, queue)
+            },
             SharedTextureHandle::Unsupported => Err(TextureImportError::UnsupportedPlatform),
         }
     }

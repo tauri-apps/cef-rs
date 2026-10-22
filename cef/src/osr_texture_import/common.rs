@@ -34,38 +34,69 @@ pub mod format {
 pub mod texture {
     use super::*;
 
-    /// Create a fallback CPU texture with the given dimensions and format
-    pub fn create_fallback(
+    /// Copy the source and wait before CEF can reuse it.
+    #[cfg(any(target_os = "macos", target_os = "windows"))]
+    pub fn copy_to_owned(
         device: &Device,
-        width: u32,
-        height: u32,
-        format: cef_color_type_t,
-        label: &str,
+        queue: &wgpu::Queue,
+        source: wgpu::Texture,
+        release_state: Option<wgpu::TextureUses>,
     ) -> TextureImportResult {
-        let wgpu_format = format::cef_to_wgpu(format)?;
-
         let texture = device.create_texture(&wgpu::TextureDescriptor {
-            label: Some(label),
-            size: wgpu::Extent3d {
-                width,
-                height,
-                depth_or_array_layers: 1,
-            },
+            label: Some("CEF owned frame"),
+            size: source.size(),
             mip_level_count: 1,
             sample_count: 1,
             dimension: wgpu::TextureDimension::D2,
-            format: wgpu_format,
-            usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
+            format: source.format(),
+            usage: wgpu::TextureUsages::TEXTURE_BINDING
+                | wgpu::TextureUsages::COPY_DST
+                | wgpu::TextureUsages::COPY_SRC,
             view_formats: &[],
         });
 
-        tracing::warn!(
-            "Using fallback CPU texture for CEF rendering ({}x{}, {:?}) - hardware acceleration failed or unavailable. Consider checking GPU driver support.",
-            width,
-            height,
-            format
+        let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
+            label: Some("CEF frame copy"),
+        });
+        encoder.copy_texture_to_texture(
+            source.as_image_copy(),
+            texture.as_image_copy(),
+            source.size(),
         );
+        if let Some(state) = release_state {
+            encoder.transition_resources(
+                std::iter::empty(),
+                std::iter::once(wgpu::TextureTransition {
+                    texture: &source,
+                    selector: None,
+                    state,
+                }),
+            );
+        }
+        let submission = queue.submit([encoder.finish()]);
+        wait_for_copy(device, submission)?;
         Ok(texture)
+    }
+
+    pub fn wait_for_copy(
+        device: &Device,
+        submission: wgpu::SubmissionIndex,
+    ) -> Result<(), TextureImportError> {
+        loop {
+            match device.poll(wgpu::PollType::Wait {
+                submission_index: Some(submission.clone()),
+                timeout: None,
+            }) {
+                Ok(_) => return Ok(()),
+                // CEF must not reuse the source while the copy is in flight.
+                Err(wgpu::PollError::Timeout) => continue,
+                Err(error) => {
+                    return Err(TextureImportError::PlatformError {
+                        message: format!("Failed to wait for CEF frame copy: {error}"),
+                    });
+                }
+            }
+        }
     }
 }
 

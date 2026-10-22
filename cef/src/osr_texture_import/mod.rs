@@ -1,55 +1,44 @@
 //! Unified texture import system for CEF hardware acceleration
 //!
-//! This module provides a platform-agnostic interface for importing shared textures
-//! from CEF into wgpu, with automatic fallback to CPU textures when hardware
-//! acceleration is not available.
+//! Copies CEF shared textures into application-owned wgpu textures and waits for
+//! completion before CEF can reuse the source after `on_accelerated_paint`.
+//!
+//! Import failures are returned as errors. Software rendering uses `on_paint`.
 //!
 //! # Supported Platforms
 //!
 //! - **Linux**: DMA-BUF via Vulkan external memory
-//! - **Windows**: D3D11 shared textures via Vulkan interop
+//! - **Windows**: D3D11 shared textures via D3D12 or Vulkan interop
 //! - **macOS**: IOSurface via Metal native API
 //!
 //! # Usage
 //!
 //! ```no_run
-//! use cef::{PaintElementType, AcceleratedPaintInfo};
-//! use wgpu::Device;
-//! fn on_accelerated_paint(device: &wgpu::Device, type_: PaintElementType, info: Option<&AcceleratedPaintInfo>) {
+//! use cef::{osr_texture_import::SharedTextureHandle, PaintElementType, AcceleratedPaintInfo};
+//! fn on_accelerated_paint(device: &wgpu::Device, queue: &wgpu::Queue, type_: PaintElementType, info: Option<&AcceleratedPaintInfo>) {
 //!     let Some(info) = info else { return };
-//!
-//!     let src_texture = {
-//!         use cef::osr_texture_import::shared_texture_handle::SharedTextureHandle;
-//!
-//!         if type_ != PaintElementType::default() {
+//!     if type_ != PaintElementType::default() {
+//!         return;
+//!     }
+//!     let shared_handle = SharedTextureHandle::new(info);
+//!     // SAFETY: Called inside the CEF callback, with its current frame and
+//!     // a device/queue using the same GPU (and driver for Vulkan) as CEF.
+//!     let texture = match unsafe { shared_handle.import_texture(device, queue) } {
+//!         Ok(texture) => texture,
+//!         Err(error) => {
+//!             eprintln!("Failed to copy shared texture: {error}");
 //!             return;
 //!         }
-//!
-//!         // Import texture with automatic platform detection
-//!         let shared_handle = SharedTextureHandle::new(info);
-//!         if let SharedTextureHandle::Unsupported = shared_handle {
-//!             eprintln!("Platform does not support accelerated painting");
-//!             return;
-//!         }
-//!
-//!         match shared_handle.import_texture(device) {
-//!             Ok(texture) => texture,
-//!                 Err(e) => {
-//!                     eprintln!("Failed to import shared texture: {:?}", e);
-//!                     return;
-//!                 }
-//!         }
-//!         // Use `src_texture` in rendering pipeline...
 //!     };
-//!     // Use `src_texture` in rendering pipeline...
-//! };
-//!```
+//!     // The texture can be retained after the callback.
+//! }
+//! ```
+//!
 //! # Features
 //!
-//! - `accelerated_paint` - Base feature for texture import
-//! - `accelerated_paint_dmabuf` - Linux DMA-BUF support
-//! - `accelerated_paint_d3d11` - Windows D3D11 support
-//! - `accelerated_paint_iosurface` - macOS IOSurface support
+//! Enable `accelerated_osr` for texture import on the current platform.
+//! Vulkan devices must enable `wgpu::Features::VULKAN_EXTERNAL_MEMORY_DMA_BUF`
+//! on Linux or `wgpu::Features::VULKAN_EXTERNAL_MEMORY_WIN32` on Windows.
 
 pub(crate) mod common;
 
@@ -64,6 +53,9 @@ pub(crate) mod d3d11;
 
 #[cfg(target_os = "macos")]
 pub(crate) mod iosurface;
+
+#[cfg(any(target_os = "linux", target_os = "windows"))]
+pub(crate) mod vulkan;
 
 /// Result type for texture import operations
 pub type TextureImportResult = Result<wgpu::Texture, TextureImportError>;
@@ -104,8 +96,18 @@ impl From<wgpu::hal::DeviceError> for TextureImportError {
 pub trait TextureImporter {
     fn new(info: &crate::AcceleratedPaintInfo) -> Self;
 
-    /// Import the texture into wgpu, with automatic fallback to CPU texture
-    fn import_to_wgpu(&self, device: &wgpu::Device) -> TextureImportResult;
+    /// Copy the shared frame into an owned texture, waiting for GPU completion.
+    ///
+    /// # Safety
+    ///
+    /// Call within the originating `on_accelerated_paint` callback, while the
+    /// source remains valid and available for reading. `queue` must belong to
+    /// `device`, using the same physical GPU as CEF and the same driver for Vulkan.
+    unsafe fn import_to_wgpu(
+        &self,
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+    ) -> TextureImportResult;
 
     /// Check if hardware acceleration is available for this texture
     fn supports_hardware_acceleration(&self, device: &wgpu::Device) -> bool;

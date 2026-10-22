@@ -47,6 +47,8 @@ impl State {
             .unwrap();
         let (device, queue) = adapter
             .request_device(&wgpu::DeviceDescriptor {
+                #[cfg(all(target_os = "linux", feature = "accelerated_osr"))]
+                required_features: wgpu::Features::VULKAN_EXTERNAL_MEMORY_DMA_BUF,
                 required_limits: wgpu::Limits {
                     max_non_sampler_bindings: 2048,
                     ..Default::default()

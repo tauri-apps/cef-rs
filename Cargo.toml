@@ -68,4 +68,4 @@ features = ["Win32_System_Environment", "Win32_System_LibraryLoader", "Win32_UI_
 
 [workspace.dependencies.windows]
 version = "0.62"
-features = ["Win32_Graphics_Direct3D12"]
+features = ["Win32_Graphics_Direct3D12", "Win32_Graphics_Dxgi_Common"]
