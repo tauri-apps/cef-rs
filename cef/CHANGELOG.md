@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [155.0.0+154.0.34](https://github.com/tauri-apps/cef-rs/compare/cef-v154.5.0+154.0.34...cef-v155.0.0+154.0.34) - 2026-10-23
+
+### Fixed
+
+- *(osr)* copy shared textures before accelerated paint callbacks return ([#498](https://github.com/tauri-apps/cef-rs/pull/498))
+
 ### Fixed
 
 - fix(osr): copy shared textures before accelerated paint callbacks return
