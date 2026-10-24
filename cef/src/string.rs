@@ -376,9 +376,11 @@ impl From<_cef_string_utf8_t> for CefStringUtf8 {
 
 impl From<CefStringUtf8> for _cef_string_utf8_t {
     fn from(value: CefStringUtf8) -> Self {
-        match value.0 {
-            CefStringData::Borrowed(value) => value,
-            _ => None,
+        let mut value = value;
+        match &mut value.0 {
+            CefStringData::Borrowed(value) => *value,
+            CefStringData::Clear(value) => value.take(),
+            CefStringData::BorrowedMut(_) => None,
         }
         .unwrap_or(unsafe { mem::zeroed() })
     }
@@ -550,9 +552,11 @@ impl From<_cef_string_utf16_t> for CefStringUtf16 {
 
 impl From<CefStringUtf16> for _cef_string_utf16_t {
     fn from(value: CefStringUtf16) -> Self {
-        match value.0 {
-            CefStringData::Borrowed(value) => value,
-            _ => None,
+        let mut value = value;
+        match &mut value.0 {
+            CefStringData::Borrowed(value) => *value,
+            CefStringData::Clear(value) => value.take(),
+            CefStringData::BorrowedMut(_) => None,
         }
         .unwrap_or(unsafe { mem::zeroed() })
     }
@@ -711,9 +715,11 @@ impl From<_cef_string_wide_t> for CefStringWide {
 
 impl From<CefStringWide> for _cef_string_wide_t {
     fn from(value: CefStringWide) -> Self {
-        match value.0 {
-            CefStringData::Borrowed(value) => value,
-            _ => None,
+        let mut value = value;
+        match &mut value.0 {
+            CefStringData::Borrowed(value) => *value,
+            CefStringData::Clear(value) => value.take(),
+            CefStringData::BorrowedMut(_) => None,
         }
         .unwrap_or(unsafe { mem::zeroed() })
     }
@@ -1349,6 +1355,41 @@ mod test {
                 1
             );
         })
+    }
+
+    #[test]
+    fn test_owned_string_into_raw() {
+        #[cfg(target_os = "macos")]
+        ensure_dll_loaded();
+
+        let mut utf8: sys::_cef_string_utf8_t = CefStringUtf8::from("foo").into();
+        assert_eq!(CefStringUtf8::from(&raw const utf8).as_str(), Some("foo"));
+        unsafe { sys::cef_string_utf8_clear(&mut utf8) };
+
+        let mut utf16: sys::_cef_string_utf16_t = CefStringUtf16::from("bar").into();
+        assert_eq!(CefStringUtf16::from(&raw const utf16).to_string(), "bar");
+        unsafe { sys::cef_string_utf16_clear(&mut utf16) };
+
+        let mut wide: sys::_cef_string_wide_t = CefStringWide::from("baz").into();
+        assert_eq!(CefStringWide::from(&raw const wide).to_string(), "baz");
+        unsafe { sys::cef_string_wide_clear(&mut wide) };
+    }
+
+    #[test]
+    fn test_owned_string_in_out_param() {
+        #[cfg(target_os = "macos")]
+        ensure_dll_loaded();
+
+        let mut raw: sys::_cef_linux_window_properties_t = LinuxWindowProperties::default().into();
+        {
+            let mut properties = rc::WrapParamRef::<LinuxWindowProperties, _>::from(&raw mut raw);
+            properties.as_mut().wayland_app_id = CefString::from("app-id");
+        }
+        assert_eq!(
+            CefString::from(&raw const raw.wayland_app_id).to_string(),
+            "app-id"
+        );
+        unsafe { sys::cef_string_utf16_clear(&mut raw.wayland_app_id) };
     }
 
     #[test]
