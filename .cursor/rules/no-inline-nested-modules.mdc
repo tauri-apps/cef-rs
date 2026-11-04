@@ -1,0 +1,47 @@
+---
+description: No inline mod { … } blocks; use sibling .rs files (+ cfg(test) exception)
+alwaysApply: true
+---
+
+# Module Layout Rule: No Inline `mod { … }` Blocks
+
+- Do not declare modules with an inline body in the same file (`mod foo { … }`, `pub mod foo { … }`). Use a sibling file: `foo.rs` next to the parent, or `parent/foo.rs` when the parent is already a directory module (see `no-mod-rs-modules.mdc`).
+- In the parent, use `mod foo;` or `pub mod foo;` only (no braces).
+- Nested inline modules are doubly disallowed (`mod a { mod b { … } }`).
+
+## Exceptions
+
+- **`examples/vmux/src/`:** Large single files (`log.rs`, `browser/cef.rs`, `browser/cef/osr.rs`, `browser/cef/renderer.rs`) intentionally keep many items in one module **without** nested `mod { … }`. Prefer `#[cfg(test)]` on each test helper / `#[test]` fn instead of `#[cfg(test)] mod tests { … }`.
+- **Elsewhere in the repo:** `#[cfg(test)] mod tests { … }` may stay inline when splitting to `tests/` or `foo_tests.rs` is impractical. Avoid nested `mod` inside test modules unless necessary.
+
+## Example
+
+```rust
+// ❌ BAD — inline module body
+mod event {
+    pub struct RuntimeState;
+}
+
+// ✅ GOOD
+// runtime.rs
+mod event;
+
+// runtime/event.rs
+pub struct RuntimeState;
+```
+
+```rust
+// ❌ BAD — nested inline modules
+mod browser {
+    mod cef {
+        pub fn init() {}
+    }
+}
+
+// ✅ GOOD — file-based
+// browser.rs
+pub mod cef;
+
+// browser/cef.rs
+pub fn init() {}
+```
