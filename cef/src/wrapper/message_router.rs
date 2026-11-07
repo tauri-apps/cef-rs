@@ -1241,11 +1241,8 @@ impl RendererSideRouter {
         request_id: i32,
     ) -> bool {
         debug_assert_ne!(currently_on(ThreadId::RENDERER), 0);
-        let (Some(browser_id), Some(frame), Ok(mut browser_request_info_map)) = (
-            browser.as_ref().map(Browser::identifier),
-            frame,
-            self.browser_request_info_map.lock(),
-        ) else {
+        let (Some(browser_id), Some(frame)) = (browser.as_ref().map(Browser::identifier), frame)
+        else {
             return false;
         };
 
@@ -1288,6 +1285,9 @@ impl RendererSideRouter {
                 cancel_count: Default::default(),
             };
 
+            let Ok(mut browser_request_info_map) = self.browser_request_info_map.lock() else {
+                return false;
+            };
             browser_request_info_map.find_browser_all(browser_id, &visitor);
             visitor.cancel_count.load(Ordering::Relaxed)
         };
