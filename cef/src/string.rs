@@ -285,8 +285,33 @@ impl<'a, T> From<&'a CefStringData<T>> for Option<&'a T> {
     }
 }
 
-impl<'a, T> From<&'a mut CefStringData<T>> for Option<&'a mut T> {
+/// The raw CEF string structs. Each one is a valid empty string when zeroed: a null buffer, a
+/// length of 0 and no destructor.
+trait RawCefString: Sized {
+    fn empty() -> Self {
+        // SAFETY: see the trait documentation.
+        unsafe { mem::zeroed() }
+    }
+}
+
+impl RawCefString for _cef_string_utf8_t {}
+impl RawCefString for _cef_string_utf16_t {}
+impl RawCefString for _cef_string_wide_t {}
+
+impl<'a, T> From<&'a mut CefStringData<T>> for Option<&'a mut T>
+where
+    T: RawCefString,
+{
     fn from(value: &'a mut CefStringData<T>) -> Self {
+        // A string passed as `&mut` is usually an out-parameter (`string_byref` in CEF), and CEF
+        // rejects those calls when the pointer is null. Give an empty string its own storage
+        // first, so the callee can write into it and the result is freed on drop.
+        if matches!(
+            value,
+            CefStringData::Borrowed(None) | CefStringData::Clear(None)
+        ) {
+            *value = CefStringData::Clear(Some(T::empty()));
+        }
         match value {
             CefStringData::BorrowedMut(value) => {
                 value.as_mut().map(|value| unsafe { value.as_mut() })
@@ -1349,6 +1374,25 @@ mod test {
                 1
             );
         })
+    }
+
+    #[test]
+    fn test_empty_string_out_param() {
+        #[cfg(target_os = "macos")]
+        ensure_dll_loaded();
+
+        // An empty string used as an out-parameter must not turn into a null pointer.
+        let mut value = CefString::default();
+        let raw: *mut sys::_cef_string_utf16_t = (&mut value).into();
+        assert!(!raw.is_null());
+
+        // The callee can write into it, and the result is readable.
+        let text: Vec<u16> = "written".encode_utf16().collect();
+        assert_eq!(
+            unsafe { sys::cef_string_utf16_set(text.as_ptr(), text.len(), raw, 1) },
+            1
+        );
+        assert_eq!(value.to_string(), "written");
     }
 
     #[test]
