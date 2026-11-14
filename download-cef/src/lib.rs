@@ -132,6 +132,10 @@ where
 
 pub const DEFAULT_CDN_URL: &str = "https://cef-builds.spotifycdn.com";
 
+/// Upper bound on the size of the CEF builds index, which lists every build
+/// ever published and only grows.
+const INDEX_SIZE_LIMIT: u64 = 256 * 1024 * 1024;
+
 pub fn default_download_url() -> String {
     env::var("CEF_DOWNLOAD_URL").unwrap_or(DEFAULT_CDN_URL.to_owned())
 }
@@ -170,9 +174,12 @@ impl CefIndex {
     }
 
     pub fn download_from(url: &str) -> Result<Self> {
+        // The index has outgrown ureq's default 10 MB body limit.
         Ok(ureq::get(&format!("{url}/index.json"))
             .call()?
             .into_body()
+            .with_config()
+            .limit(INDEX_SIZE_LIMIT)
             .read_json()?)
     }
 

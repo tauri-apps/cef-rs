@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- raise the size limit when downloading the CEF builds index
+
 ## [3.0.0](https://github.com/tauri-apps/cef-rs/compare/download-cef-v2.3.2...download-cef-v3.0.0) - 2026-09-12
 
 ### Added
