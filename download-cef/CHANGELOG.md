@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.1](https://github.com/tauri-apps/cef-rs/compare/download-cef-v3.0.0...download-cef-v3.0.1) - 2026-11-15
+
+### Fixed
+
+- *(download-cef)* allow bounded CEF indexes above 10 MiB ([#512](https://github.com/tauri-apps/cef-rs/pull/512))
+
 ### Fixed
 
 - fix(download-cef): allow CEF indexes up to 32 MiB while retaining a size bound
