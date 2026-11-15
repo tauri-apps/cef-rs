@@ -130,6 +130,10 @@ where
     std::path::absolute(&location).unwrap_or(location)
 }
 
+// Keep a bound while allowing the growing multi-platform CEF index to exceed
+// ureq's 10 MiB read_json default. Archive downloads use a separate streaming path.
+const MAX_INDEX_BYTES: u64 = 32 * 1024 * 1024;
+
 pub const DEFAULT_CDN_URL: &str = "https://cef-builds.spotifycdn.com";
 
 pub fn default_download_url() -> String {
@@ -173,6 +177,8 @@ impl CefIndex {
         Ok(ureq::get(&format!("{url}/index.json"))
             .call()?
             .into_body()
+            .with_config()
+            .limit(MAX_INDEX_BYTES)
             .read_json()?)
     }
 
@@ -691,3 +697,62 @@ pub const DEFAULT_TARGET: &str = "aarch64-pc-windows-msvc";
 pub const DEFAULT_TARGET: &str = "x86_64-apple-darwin";
 #[cfg(all(target_os = "macos", target_arch = "aarch64"))]
 pub const DEFAULT_TARGET: &str = "aarch64-apple-darwin";
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::io::{Read, Write};
+    use std::net::TcpListener;
+
+    fn index_server(size: usize) -> (String, std::thread::JoinHandle<()>) {
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let url = format!("http://{}", listener.local_addr().unwrap());
+        let mut body = serde_json::to_vec(&CefIndex::default()).unwrap();
+        body.resize(size, b' '); // Valid JSON trailing whitespace; no large fixture in Git.
+        let job = std::thread::spawn(move || {
+            let (mut stream, _) = listener.accept().unwrap();
+            let mut request = [0; 8192];
+            let read = stream.read(&mut request).unwrap();
+            assert!(request[..read].starts_with(b"GET /index.json "));
+            write!(
+                stream,
+                "HTTP/1.1 200 OK\r\nContent-Length: {}\r\nConnection: close\r\n\r\n",
+                body.len()
+            )
+            .unwrap();
+            // The over-limit case may close the socket before the final write.
+            let _ = stream.write_all(&body);
+        });
+        (url, job)
+    }
+
+    #[test]
+    fn index_larger_than_ureq_default_is_accepted() {
+        let (url, job) = index_server(10 * 1024 * 1024 + 1024);
+        let index = CefIndex::download_from(&url).unwrap();
+        assert!(index.macosarm64.versions.is_empty());
+        job.join().unwrap();
+    }
+
+    #[test]
+    fn oversized_index_is_still_rejected() {
+        let (url, job) = index_server(MAX_INDEX_BYTES as usize + 1);
+        let error = CefIndex::download_from(&url)
+            .err()
+            .expect("oversized index accepted");
+        match error {
+            Error::Request(ureq::Error::BodyExceedsLimit(limit)) => {
+                assert_eq!(limit, MAX_INDEX_BYTES)
+            }
+            // Streaming JSON wraps the reader's size error in serde_json::Error.
+            Error::Request(ureq::Error::Json(error)) => {
+                assert!(error.is_io());
+                assert!(error
+                    .to_string()
+                    .contains(&format!("request limit: {MAX_INDEX_BYTES}")));
+            }
+            other => panic!("unexpected error: {other:?}"),
+        }
+        job.join().unwrap();
+    }
+}
