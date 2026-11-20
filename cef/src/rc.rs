@@ -51,6 +51,13 @@ pub trait Rc {
     fn as_base(&self) -> &cef_base_ref_counted_t;
 }
 
+/// Implementation detail used by generated `wrap_*` macros to read the wrapped CEF object pointer.
+#[doc(hidden)]
+pub trait WrapRcPtr {
+    /// Returns the raw CEF object pointer without changing its reference count.
+    fn as_rc_ptr(&self) -> *mut std::os::raw::c_void;
+}
+
 impl Rc for cef_base_ref_counted_t {
     unsafe fn add_ref(&self) {
         if let Some(add_ref) = self.add_ref {
@@ -266,6 +273,14 @@ impl<T: Rc> RefGuard<T> {
     /// value to the function call. Using this method elsewhere may cause incorrect reference count
     /// and memory safety issues.
     pub unsafe fn into_raw(&self) -> *mut T {
+        self.object
+    }
+
+    /// Borrow the raw pointer without changing the reference count or implying an ownership transfer.
+    ///
+    /// Use this accessor when the pointer is only observed. Use [`RefGuard::into_raw`] for call
+    /// sites that intentionally pass ownership at an FFI boundary.
+    pub fn as_ptr(&self) -> *mut T {
         self.object
     }
 

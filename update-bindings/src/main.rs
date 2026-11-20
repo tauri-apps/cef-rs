@@ -113,3 +113,85 @@ fn read_bindings(source_path: &Path) -> crate::Result<String> {
     source_file.read_to_string(&mut updated)?;
     Ok(updated)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::parse_tree;
+    use std::fs;
+
+    #[test]
+    fn generated_wrap_macros_support_external_trait_impls() {
+        let test_dir = std::env::temp_dir().join(format!(
+            "cef-rs-wrap-macro-generator-test-{}",
+            std::process::id()
+        ));
+        fs::create_dir_all(&test_dir).unwrap();
+        let source_path = test_dir.join("bindings.rs");
+        fs::write(
+            &source_path,
+            r#"
+#![allow(non_camel_case_types)]
+
+pub type size_t = usize;
+
+#[repr(C)]
+pub type cef_base_ref_counted_t = _cef_base_ref_counted_t;
+
+#[repr(C)]
+pub struct _cef_base_ref_counted_t {
+    pub size: size_t,
+    pub add_ref: Option<unsafe extern "C" fn(self_: *mut _cef_base_ref_counted_t)>,
+    pub release: Option<unsafe extern "C" fn(self_: *mut _cef_base_ref_counted_t) -> ::std::os::raw::c_int>,
+    pub has_one_ref: Option<unsafe extern "C" fn(self_: *mut _cef_base_ref_counted_t) -> ::std::os::raw::c_int>,
+    pub has_at_least_one_ref: Option<unsafe extern "C" fn(self_: *mut _cef_base_ref_counted_t) -> ::std::os::raw::c_int>,
+}
+
+#[repr(C)]
+pub struct cef_size_t {
+    pub width: ::std::os::raw::c_int,
+    pub height: ::std::os::raw::c_int,
+}
+
+#[repr(C)]
+pub struct _cef_view_delegate_t {
+    pub base: _cef_base_ref_counted_t,
+    pub get_preferred_size: Option<unsafe extern "C" fn(self_: *mut _cef_view_delegate_t) -> cef_size_t>,
+}
+
+#[repr(C)]
+pub struct _cef_panel_delegate_t {
+    pub base: _cef_view_delegate_t,
+}
+
+#[repr(C)]
+pub struct _cef_window_delegate_t {
+    pub base: _cef_panel_delegate_t,
+    pub can_close: Option<unsafe extern "C" fn(self_: *mut _cef_window_delegate_t) -> ::std::os::raw::c_int>,
+}
+"#,
+        )
+        .unwrap();
+
+        let generated_path = parse_tree::generate_bindings(&source_path).unwrap();
+        let generated = fs::read_to_string(generated_path).unwrap();
+        let patterns = [
+            "pubtraitImplWindowDelegate:ImplPanelDelegate",
+            "pubtraitImplViewDelegate:Clone+Sized+Rc+crate::rc::WrapRcPtr",
+            "($vis:visstruct$name:ident;)=>{wrap_window_delegate!{$visstruct$name{}}}",
+            "fnget_raw(&self)->*mut_cef_view_delegate_t{self.as_rc_ptr().cast()}",
+        ]
+        .map(strip_whitespace);
+
+        let bindings = strip_whitespace(&generated);
+        for pattern in patterns.iter() {
+            assert!(
+                bindings.contains(pattern),
+                "generated bindings are missing pattern: {pattern}"
+            );
+        }
+    }
+
+    fn strip_whitespace(source: &str) -> String {
+        source.chars().filter(|c| !c.is_whitespace()).collect()
+    }
+}
