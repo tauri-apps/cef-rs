@@ -508,6 +508,408 @@ impl Default for AcceleratedPaintInfo {
     }
 }
 
+/// See [`_cef_mouse_input_event_t`] for more documentation.
+#[derive(Clone, Debug)]
+pub struct MouseInputEvent {
+    pub size: usize,
+    pub type_: MouseInputEventType,
+    pub modifiers: u32,
+    pub timestamp: i64,
+    pub x: f32,
+    pub y: f32,
+    pub screen_x: f32,
+    pub screen_y: f32,
+    pub button: MouseButtonType,
+    pub click_count: i32,
+    pub pointer_type: PointerType,
+    pub pointer_id: i32,
+    pub pressure: f32,
+    pub tilt_x: f64,
+    pub tilt_y: f64,
+    pub tangential_pressure: f32,
+    pub twist: i32,
+    pub movement_x: i32,
+    pub movement_y: i32,
+    pub is_raw_movement_event: i32,
+    pub device_id: i32,
+    pub menu_source_type: i32,
+}
+impl MouseInputEvent {
+    fn get_raw(&self) -> _cef_mouse_input_event_t {
+        self.clone().into()
+    }
+}
+impl From<_cef_mouse_input_event_t> for MouseInputEvent {
+    fn from(value: _cef_mouse_input_event_t) -> Self {
+        Self {
+            size: value.size,
+            type_: value.type_.into(),
+            modifiers: value.modifiers,
+            timestamp: value.timestamp,
+            x: value.x,
+            y: value.y,
+            screen_x: value.screen_x,
+            screen_y: value.screen_y,
+            button: value.button.into(),
+            click_count: value.click_count,
+            pointer_type: value.pointer_type.into(),
+            pointer_id: value.pointer_id,
+            pressure: value.pressure,
+            tilt_x: value.tilt_x,
+            tilt_y: value.tilt_y,
+            tangential_pressure: value.tangential_pressure,
+            twist: value.twist,
+            movement_x: value.movement_x,
+            movement_y: value.movement_y,
+            is_raw_movement_event: value.is_raw_movement_event,
+            device_id: value.device_id,
+            menu_source_type: value.menu_source_type,
+        }
+    }
+}
+impl From<MouseInputEvent> for _cef_mouse_input_event_t {
+    fn from(value: MouseInputEvent) -> Self {
+        Self {
+            size: value.size,
+            type_: value.type_.into(),
+            modifiers: value.modifiers,
+            timestamp: value.timestamp,
+            x: value.x,
+            y: value.y,
+            screen_x: value.screen_x,
+            screen_y: value.screen_y,
+            button: value.button.into(),
+            click_count: value.click_count,
+            pointer_type: value.pointer_type.into(),
+            pointer_id: value.pointer_id,
+            pressure: value.pressure,
+            tilt_x: value.tilt_x,
+            tilt_y: value.tilt_y,
+            tangential_pressure: value.tangential_pressure,
+            twist: value.twist,
+            movement_x: value.movement_x,
+            movement_y: value.movement_y,
+            is_raw_movement_event: value.is_raw_movement_event,
+            device_id: value.device_id,
+            menu_source_type: value.menu_source_type,
+        }
+    }
+}
+impl Default for MouseInputEvent {
+    fn default() -> Self {
+        Self {
+            size: std::mem::size_of::<_cef_mouse_input_event_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
+    }
+}
+
+/// See [`_cef_gesture_input_event_t`] for more documentation.
+#[derive(Clone, Debug)]
+pub struct GestureInputEvent {
+    pub size: usize,
+    pub type_: GestureInputEventType,
+    pub modifiers: u32,
+    pub timestamp: i64,
+    pub x: f32,
+    pub y: f32,
+    pub screen_x: f32,
+    pub screen_y: f32,
+    pub source_device: GestureDevice,
+    pub primary_pointer_type: PointerType,
+    pub primary_unique_touch_event_id: u32,
+    pub unique_touch_event_id: u32,
+    pub is_source_touch_event_set_blocking: i32,
+    pub tap_count: i32,
+    pub width: f32,
+    pub height: f32,
+    pub delta_x: f32,
+    pub delta_y: f32,
+    pub delta_x_unconstrained: f32,
+    pub delta_y_unconstrained: f32,
+    pub delta_units: GestureScrollUnits,
+    pub inertial_phase: i32,
+    pub pointer_count: i32,
+    pub scale: f32,
+    pub velocity_x: f32,
+    pub velocity_y: f32,
+    pub target_viewport: i32,
+    pub prevent_boosting: i32,
+    pub needs_wheel_event: i32,
+    pub zoom_disabled: i32,
+    pub synthetic: i32,
+    pub cursor_control: i32,
+}
+impl GestureInputEvent {
+    fn get_raw(&self) -> _cef_gesture_input_event_t {
+        self.clone().into()
+    }
+}
+impl From<_cef_gesture_input_event_t> for GestureInputEvent {
+    fn from(value: _cef_gesture_input_event_t) -> Self {
+        Self {
+            size: value.size,
+            type_: value.type_.into(),
+            modifiers: value.modifiers,
+            timestamp: value.timestamp,
+            x: value.x,
+            y: value.y,
+            screen_x: value.screen_x,
+            screen_y: value.screen_y,
+            source_device: value.source_device.into(),
+            primary_pointer_type: value.primary_pointer_type.into(),
+            primary_unique_touch_event_id: value.primary_unique_touch_event_id,
+            unique_touch_event_id: value.unique_touch_event_id,
+            is_source_touch_event_set_blocking: value.is_source_touch_event_set_blocking,
+            tap_count: value.tap_count,
+            width: value.width,
+            height: value.height,
+            delta_x: value.delta_x,
+            delta_y: value.delta_y,
+            delta_x_unconstrained: value.delta_x_unconstrained,
+            delta_y_unconstrained: value.delta_y_unconstrained,
+            delta_units: value.delta_units.into(),
+            inertial_phase: value.inertial_phase,
+            pointer_count: value.pointer_count,
+            scale: value.scale,
+            velocity_x: value.velocity_x,
+            velocity_y: value.velocity_y,
+            target_viewport: value.target_viewport,
+            prevent_boosting: value.prevent_boosting,
+            needs_wheel_event: value.needs_wheel_event,
+            zoom_disabled: value.zoom_disabled,
+            synthetic: value.synthetic,
+            cursor_control: value.cursor_control,
+        }
+    }
+}
+impl From<GestureInputEvent> for _cef_gesture_input_event_t {
+    fn from(value: GestureInputEvent) -> Self {
+        Self {
+            size: value.size,
+            type_: value.type_.into(),
+            modifiers: value.modifiers,
+            timestamp: value.timestamp,
+            x: value.x,
+            y: value.y,
+            screen_x: value.screen_x,
+            screen_y: value.screen_y,
+            source_device: value.source_device.into(),
+            primary_pointer_type: value.primary_pointer_type.into(),
+            primary_unique_touch_event_id: value.primary_unique_touch_event_id,
+            unique_touch_event_id: value.unique_touch_event_id,
+            is_source_touch_event_set_blocking: value.is_source_touch_event_set_blocking,
+            tap_count: value.tap_count,
+            width: value.width,
+            height: value.height,
+            delta_x: value.delta_x,
+            delta_y: value.delta_y,
+            delta_x_unconstrained: value.delta_x_unconstrained,
+            delta_y_unconstrained: value.delta_y_unconstrained,
+            delta_units: value.delta_units.into(),
+            inertial_phase: value.inertial_phase,
+            pointer_count: value.pointer_count,
+            scale: value.scale,
+            velocity_x: value.velocity_x,
+            velocity_y: value.velocity_y,
+            target_viewport: value.target_viewport,
+            prevent_boosting: value.prevent_boosting,
+            needs_wheel_event: value.needs_wheel_event,
+            zoom_disabled: value.zoom_disabled,
+            synthetic: value.synthetic,
+            cursor_control: value.cursor_control,
+        }
+    }
+}
+impl Default for GestureInputEvent {
+    fn default() -> Self {
+        Self {
+            size: std::mem::size_of::<_cef_gesture_input_event_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
+    }
+}
+
+/// See [`_cef_keyboard_input_event_t`] for more documentation.
+#[derive(Clone, Debug)]
+pub struct KeyboardInputEvent {
+    pub size: usize,
+    pub type_: KeyEventType,
+    pub modifiers: u32,
+    pub timestamp: i64,
+    pub dom_code: u32,
+    pub dom_key: u32,
+    pub windows_key_code: ::std::os::raw::c_int,
+    pub is_system_key: ::std::os::raw::c_int,
+    pub text: [char16_t; 4usize],
+    pub unmodified_text: [char16_t; 4usize],
+}
+impl KeyboardInputEvent {
+    fn get_raw(&self) -> _cef_keyboard_input_event_t {
+        self.clone().into()
+    }
+}
+impl From<_cef_keyboard_input_event_t> for KeyboardInputEvent {
+    fn from(value: _cef_keyboard_input_event_t) -> Self {
+        Self {
+            size: value.size,
+            type_: value.type_.into(),
+            modifiers: value.modifiers,
+            timestamp: value.timestamp,
+            dom_code: value.dom_code,
+            dom_key: value.dom_key,
+            windows_key_code: value.windows_key_code,
+            is_system_key: value.is_system_key,
+            text: init_array_field(value.text),
+            unmodified_text: init_array_field(value.unmodified_text),
+        }
+    }
+}
+impl From<KeyboardInputEvent> for _cef_keyboard_input_event_t {
+    fn from(value: KeyboardInputEvent) -> Self {
+        Self {
+            size: value.size,
+            type_: value.type_.into(),
+            modifiers: value.modifiers,
+            timestamp: value.timestamp,
+            dom_code: value.dom_code,
+            dom_key: value.dom_key,
+            windows_key_code: value.windows_key_code,
+            is_system_key: value.is_system_key,
+            text: init_array_field(value.text),
+            unmodified_text: init_array_field(value.unmodified_text),
+        }
+    }
+}
+impl Default for KeyboardInputEvent {
+    fn default() -> Self {
+        Self {
+            size: std::mem::size_of::<_cef_keyboard_input_event_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
+    }
+}
+
+/// See [`_cef_input_event_context_t`] for more documentation.
+#[derive(Clone, Debug)]
+pub struct InputEventContext {
+    pub size: usize,
+    pub focus_on_editable_field: ::std::os::raw::c_int,
+    pub os_event: *mut MSG,
+}
+impl InputEventContext {
+    fn get_raw(&self) -> _cef_input_event_context_t {
+        self.clone().into()
+    }
+}
+impl From<_cef_input_event_context_t> for InputEventContext {
+    fn from(value: _cef_input_event_context_t) -> Self {
+        Self {
+            size: value.size,
+            focus_on_editable_field: value.focus_on_editable_field,
+            os_event: value.os_event,
+        }
+    }
+}
+impl From<InputEventContext> for _cef_input_event_context_t {
+    fn from(value: InputEventContext) -> Self {
+        Self {
+            size: value.size,
+            focus_on_editable_field: value.focus_on_editable_field,
+            os_event: value.os_event,
+        }
+    }
+}
+impl Default for InputEventContext {
+    fn default() -> Self {
+        Self {
+            size: std::mem::size_of::<_cef_input_event_context_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
+    }
+}
+
+/// See [`_cef_wheel_input_event_t`] for more documentation.
+#[derive(Clone, Debug)]
+pub struct WheelInputEvent {
+    pub size: usize,
+    pub modifiers: u32,
+    pub timestamp: i64,
+    pub x: f32,
+    pub y: f32,
+    pub screen_x: f32,
+    pub screen_y: f32,
+    pub delta_x: f32,
+    pub delta_y: f32,
+    pub wheel_ticks_x: f32,
+    pub wheel_ticks_y: f32,
+    pub delta_units: GestureScrollUnits,
+    pub phase: WheelEventPhase,
+    pub momentum_phase: WheelEventPhase,
+    pub rails_mode: i32,
+    pub acceleration_ratio_x: f32,
+    pub acceleration_ratio_y: f32,
+}
+impl WheelInputEvent {
+    fn get_raw(&self) -> _cef_wheel_input_event_t {
+        self.clone().into()
+    }
+}
+impl From<_cef_wheel_input_event_t> for WheelInputEvent {
+    fn from(value: _cef_wheel_input_event_t) -> Self {
+        Self {
+            size: value.size,
+            modifiers: value.modifiers,
+            timestamp: value.timestamp,
+            x: value.x,
+            y: value.y,
+            screen_x: value.screen_x,
+            screen_y: value.screen_y,
+            delta_x: value.delta_x,
+            delta_y: value.delta_y,
+            wheel_ticks_x: value.wheel_ticks_x,
+            wheel_ticks_y: value.wheel_ticks_y,
+            delta_units: value.delta_units.into(),
+            phase: value.phase.into(),
+            momentum_phase: value.momentum_phase.into(),
+            rails_mode: value.rails_mode,
+            acceleration_ratio_x: value.acceleration_ratio_x,
+            acceleration_ratio_y: value.acceleration_ratio_y,
+        }
+    }
+}
+impl From<WheelInputEvent> for _cef_wheel_input_event_t {
+    fn from(value: WheelInputEvent) -> Self {
+        Self {
+            size: value.size,
+            modifiers: value.modifiers,
+            timestamp: value.timestamp,
+            x: value.x,
+            y: value.y,
+            screen_x: value.screen_x,
+            screen_y: value.screen_y,
+            delta_x: value.delta_x,
+            delta_y: value.delta_y,
+            wheel_ticks_x: value.wheel_ticks_x,
+            wheel_ticks_y: value.wheel_ticks_y,
+            delta_units: value.delta_units.into(),
+            phase: value.phase.into(),
+            momentum_phase: value.momentum_phase.into(),
+            rails_mode: value.rails_mode,
+            acceleration_ratio_x: value.acceleration_ratio_x,
+            acceleration_ratio_y: value.acceleration_ratio_y,
+        }
+    }
+}
+impl Default for WheelInputEvent {
+    fn default() -> Self {
+        Self {
+            size: std::mem::size_of::<_cef_wheel_input_event_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
+    }
+}
+
 /// See [`_cef_settings_t`] for more documentation.
 #[derive(Clone, Debug)]
 pub struct Settings {
@@ -12877,6 +13279,14 @@ pub trait ImplBrowserHost: Clone + Sized + Rc {
     fn is_render_process_unresponsive(&self) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_browser_host_t::get_runtime_style`] for more documentation."]
     fn runtime_style(&self) -> RuntimeStyle;
+    #[doc = "See [`_cef_browser_host_t::send_keyboard_event`] for more documentation."]
+    fn send_keyboard_event(&self, event: Option<&KeyboardInputEvent>);
+    #[doc = "See [`_cef_browser_host_t::send_mouse_event`] for more documentation."]
+    fn send_mouse_event(&self, event: Option<&MouseInputEvent>);
+    #[doc = "See [`_cef_browser_host_t::send_gesture_event`] for more documentation."]
+    fn send_gesture_event(&self, event: Option<&GestureInputEvent>);
+    #[doc = "See [`_cef_browser_host_t::send_wheel_event`] for more documentation."]
+    fn send_wheel_event(&self, event: Option<&WheelInputEvent>);
     #[doc = "See [`_cef_browser_host_t::set_ax_viewport_collapse`] for more documentation."]
     fn set_ax_viewport_collapse(&self, enabled: ::std::os::raw::c_int);
     fn get_raw(&self) -> *mut _cef_browser_host_t;
@@ -13937,6 +14347,62 @@ impl ImplBrowserHost for BrowserHost {
                     result.wrap_result()
                 })
                 .unwrap_or_default()
+        }
+    }
+    fn send_keyboard_event(&self, event: Option<&KeyboardInputEvent>) {
+        unsafe {
+            if let Some(f) = self.0.send_keyboard_event {
+                let arg_event = event;
+                let arg_self_ = self.into_raw();
+                let arg_event = arg_event.cloned().map(|arg| arg.into());
+                let arg_event = arg_event
+                    .as_ref()
+                    .map(std::ptr::from_ref)
+                    .unwrap_or(std::ptr::null());
+                f(arg_self_, arg_event);
+            }
+        }
+    }
+    fn send_mouse_event(&self, event: Option<&MouseInputEvent>) {
+        unsafe {
+            if let Some(f) = self.0.send_mouse_event {
+                let arg_event = event;
+                let arg_self_ = self.into_raw();
+                let arg_event = arg_event.cloned().map(|arg| arg.into());
+                let arg_event = arg_event
+                    .as_ref()
+                    .map(std::ptr::from_ref)
+                    .unwrap_or(std::ptr::null());
+                f(arg_self_, arg_event);
+            }
+        }
+    }
+    fn send_gesture_event(&self, event: Option<&GestureInputEvent>) {
+        unsafe {
+            if let Some(f) = self.0.send_gesture_event {
+                let arg_event = event;
+                let arg_self_ = self.into_raw();
+                let arg_event = arg_event.cloned().map(|arg| arg.into());
+                let arg_event = arg_event
+                    .as_ref()
+                    .map(std::ptr::from_ref)
+                    .unwrap_or(std::ptr::null());
+                f(arg_self_, arg_event);
+            }
+        }
+    }
+    fn send_wheel_event(&self, event: Option<&WheelInputEvent>) {
+        unsafe {
+            if let Some(f) = self.0.send_wheel_event {
+                let arg_event = event;
+                let arg_self_ = self.into_raw();
+                let arg_event = arg_event.cloned().map(|arg| arg.into());
+                let arg_event = arg_event
+                    .as_ref()
+                    .map(std::ptr::from_ref)
+                    .unwrap_or(std::ptr::null());
+                f(arg_self_, arg_event);
+            }
         }
     }
     fn set_ax_viewport_collapse(&self, enabled: ::std::os::raw::c_int) {
@@ -20125,6 +20591,360 @@ impl ConvertReturnValue<FrameHandler> for *mut _cef_frame_handler_t {
 impl From<FrameHandler> for *mut _cef_frame_handler_t {
     fn from(value: FrameHandler) -> Self {
         let object = ImplFrameHandler::get_raw(&value);
+        std::mem::forget(value);
+        object
+    }
+}
+
+/// See [`_cef_input_handler_t`] for more documentation.
+#[derive(Clone)]
+pub struct InputHandler(RefGuard<_cef_input_handler_t>);
+impl InputHandler {
+    pub fn new<T>(interface: T) -> Self
+    where
+        T: WrapInputHandler,
+    {
+        unsafe {
+            let mut cef_object = std::mem::zeroed();
+            <T as ImplInputHandler>::init_methods(&mut cef_object);
+            let object = RcImpl::new(cef_object, interface);
+            <T as WrapInputHandler>::wrap_rc(&mut (*object).interface, object);
+            let object: *mut _cef_input_handler_t = object.cast();
+            object.wrap_result()
+        }
+    }
+}
+pub trait WrapInputHandler: ImplInputHandler {
+    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_input_handler_t, Self>);
+}
+pub trait ImplInputHandler: Clone + Sized + Rc {
+    #[doc = "See [`_cef_input_handler_t::on_pre_keyboard_event`] for more documentation."]
+    fn on_pre_keyboard_event(
+        &self,
+        browser: Option<&mut Browser>,
+        event: Option<&KeyboardInputEvent>,
+        context: Option<&InputEventContext>,
+        is_keyboard_shortcut: Option<&mut ::std::os::raw::c_int>,
+    ) -> ::std::os::raw::c_int {
+        Default::default()
+    }
+    #[doc = "See [`_cef_input_handler_t::on_keyboard_event`] for more documentation."]
+    fn on_keyboard_event(
+        &self,
+        browser: Option<&mut Browser>,
+        event: Option<&KeyboardInputEvent>,
+        context: Option<&InputEventContext>,
+    ) -> ::std::os::raw::c_int {
+        Default::default()
+    }
+    #[doc = "See [`_cef_input_handler_t::on_pre_mouse_event`] for more documentation."]
+    fn on_pre_mouse_event(
+        &self,
+        browser: Option<&mut Browser>,
+        event: Option<&MouseInputEvent>,
+    ) -> ::std::os::raw::c_int {
+        Default::default()
+    }
+    #[doc = "See [`_cef_input_handler_t::on_pre_gesture_event`] for more documentation."]
+    fn on_pre_gesture_event(
+        &self,
+        browser: Option<&mut Browser>,
+        event: Option<&GestureInputEvent>,
+    ) -> ::std::os::raw::c_int {
+        Default::default()
+    }
+    fn init_methods(object: &mut _cef_input_handler_t) {
+        impl_cef_input_handler_t::init_methods::<Self, _cef_input_handler_t>(object);
+    }
+    fn get_raw(&self) -> *mut _cef_input_handler_t;
+}
+#[doc = "Implement the [`WrapInputHandler`] trait for the specified struct. You can declare more\nmembers for your struct, and in the `impl InputHandler` block you can override default\nmethods implemented by the [`ImplInputHandler`] trait.\n\n# Example\n```rust\n# use cef::*;\n\nwrap_input_handler! {\n    struct MyInputHandler {\n        payload: String,\n    }\n\n    impl InputHandler {\n        // ...\n    }\n}\n\nfn make_my_struct() -> InputHandler {\n    MyInputHandler::new(\"payload\".to_string())\n}\n```"]
+#[macro_export]
+macro_rules ! wrap_input_handler { ($ vis : vis struct $ name : ident ; impl InputHandler { $ ($ (# [$ attrs_name : meta]) * fn $ method_name : ident (& $ self : ident $ (, $ arg_name : ident : $ arg_type : ty) * $ (,) ?) $ (-> $ return_type : ty) ? { $ ($ body : tt) * }) * }) => { wrap_input_handler ! { $ vis struct $ name { } impl InputHandler { $ ($ (# [$ attrs_name]) * fn $ method_name (& $ self $ (, $ arg_name : $ arg_type) *) $ (-> $ return_type) ? { $ ($ body) * }) * } } } ; ($ vis : vis struct $ name : ident $ (< $ ($ generic_type : ident : $ first_generic_type_bound : tt $ (+ $ generic_type_bound : tt) *) , + $ (,) ? >) ? { $ ($ field_vis : vis $ field_name : ident : $ field_type : ty) , * $ (,) ? } impl InputHandler { $ ($ (# [$ attrs_name : meta]) * fn $ method_name : ident (& $ self : ident $ (, $ arg_name : ident : $ arg_type : ty) * $ (,) ?) $ (-> $ return_type : ty) ? { $ ($ body : tt) * }) * }) => { $ vis struct $ name $ (< $ ($ generic_type ,) + >) ? $ (where $ ($ generic_type : $ first_generic_type_bound $ (+ $ generic_type_bound) * ,) +) ? { $ ($ field_vis $ field_name : $ field_type ,) * cef_object : * mut $ crate :: rc :: RcImpl < $ crate :: sys :: _cef_input_handler_t , Self > } impl $ (< $ ($ generic_type ,) + >) ? $ name $ (< $ ($ generic_type ,) + >) ? $ (where $ ($ generic_type : $ first_generic_type_bound $ (+ $ generic_type_bound) * ,) +) ? { # [allow (clippy :: new_ret_no_self)] pub fn new ($ ($ field_name : $ field_type) , *) -> InputHandler { InputHandler :: new (Self { $ ($ field_name ,) * cef_object : std :: ptr :: null_mut () , }) } } impl $ (< $ ($ generic_type ,) + >) ? WrapInputHandler for $ name $ (< $ ($ generic_type ,) + >) ? $ (where $ ($ generic_type : $ first_generic_type_bound $ (+ $ generic_type_bound) * ,) +) ? { fn wrap_rc (& mut self , cef_object : * mut $ crate :: rc :: RcImpl < $ crate :: sys :: _cef_input_handler_t , Self >) { self . cef_object = cef_object ; } } impl $ (< $ ($ generic_type ,) + >) ? Clone for $ name $ (< $ ($ generic_type ,) + >) ? $ (where $ ($ generic_type : $ first_generic_type_bound $ (+ $ generic_type_bound) * ,) +) ? { fn clone (& self) -> Self { unsafe { let rc_impl = & mut * self . cef_object ; rc_impl . interface . add_ref () ; } Self { $ ($ field_name : self . $ field_name . clone () ,) * cef_object : self . cef_object , } } } impl $ (< $ ($ generic_type ,) + >) ? $ crate :: rc :: Rc for $ name $ (< $ ($ generic_type ,) + >) ? $ (where $ ($ generic_type : $ first_generic_type_bound $ (+ $ generic_type_bound) * ,) +) ? { fn as_base (& self) -> & $ crate :: sys :: cef_base_ref_counted_t { unsafe { let base = & * self . cef_object ; std :: mem :: transmute (& base . cef_object) } } } impl $ (< $ ($ generic_type ,) + >) ? ImplInputHandler for $ name $ (< $ ($ generic_type ,) + >) ? $ (where $ ($ generic_type : $ first_generic_type_bound $ (+ $ generic_type_bound) * ,) +) ? { $ ($ (# [$ attrs_name]) * fn $ method_name (& $ self $ (, $ arg_name : $ arg_type) *) $ (-> $ return_type) ? { $ ($ body) * }) * fn get_raw (& self) -> * mut $ crate :: sys :: _cef_input_handler_t { self . cef_object . cast () } } } ; }
+mod impl_cef_input_handler_t {
+    use super::*;
+    pub fn init_methods<I: ImplInputHandler, R: Rc>(object: &mut _cef_input_handler_t) {
+        object.on_pre_keyboard_event = Some(on_pre_keyboard_event::<I, R>);
+        object.on_keyboard_event = Some(on_keyboard_event::<I, R>);
+        object.on_pre_mouse_event = Some(on_pre_mouse_event::<I, R>);
+        object.on_pre_gesture_event = Some(on_pre_gesture_event::<I, R>);
+    }
+    extern "C" fn on_pre_keyboard_event<I: ImplInputHandler, R: Rc>(
+        self_: *mut _cef_input_handler_t,
+        browser: *mut _cef_browser_t,
+        event: *const _cef_keyboard_input_event_t,
+        context: *const _cef_input_event_context_t,
+        is_keyboard_shortcut: *mut ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int {
+        let (arg_self_, arg_browser, arg_event, arg_context, arg_is_keyboard_shortcut) =
+            (self_, browser, event, context, is_keyboard_shortcut);
+        let arg_self_: &RcImpl<R, I> = RcImpl::get(arg_self_.cast());
+        let mut arg_browser =
+            unsafe { arg_browser.as_mut() }.map(|arg| Browser(unsafe { RefGuard::from_raw(arg) }));
+        let arg_browser = arg_browser.as_mut();
+        let arg_event = if arg_event.is_null() {
+            None
+        } else {
+            Some(WrapParamRef::<KeyboardInputEvent, _>::from(arg_event))
+        };
+        let arg_event = arg_event.as_ref().map(|arg| arg.as_ref());
+        let arg_context = if arg_context.is_null() {
+            None
+        } else {
+            Some(WrapParamRef::<InputEventContext, _>::from(arg_context))
+        };
+        let arg_context = arg_context.as_ref().map(|arg| arg.as_ref());
+        let mut arg_is_keyboard_shortcut = if arg_is_keyboard_shortcut.is_null() {
+            None
+        } else {
+            Some(WrapParamRef::<::std::os::raw::c_int, _>::from(
+                arg_is_keyboard_shortcut,
+            ))
+        };
+        let arg_is_keyboard_shortcut = arg_is_keyboard_shortcut.as_mut().map(|arg| arg.as_mut());
+        ImplInputHandler::on_pre_keyboard_event(
+            &arg_self_.interface,
+            arg_browser,
+            arg_event,
+            arg_context,
+            arg_is_keyboard_shortcut,
+        )
+    }
+    extern "C" fn on_keyboard_event<I: ImplInputHandler, R: Rc>(
+        self_: *mut _cef_input_handler_t,
+        browser: *mut _cef_browser_t,
+        event: *const _cef_keyboard_input_event_t,
+        context: *const _cef_input_event_context_t,
+    ) -> ::std::os::raw::c_int {
+        let (arg_self_, arg_browser, arg_event, arg_context) = (self_, browser, event, context);
+        let arg_self_: &RcImpl<R, I> = RcImpl::get(arg_self_.cast());
+        let mut arg_browser =
+            unsafe { arg_browser.as_mut() }.map(|arg| Browser(unsafe { RefGuard::from_raw(arg) }));
+        let arg_browser = arg_browser.as_mut();
+        let arg_event = if arg_event.is_null() {
+            None
+        } else {
+            Some(WrapParamRef::<KeyboardInputEvent, _>::from(arg_event))
+        };
+        let arg_event = arg_event.as_ref().map(|arg| arg.as_ref());
+        let arg_context = if arg_context.is_null() {
+            None
+        } else {
+            Some(WrapParamRef::<InputEventContext, _>::from(arg_context))
+        };
+        let arg_context = arg_context.as_ref().map(|arg| arg.as_ref());
+        ImplInputHandler::on_keyboard_event(
+            &arg_self_.interface,
+            arg_browser,
+            arg_event,
+            arg_context,
+        )
+    }
+    extern "C" fn on_pre_mouse_event<I: ImplInputHandler, R: Rc>(
+        self_: *mut _cef_input_handler_t,
+        browser: *mut _cef_browser_t,
+        event: *const _cef_mouse_input_event_t,
+    ) -> ::std::os::raw::c_int {
+        let (arg_self_, arg_browser, arg_event) = (self_, browser, event);
+        let arg_self_: &RcImpl<R, I> = RcImpl::get(arg_self_.cast());
+        let mut arg_browser =
+            unsafe { arg_browser.as_mut() }.map(|arg| Browser(unsafe { RefGuard::from_raw(arg) }));
+        let arg_browser = arg_browser.as_mut();
+        let arg_event = if arg_event.is_null() {
+            None
+        } else {
+            Some(WrapParamRef::<MouseInputEvent, _>::from(arg_event))
+        };
+        let arg_event = arg_event.as_ref().map(|arg| arg.as_ref());
+        ImplInputHandler::on_pre_mouse_event(&arg_self_.interface, arg_browser, arg_event)
+    }
+    extern "C" fn on_pre_gesture_event<I: ImplInputHandler, R: Rc>(
+        self_: *mut _cef_input_handler_t,
+        browser: *mut _cef_browser_t,
+        event: *const _cef_gesture_input_event_t,
+    ) -> ::std::os::raw::c_int {
+        let (arg_self_, arg_browser, arg_event) = (self_, browser, event);
+        let arg_self_: &RcImpl<R, I> = RcImpl::get(arg_self_.cast());
+        let mut arg_browser =
+            unsafe { arg_browser.as_mut() }.map(|arg| Browser(unsafe { RefGuard::from_raw(arg) }));
+        let arg_browser = arg_browser.as_mut();
+        let arg_event = if arg_event.is_null() {
+            None
+        } else {
+            Some(WrapParamRef::<GestureInputEvent, _>::from(arg_event))
+        };
+        let arg_event = arg_event.as_ref().map(|arg| arg.as_ref());
+        ImplInputHandler::on_pre_gesture_event(&arg_self_.interface, arg_browser, arg_event)
+    }
+}
+impl ImplInputHandler for InputHandler {
+    fn on_pre_keyboard_event(
+        &self,
+        browser: Option<&mut Browser>,
+        event: Option<&KeyboardInputEvent>,
+        context: Option<&InputEventContext>,
+        is_keyboard_shortcut: Option<&mut ::std::os::raw::c_int>,
+    ) -> ::std::os::raw::c_int {
+        unsafe {
+            self.0
+                .on_pre_keyboard_event
+                .map(|f| {
+                    let (arg_browser, arg_event, arg_context, arg_is_keyboard_shortcut) =
+                        (browser, event, context, is_keyboard_shortcut);
+                    let arg_self_ = self.into_raw();
+                    let arg_browser = arg_browser
+                        .map(|arg| {
+                            arg.add_ref();
+                            ImplBrowser::get_raw(arg)
+                        })
+                        .unwrap_or(std::ptr::null_mut());
+                    let arg_event = arg_event.cloned().map(|arg| arg.into());
+                    let arg_event = arg_event
+                        .as_ref()
+                        .map(std::ptr::from_ref)
+                        .unwrap_or(std::ptr::null());
+                    let arg_context = arg_context.cloned().map(|arg| arg.into());
+                    let arg_context = arg_context
+                        .as_ref()
+                        .map(std::ptr::from_ref)
+                        .unwrap_or(std::ptr::null());
+                    let arg_is_keyboard_shortcut = arg_is_keyboard_shortcut
+                        .map(std::ptr::from_mut)
+                        .unwrap_or(std::ptr::null_mut());
+                    let result = f(
+                        arg_self_,
+                        arg_browser,
+                        arg_event,
+                        arg_context,
+                        arg_is_keyboard_shortcut,
+                    );
+                    result.wrap_result()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn on_keyboard_event(
+        &self,
+        browser: Option<&mut Browser>,
+        event: Option<&KeyboardInputEvent>,
+        context: Option<&InputEventContext>,
+    ) -> ::std::os::raw::c_int {
+        unsafe {
+            self.0
+                .on_keyboard_event
+                .map(|f| {
+                    let (arg_browser, arg_event, arg_context) = (browser, event, context);
+                    let arg_self_ = self.into_raw();
+                    let arg_browser = arg_browser
+                        .map(|arg| {
+                            arg.add_ref();
+                            ImplBrowser::get_raw(arg)
+                        })
+                        .unwrap_or(std::ptr::null_mut());
+                    let arg_event = arg_event.cloned().map(|arg| arg.into());
+                    let arg_event = arg_event
+                        .as_ref()
+                        .map(std::ptr::from_ref)
+                        .unwrap_or(std::ptr::null());
+                    let arg_context = arg_context.cloned().map(|arg| arg.into());
+                    let arg_context = arg_context
+                        .as_ref()
+                        .map(std::ptr::from_ref)
+                        .unwrap_or(std::ptr::null());
+                    let result = f(arg_self_, arg_browser, arg_event, arg_context);
+                    result.wrap_result()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn on_pre_mouse_event(
+        &self,
+        browser: Option<&mut Browser>,
+        event: Option<&MouseInputEvent>,
+    ) -> ::std::os::raw::c_int {
+        unsafe {
+            self.0
+                .on_pre_mouse_event
+                .map(|f| {
+                    let (arg_browser, arg_event) = (browser, event);
+                    let arg_self_ = self.into_raw();
+                    let arg_browser = arg_browser
+                        .map(|arg| {
+                            arg.add_ref();
+                            ImplBrowser::get_raw(arg)
+                        })
+                        .unwrap_or(std::ptr::null_mut());
+                    let arg_event = arg_event.cloned().map(|arg| arg.into());
+                    let arg_event = arg_event
+                        .as_ref()
+                        .map(std::ptr::from_ref)
+                        .unwrap_or(std::ptr::null());
+                    let result = f(arg_self_, arg_browser, arg_event);
+                    result.wrap_result()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn on_pre_gesture_event(
+        &self,
+        browser: Option<&mut Browser>,
+        event: Option<&GestureInputEvent>,
+    ) -> ::std::os::raw::c_int {
+        unsafe {
+            self.0
+                .on_pre_gesture_event
+                .map(|f| {
+                    let (arg_browser, arg_event) = (browser, event);
+                    let arg_self_ = self.into_raw();
+                    let arg_browser = arg_browser
+                        .map(|arg| {
+                            arg.add_ref();
+                            ImplBrowser::get_raw(arg)
+                        })
+                        .unwrap_or(std::ptr::null_mut());
+                    let arg_event = arg_event.cloned().map(|arg| arg.into());
+                    let arg_event = arg_event
+                        .as_ref()
+                        .map(std::ptr::from_ref)
+                        .unwrap_or(std::ptr::null());
+                    let result = f(arg_self_, arg_browser, arg_event);
+                    result.wrap_result()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn get_raw(&self) -> *mut _cef_input_handler_t {
+        unsafe { RefGuard::into_raw(&self.0) }
+    }
+}
+impl Rc for _cef_input_handler_t {
+    fn as_base(&self) -> &_cef_base_ref_counted_t {
+        self.base.as_base()
+    }
+}
+impl Rc for InputHandler {
+    fn as_base(&self) -> &_cef_base_ref_counted_t {
+        self.0.as_base()
+    }
+}
+impl ConvertParam<*mut _cef_input_handler_t> for &InputHandler {
+    fn into_raw(self) -> *mut _cef_input_handler_t {
+        ImplInputHandler::get_raw(self)
+    }
+}
+impl ConvertParam<*mut _cef_input_handler_t> for &mut InputHandler {
+    fn into_raw(self) -> *mut _cef_input_handler_t {
+        ImplInputHandler::get_raw(self)
+    }
+}
+impl ConvertReturnValue<InputHandler> for *mut _cef_input_handler_t {
+    fn wrap_result(self) -> InputHandler {
+        InputHandler(unsafe { RefGuard::from_raw(self) })
+    }
+}
+impl From<InputHandler> for *mut _cef_input_handler_t {
+    fn from(value: InputHandler) -> Self {
+        let object = ImplInputHandler::get_raw(&value);
         std::mem::forget(value);
         object
     }
@@ -28029,6 +28849,10 @@ pub trait ImplClient: Clone + Sized + Rc {
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
+    #[doc = "See [`_cef_client_t::get_input_handler`] for more documentation."]
+    fn input_handler(&self) -> Option<InputHandler> {
+        Default::default()
+    }
     fn init_methods(object: &mut _cef_client_t) {
         impl_cef_client_t::init_methods::<Self, _cef_client_t>(object);
     }
@@ -28059,6 +28883,7 @@ mod impl_cef_client_t {
         object.get_render_handler = Some(get_render_handler::<I, R>);
         object.get_request_handler = Some(get_request_handler::<I, R>);
         object.on_process_message_received = Some(on_process_message_received::<I, R>);
+        object.get_input_handler = Some(get_input_handler::<I, R>);
     }
     extern "C" fn get_audio_handler<I: ImplClient, R: Rc>(
         self_: *mut _cef_client_t,
@@ -28267,6 +29092,16 @@ mod impl_cef_client_t {
             arg_source_process,
             arg_message,
         )
+    }
+    extern "C" fn get_input_handler<I: ImplClient, R: Rc>(
+        self_: *mut _cef_client_t,
+    ) -> *mut _cef_input_handler_t {
+        let arg_self_ = self_;
+        let arg_self_: &RcImpl<R, I> = RcImpl::get(arg_self_.cast());
+        let result = ImplClient::input_handler(&arg_self_.interface);
+        result
+            .map(|result| result.into())
+            .unwrap_or(std::ptr::null_mut())
     }
 }
 impl ImplClient for Client {
@@ -28599,6 +29434,22 @@ impl ImplClient for Client {
                         arg_message,
                     );
                     result.wrap_result()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn input_handler(&self) -> Option<InputHandler> {
+        unsafe {
+            self.0
+                .get_input_handler
+                .map(|f| {
+                    let arg_self_ = self.into_raw();
+                    let result = f(arg_self_);
+                    if result.is_null() {
+                        None
+                    } else {
+                        Some(result.wrap_result())
+                    }
                 })
                 .unwrap_or_default()
         }
@@ -42526,6 +43377,14 @@ pub trait ImplTextfieldDelegate: ImplViewDelegate {
     }
     #[doc = "See [`_cef_textfield_delegate_t::on_after_user_action`] for more documentation."]
     fn on_after_user_action(&self, textfield: Option<&mut Textfield>) {}
+    #[doc = "See [`_cef_textfield_delegate_t::on_keyboard_event`] for more documentation."]
+    fn on_keyboard_event(
+        &self,
+        textfield: Option<&mut Textfield>,
+        event: Option<&KeyboardInputEvent>,
+    ) -> ::std::os::raw::c_int {
+        Default::default()
+    }
     fn init_methods(object: &mut _cef_textfield_delegate_t) {
         impl_cef_view_delegate_t::init_methods::<Self, _cef_textfield_delegate_t>(&mut object.base);
         impl_cef_textfield_delegate_t::init_methods::<Self, _cef_textfield_delegate_t>(object);
@@ -42542,6 +43401,7 @@ mod impl_cef_textfield_delegate_t {
     pub fn init_methods<I: ImplTextfieldDelegate, R: Rc>(object: &mut _cef_textfield_delegate_t) {
         object.on_key_event = Some(on_key_event::<I, R>);
         object.on_after_user_action = Some(on_after_user_action::<I, R>);
+        object.on_keyboard_event = Some(on_keyboard_event::<I, R>);
     }
     extern "C" fn on_key_event<I: ImplTextfieldDelegate, R: Rc>(
         self_: *mut _cef_textfield_delegate_t,
@@ -42571,6 +43431,24 @@ mod impl_cef_textfield_delegate_t {
             .map(|arg| Textfield(unsafe { RefGuard::from_raw(arg) }));
         let arg_textfield = arg_textfield.as_mut();
         ImplTextfieldDelegate::on_after_user_action(&arg_self_.interface, arg_textfield)
+    }
+    extern "C" fn on_keyboard_event<I: ImplTextfieldDelegate, R: Rc>(
+        self_: *mut _cef_textfield_delegate_t,
+        textfield: *mut _cef_textfield_t,
+        event: *const _cef_keyboard_input_event_t,
+    ) -> ::std::os::raw::c_int {
+        let (arg_self_, arg_textfield, arg_event) = (self_, textfield, event);
+        let arg_self_: &RcImpl<R, I> = RcImpl::get(arg_self_.cast());
+        let mut arg_textfield = unsafe { arg_textfield.as_mut() }
+            .map(|arg| Textfield(unsafe { RefGuard::from_raw(arg) }));
+        let arg_textfield = arg_textfield.as_mut();
+        let arg_event = if arg_event.is_null() {
+            None
+        } else {
+            Some(WrapParamRef::<KeyboardInputEvent, _>::from(arg_event))
+        };
+        let arg_event = arg_event.as_ref().map(|arg| arg.as_ref());
+        ImplTextfieldDelegate::on_keyboard_event(&arg_self_.interface, arg_textfield, arg_event)
     }
 }
 impl ImplViewDelegate for TextfieldDelegate {
@@ -42678,6 +43556,34 @@ impl ImplTextfieldDelegate for TextfieldDelegate {
                     .unwrap_or(std::ptr::null_mut());
                 f(arg_self_, arg_textfield);
             }
+        }
+    }
+    fn on_keyboard_event(
+        &self,
+        textfield: Option<&mut Textfield>,
+        event: Option<&KeyboardInputEvent>,
+    ) -> ::std::os::raw::c_int {
+        unsafe {
+            self.0
+                .on_keyboard_event
+                .map(|f| {
+                    let (arg_textfield, arg_event) = (textfield, event);
+                    let arg_self_ = self.into_raw();
+                    let arg_textfield = arg_textfield
+                        .map(|arg| {
+                            arg.add_ref();
+                            ImplTextfield::get_raw(arg)
+                        })
+                        .unwrap_or(std::ptr::null_mut());
+                    let arg_event = arg_event.cloned().map(|arg| arg.into());
+                    let arg_event = arg_event
+                        .as_ref()
+                        .map(std::ptr::from_ref)
+                        .unwrap_or(std::ptr::null());
+                    let result = f(arg_self_, arg_textfield, arg_event);
+                    result.wrap_result()
+                })
+                .unwrap_or_default()
         }
     }
     fn get_raw(&self) -> *mut _cef_textfield_delegate_t {
@@ -43404,6 +44310,14 @@ pub trait ImplWindowDelegate: ImplPanelDelegate {
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
+    #[doc = "See [`_cef_window_delegate_t::on_keyboard_event`] for more documentation."]
+    fn on_keyboard_event(
+        &self,
+        window: Option<&mut Window>,
+        event: Option<&KeyboardInputEvent>,
+    ) -> ::std::os::raw::c_int {
+        Default::default()
+    }
     fn init_methods(object: &mut _cef_window_delegate_t) {
         impl_cef_view_delegate_t::init_methods::<Self, _cef_window_delegate_t>(
             &mut object.base.base,
@@ -43444,6 +44358,7 @@ mod impl_cef_window_delegate_t {
         object.on_theme_colors_changed = Some(on_theme_colors_changed::<I, R>);
         object.get_window_runtime_style = Some(get_window_runtime_style::<I, R>);
         object.get_linux_window_properties = Some(get_linux_window_properties::<I, R>);
+        object.on_keyboard_event = Some(on_keyboard_event::<I, R>);
     }
     extern "C" fn on_window_created<I: ImplWindowDelegate, R: Rc>(
         self_: *mut _cef_window_delegate_t,
@@ -43780,6 +44695,24 @@ mod impl_cef_window_delegate_t {
             arg_window,
             arg_properties,
         )
+    }
+    extern "C" fn on_keyboard_event<I: ImplWindowDelegate, R: Rc>(
+        self_: *mut _cef_window_delegate_t,
+        window: *mut _cef_window_t,
+        event: *const _cef_keyboard_input_event_t,
+    ) -> ::std::os::raw::c_int {
+        let (arg_self_, arg_window, arg_event) = (self_, window, event);
+        let arg_self_: &RcImpl<R, I> = RcImpl::get(arg_self_.cast());
+        let mut arg_window =
+            unsafe { arg_window.as_mut() }.map(|arg| Window(unsafe { RefGuard::from_raw(arg) }));
+        let arg_window = arg_window.as_mut();
+        let arg_event = if arg_event.is_null() {
+            None
+        } else {
+            Some(WrapParamRef::<KeyboardInputEvent, _>::from(arg_event))
+        };
+        let arg_event = arg_event.as_ref().map(|arg| arg.as_ref());
+        ImplWindowDelegate::on_keyboard_event(&arg_self_.interface, arg_window, arg_event)
     }
 }
 impl ImplViewDelegate for WindowDelegate {
@@ -44310,6 +45243,34 @@ impl ImplWindowDelegate for WindowDelegate {
                         .map(std::ptr::from_mut)
                         .unwrap_or(std::ptr::null_mut());
                     let result = f(arg_self_, arg_window, arg_properties);
+                    result.wrap_result()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn on_keyboard_event(
+        &self,
+        window: Option<&mut Window>,
+        event: Option<&KeyboardInputEvent>,
+    ) -> ::std::os::raw::c_int {
+        unsafe {
+            self.0
+                .on_keyboard_event
+                .map(|f| {
+                    let (arg_window, arg_event) = (window, event);
+                    let arg_self_ = self.into_raw();
+                    let arg_window = arg_window
+                        .map(|arg| {
+                            arg.add_ref();
+                            ImplWindow::get_raw(arg)
+                        })
+                        .unwrap_or(std::ptr::null_mut());
+                    let arg_event = arg_event.cloned().map(|arg| arg.into());
+                    let arg_event = arg_event
+                        .as_ref()
+                        .map(std::ptr::from_ref)
+                        .unwrap_or(std::ptr::null());
+                    let result = f(arg_self_, arg_window, arg_event);
                     result.wrap_result()
                 })
                 .unwrap_or_default()
@@ -45739,6 +46700,1206 @@ impl Default for ContentSettingValues {
     }
 }
 
+/// See [`cef_dom_code_t`] for more documentation.
+#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+pub struct DomCode(cef_dom_code_t);
+impl AsRef<cef_dom_code_t> for DomCode {
+    fn as_ref(&self) -> &cef_dom_code_t {
+        &self.0
+    }
+}
+impl AsMut<cef_dom_code_t> for DomCode {
+    fn as_mut(&mut self) -> &mut cef_dom_code_t {
+        &mut self.0
+    }
+}
+impl From<cef_dom_code_t> for DomCode {
+    fn from(value: cef_dom_code_t) -> Self {
+        Self(value)
+    }
+}
+impl From<DomCode> for cef_dom_code_t {
+    fn from(value: DomCode) -> Self {
+        value.0
+    }
+}
+impl DomCode {
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_NONE`] for more documentation."]
+    pub const NONE: Self = Self(cef_dom_code_t::CEF_DOM_CODE_NONE);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_HYPER`] for more documentation."]
+    pub const HYPER: Self = Self(cef_dom_code_t::CEF_DOM_CODE_HYPER);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_SUPER`] for more documentation."]
+    pub const SUPER: Self = Self(cef_dom_code_t::CEF_DOM_CODE_SUPER);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_FN_LOCK`] for more documentation."]
+    pub const FN_LOCK: Self = Self(cef_dom_code_t::CEF_DOM_CODE_FN_LOCK);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_SUSPEND`] for more documentation."]
+    pub const SUSPEND: Self = Self(cef_dom_code_t::CEF_DOM_CODE_SUSPEND);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_RESUME`] for more documentation."]
+    pub const RESUME: Self = Self(cef_dom_code_t::CEF_DOM_CODE_RESUME);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_TURBO`] for more documentation."]
+    pub const TURBO: Self = Self(cef_dom_code_t::CEF_DOM_CODE_TURBO);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_SLEEP`] for more documentation."]
+    pub const SLEEP: Self = Self(cef_dom_code_t::CEF_DOM_CODE_SLEEP);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_WAKE_UP`] for more documentation."]
+    pub const WAKE_UP: Self = Self(cef_dom_code_t::CEF_DOM_CODE_WAKE_UP);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_FN`] for more documentation."]
+    pub const FN: Self = Self(cef_dom_code_t::CEF_DOM_CODE_FN);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_DO_NOT_DISTURB`] for more documentation."]
+    pub const DO_NOT_DISTURB: Self = Self(cef_dom_code_t::CEF_DOM_CODE_DO_NOT_DISTURB);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_MICROPHONE_MUTE_TOGGLE`] for more documentation."]
+    pub const MICROPHONE_MUTE_TOGGLE: Self =
+        Self(cef_dom_code_t::CEF_DOM_CODE_MICROPHONE_MUTE_TOGGLE);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_ACCESSIBILITY`] for more documentation."]
+    pub const ACCESSIBILITY: Self = Self(cef_dom_code_t::CEF_DOM_CODE_ACCESSIBILITY);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_DISPLAY_TOGGLE_INT_EXT`] for more documentation."]
+    pub const DISPLAY_TOGGLE_INT_EXT: Self =
+        Self(cef_dom_code_t::CEF_DOM_CODE_DISPLAY_TOGGLE_INT_EXT);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_USB_RESERVED`] for more documentation."]
+    pub const USB_RESERVED: Self = Self(cef_dom_code_t::CEF_DOM_CODE_USB_RESERVED);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_USB_ERROR_ROLL_OVER`] for more documentation."]
+    pub const USB_ERROR_ROLL_OVER: Self = Self(cef_dom_code_t::CEF_DOM_CODE_USB_ERROR_ROLL_OVER);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_USB_POST_FAIL`] for more documentation."]
+    pub const USB_POST_FAIL: Self = Self(cef_dom_code_t::CEF_DOM_CODE_USB_POST_FAIL);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_USB_ERROR_UNDEFINED`] for more documentation."]
+    pub const USB_ERROR_UNDEFINED: Self = Self(cef_dom_code_t::CEF_DOM_CODE_USB_ERROR_UNDEFINED);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_US_A`] for more documentation."]
+    pub const US_A: Self = Self(cef_dom_code_t::CEF_DOM_CODE_US_A);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_US_B`] for more documentation."]
+    pub const US_B: Self = Self(cef_dom_code_t::CEF_DOM_CODE_US_B);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_US_C`] for more documentation."]
+    pub const US_C: Self = Self(cef_dom_code_t::CEF_DOM_CODE_US_C);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_US_D`] for more documentation."]
+    pub const US_D: Self = Self(cef_dom_code_t::CEF_DOM_CODE_US_D);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_US_E`] for more documentation."]
+    pub const US_E: Self = Self(cef_dom_code_t::CEF_DOM_CODE_US_E);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_US_F`] for more documentation."]
+    pub const US_F: Self = Self(cef_dom_code_t::CEF_DOM_CODE_US_F);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_US_G`] for more documentation."]
+    pub const US_G: Self = Self(cef_dom_code_t::CEF_DOM_CODE_US_G);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_US_H`] for more documentation."]
+    pub const US_H: Self = Self(cef_dom_code_t::CEF_DOM_CODE_US_H);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_US_I`] for more documentation."]
+    pub const US_I: Self = Self(cef_dom_code_t::CEF_DOM_CODE_US_I);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_US_J`] for more documentation."]
+    pub const US_J: Self = Self(cef_dom_code_t::CEF_DOM_CODE_US_J);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_US_K`] for more documentation."]
+    pub const US_K: Self = Self(cef_dom_code_t::CEF_DOM_CODE_US_K);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_US_L`] for more documentation."]
+    pub const US_L: Self = Self(cef_dom_code_t::CEF_DOM_CODE_US_L);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_US_M`] for more documentation."]
+    pub const US_M: Self = Self(cef_dom_code_t::CEF_DOM_CODE_US_M);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_US_N`] for more documentation."]
+    pub const US_N: Self = Self(cef_dom_code_t::CEF_DOM_CODE_US_N);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_US_O`] for more documentation."]
+    pub const US_O: Self = Self(cef_dom_code_t::CEF_DOM_CODE_US_O);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_US_P`] for more documentation."]
+    pub const US_P: Self = Self(cef_dom_code_t::CEF_DOM_CODE_US_P);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_US_Q`] for more documentation."]
+    pub const US_Q: Self = Self(cef_dom_code_t::CEF_DOM_CODE_US_Q);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_US_R`] for more documentation."]
+    pub const US_R: Self = Self(cef_dom_code_t::CEF_DOM_CODE_US_R);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_US_S`] for more documentation."]
+    pub const US_S: Self = Self(cef_dom_code_t::CEF_DOM_CODE_US_S);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_US_T`] for more documentation."]
+    pub const US_T: Self = Self(cef_dom_code_t::CEF_DOM_CODE_US_T);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_US_U`] for more documentation."]
+    pub const US_U: Self = Self(cef_dom_code_t::CEF_DOM_CODE_US_U);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_US_V`] for more documentation."]
+    pub const US_V: Self = Self(cef_dom_code_t::CEF_DOM_CODE_US_V);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_US_W`] for more documentation."]
+    pub const US_W: Self = Self(cef_dom_code_t::CEF_DOM_CODE_US_W);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_US_X`] for more documentation."]
+    pub const US_X: Self = Self(cef_dom_code_t::CEF_DOM_CODE_US_X);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_US_Y`] for more documentation."]
+    pub const US_Y: Self = Self(cef_dom_code_t::CEF_DOM_CODE_US_Y);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_US_Z`] for more documentation."]
+    pub const US_Z: Self = Self(cef_dom_code_t::CEF_DOM_CODE_US_Z);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_DIGIT1`] for more documentation."]
+    pub const DIGIT1: Self = Self(cef_dom_code_t::CEF_DOM_CODE_DIGIT1);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_DIGIT2`] for more documentation."]
+    pub const DIGIT2: Self = Self(cef_dom_code_t::CEF_DOM_CODE_DIGIT2);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_DIGIT3`] for more documentation."]
+    pub const DIGIT3: Self = Self(cef_dom_code_t::CEF_DOM_CODE_DIGIT3);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_DIGIT4`] for more documentation."]
+    pub const DIGIT4: Self = Self(cef_dom_code_t::CEF_DOM_CODE_DIGIT4);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_DIGIT5`] for more documentation."]
+    pub const DIGIT5: Self = Self(cef_dom_code_t::CEF_DOM_CODE_DIGIT5);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_DIGIT6`] for more documentation."]
+    pub const DIGIT6: Self = Self(cef_dom_code_t::CEF_DOM_CODE_DIGIT6);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_DIGIT7`] for more documentation."]
+    pub const DIGIT7: Self = Self(cef_dom_code_t::CEF_DOM_CODE_DIGIT7);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_DIGIT8`] for more documentation."]
+    pub const DIGIT8: Self = Self(cef_dom_code_t::CEF_DOM_CODE_DIGIT8);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_DIGIT9`] for more documentation."]
+    pub const DIGIT9: Self = Self(cef_dom_code_t::CEF_DOM_CODE_DIGIT9);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_DIGIT0`] for more documentation."]
+    pub const DIGIT0: Self = Self(cef_dom_code_t::CEF_DOM_CODE_DIGIT0);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_ENTER`] for more documentation."]
+    pub const ENTER: Self = Self(cef_dom_code_t::CEF_DOM_CODE_ENTER);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_ESCAPE`] for more documentation."]
+    pub const ESCAPE: Self = Self(cef_dom_code_t::CEF_DOM_CODE_ESCAPE);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_BACKSPACE`] for more documentation."]
+    pub const BACKSPACE: Self = Self(cef_dom_code_t::CEF_DOM_CODE_BACKSPACE);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_TAB`] for more documentation."]
+    pub const TAB: Self = Self(cef_dom_code_t::CEF_DOM_CODE_TAB);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_SPACE`] for more documentation."]
+    pub const SPACE: Self = Self(cef_dom_code_t::CEF_DOM_CODE_SPACE);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_MINUS`] for more documentation."]
+    pub const MINUS: Self = Self(cef_dom_code_t::CEF_DOM_CODE_MINUS);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_EQUAL`] for more documentation."]
+    pub const EQUAL: Self = Self(cef_dom_code_t::CEF_DOM_CODE_EQUAL);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_BRACKET_LEFT`] for more documentation."]
+    pub const BRACKET_LEFT: Self = Self(cef_dom_code_t::CEF_DOM_CODE_BRACKET_LEFT);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_BRACKET_RIGHT`] for more documentation."]
+    pub const BRACKET_RIGHT: Self = Self(cef_dom_code_t::CEF_DOM_CODE_BRACKET_RIGHT);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_BACKSLASH`] for more documentation."]
+    pub const BACKSLASH: Self = Self(cef_dom_code_t::CEF_DOM_CODE_BACKSLASH);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_SEMICOLON`] for more documentation."]
+    pub const SEMICOLON: Self = Self(cef_dom_code_t::CEF_DOM_CODE_SEMICOLON);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_QUOTE`] for more documentation."]
+    pub const QUOTE: Self = Self(cef_dom_code_t::CEF_DOM_CODE_QUOTE);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_BACKQUOTE`] for more documentation."]
+    pub const BACKQUOTE: Self = Self(cef_dom_code_t::CEF_DOM_CODE_BACKQUOTE);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_COMMA`] for more documentation."]
+    pub const COMMA: Self = Self(cef_dom_code_t::CEF_DOM_CODE_COMMA);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_PERIOD`] for more documentation."]
+    pub const PERIOD: Self = Self(cef_dom_code_t::CEF_DOM_CODE_PERIOD);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_SLASH`] for more documentation."]
+    pub const SLASH: Self = Self(cef_dom_code_t::CEF_DOM_CODE_SLASH);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_CAPS_LOCK`] for more documentation."]
+    pub const CAPS_LOCK: Self = Self(cef_dom_code_t::CEF_DOM_CODE_CAPS_LOCK);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_F1`] for more documentation."]
+    pub const F1: Self = Self(cef_dom_code_t::CEF_DOM_CODE_F1);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_F2`] for more documentation."]
+    pub const F2: Self = Self(cef_dom_code_t::CEF_DOM_CODE_F2);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_F3`] for more documentation."]
+    pub const F3: Self = Self(cef_dom_code_t::CEF_DOM_CODE_F3);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_F4`] for more documentation."]
+    pub const F4: Self = Self(cef_dom_code_t::CEF_DOM_CODE_F4);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_F5`] for more documentation."]
+    pub const F5: Self = Self(cef_dom_code_t::CEF_DOM_CODE_F5);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_F6`] for more documentation."]
+    pub const F6: Self = Self(cef_dom_code_t::CEF_DOM_CODE_F6);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_F7`] for more documentation."]
+    pub const F7: Self = Self(cef_dom_code_t::CEF_DOM_CODE_F7);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_F8`] for more documentation."]
+    pub const F8: Self = Self(cef_dom_code_t::CEF_DOM_CODE_F8);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_F9`] for more documentation."]
+    pub const F9: Self = Self(cef_dom_code_t::CEF_DOM_CODE_F9);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_F10`] for more documentation."]
+    pub const F10: Self = Self(cef_dom_code_t::CEF_DOM_CODE_F10);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_F11`] for more documentation."]
+    pub const F11: Self = Self(cef_dom_code_t::CEF_DOM_CODE_F11);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_F12`] for more documentation."]
+    pub const F12: Self = Self(cef_dom_code_t::CEF_DOM_CODE_F12);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_PRINT_SCREEN`] for more documentation."]
+    pub const PRINT_SCREEN: Self = Self(cef_dom_code_t::CEF_DOM_CODE_PRINT_SCREEN);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_SCROLL_LOCK`] for more documentation."]
+    pub const SCROLL_LOCK: Self = Self(cef_dom_code_t::CEF_DOM_CODE_SCROLL_LOCK);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_PAUSE`] for more documentation."]
+    pub const PAUSE: Self = Self(cef_dom_code_t::CEF_DOM_CODE_PAUSE);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_INSERT`] for more documentation."]
+    pub const INSERT: Self = Self(cef_dom_code_t::CEF_DOM_CODE_INSERT);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_HOME`] for more documentation."]
+    pub const HOME: Self = Self(cef_dom_code_t::CEF_DOM_CODE_HOME);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_PAGE_UP`] for more documentation."]
+    pub const PAGE_UP: Self = Self(cef_dom_code_t::CEF_DOM_CODE_PAGE_UP);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_DEL`] for more documentation."]
+    pub const DEL: Self = Self(cef_dom_code_t::CEF_DOM_CODE_DEL);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_END`] for more documentation."]
+    pub const END: Self = Self(cef_dom_code_t::CEF_DOM_CODE_END);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_PAGE_DOWN`] for more documentation."]
+    pub const PAGE_DOWN: Self = Self(cef_dom_code_t::CEF_DOM_CODE_PAGE_DOWN);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_ARROW_RIGHT`] for more documentation."]
+    pub const ARROW_RIGHT: Self = Self(cef_dom_code_t::CEF_DOM_CODE_ARROW_RIGHT);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_ARROW_LEFT`] for more documentation."]
+    pub const ARROW_LEFT: Self = Self(cef_dom_code_t::CEF_DOM_CODE_ARROW_LEFT);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_ARROW_DOWN`] for more documentation."]
+    pub const ARROW_DOWN: Self = Self(cef_dom_code_t::CEF_DOM_CODE_ARROW_DOWN);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_ARROW_UP`] for more documentation."]
+    pub const ARROW_UP: Self = Self(cef_dom_code_t::CEF_DOM_CODE_ARROW_UP);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_NUM_LOCK`] for more documentation."]
+    pub const NUM_LOCK: Self = Self(cef_dom_code_t::CEF_DOM_CODE_NUM_LOCK);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_NUMPAD_DIVIDE`] for more documentation."]
+    pub const NUMPAD_DIVIDE: Self = Self(cef_dom_code_t::CEF_DOM_CODE_NUMPAD_DIVIDE);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_NUMPAD_MULTIPLY`] for more documentation."]
+    pub const NUMPAD_MULTIPLY: Self = Self(cef_dom_code_t::CEF_DOM_CODE_NUMPAD_MULTIPLY);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_NUMPAD_SUBTRACT`] for more documentation."]
+    pub const NUMPAD_SUBTRACT: Self = Self(cef_dom_code_t::CEF_DOM_CODE_NUMPAD_SUBTRACT);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_NUMPAD_ADD`] for more documentation."]
+    pub const NUMPAD_ADD: Self = Self(cef_dom_code_t::CEF_DOM_CODE_NUMPAD_ADD);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_NUMPAD_ENTER`] for more documentation."]
+    pub const NUMPAD_ENTER: Self = Self(cef_dom_code_t::CEF_DOM_CODE_NUMPAD_ENTER);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_NUMPAD1`] for more documentation."]
+    pub const NUMPAD1: Self = Self(cef_dom_code_t::CEF_DOM_CODE_NUMPAD1);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_NUMPAD2`] for more documentation."]
+    pub const NUMPAD2: Self = Self(cef_dom_code_t::CEF_DOM_CODE_NUMPAD2);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_NUMPAD3`] for more documentation."]
+    pub const NUMPAD3: Self = Self(cef_dom_code_t::CEF_DOM_CODE_NUMPAD3);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_NUMPAD4`] for more documentation."]
+    pub const NUMPAD4: Self = Self(cef_dom_code_t::CEF_DOM_CODE_NUMPAD4);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_NUMPAD5`] for more documentation."]
+    pub const NUMPAD5: Self = Self(cef_dom_code_t::CEF_DOM_CODE_NUMPAD5);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_NUMPAD6`] for more documentation."]
+    pub const NUMPAD6: Self = Self(cef_dom_code_t::CEF_DOM_CODE_NUMPAD6);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_NUMPAD7`] for more documentation."]
+    pub const NUMPAD7: Self = Self(cef_dom_code_t::CEF_DOM_CODE_NUMPAD7);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_NUMPAD8`] for more documentation."]
+    pub const NUMPAD8: Self = Self(cef_dom_code_t::CEF_DOM_CODE_NUMPAD8);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_NUMPAD9`] for more documentation."]
+    pub const NUMPAD9: Self = Self(cef_dom_code_t::CEF_DOM_CODE_NUMPAD9);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_NUMPAD0`] for more documentation."]
+    pub const NUMPAD0: Self = Self(cef_dom_code_t::CEF_DOM_CODE_NUMPAD0);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_NUMPAD_DECIMAL`] for more documentation."]
+    pub const NUMPAD_DECIMAL: Self = Self(cef_dom_code_t::CEF_DOM_CODE_NUMPAD_DECIMAL);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_INTL_BACKSLASH`] for more documentation."]
+    pub const INTL_BACKSLASH: Self = Self(cef_dom_code_t::CEF_DOM_CODE_INTL_BACKSLASH);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_CONTEXT_MENU`] for more documentation."]
+    pub const CONTEXT_MENU: Self = Self(cef_dom_code_t::CEF_DOM_CODE_CONTEXT_MENU);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_POWER`] for more documentation."]
+    pub const POWER: Self = Self(cef_dom_code_t::CEF_DOM_CODE_POWER);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_NUMPAD_EQUAL`] for more documentation."]
+    pub const NUMPAD_EQUAL: Self = Self(cef_dom_code_t::CEF_DOM_CODE_NUMPAD_EQUAL);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_F13`] for more documentation."]
+    pub const F13: Self = Self(cef_dom_code_t::CEF_DOM_CODE_F13);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_F14`] for more documentation."]
+    pub const F14: Self = Self(cef_dom_code_t::CEF_DOM_CODE_F14);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_F15`] for more documentation."]
+    pub const F15: Self = Self(cef_dom_code_t::CEF_DOM_CODE_F15);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_F16`] for more documentation."]
+    pub const F16: Self = Self(cef_dom_code_t::CEF_DOM_CODE_F16);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_F17`] for more documentation."]
+    pub const F17: Self = Self(cef_dom_code_t::CEF_DOM_CODE_F17);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_F18`] for more documentation."]
+    pub const F18: Self = Self(cef_dom_code_t::CEF_DOM_CODE_F18);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_F19`] for more documentation."]
+    pub const F19: Self = Self(cef_dom_code_t::CEF_DOM_CODE_F19);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_F20`] for more documentation."]
+    pub const F20: Self = Self(cef_dom_code_t::CEF_DOM_CODE_F20);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_F21`] for more documentation."]
+    pub const F21: Self = Self(cef_dom_code_t::CEF_DOM_CODE_F21);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_F22`] for more documentation."]
+    pub const F22: Self = Self(cef_dom_code_t::CEF_DOM_CODE_F22);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_F23`] for more documentation."]
+    pub const F23: Self = Self(cef_dom_code_t::CEF_DOM_CODE_F23);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_F24`] for more documentation."]
+    pub const F24: Self = Self(cef_dom_code_t::CEF_DOM_CODE_F24);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_OPEN`] for more documentation."]
+    pub const OPEN: Self = Self(cef_dom_code_t::CEF_DOM_CODE_OPEN);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_HELP`] for more documentation."]
+    pub const HELP: Self = Self(cef_dom_code_t::CEF_DOM_CODE_HELP);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_SELECT`] for more documentation."]
+    pub const SELECT: Self = Self(cef_dom_code_t::CEF_DOM_CODE_SELECT);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_AGAIN`] for more documentation."]
+    pub const AGAIN: Self = Self(cef_dom_code_t::CEF_DOM_CODE_AGAIN);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_UNDO`] for more documentation."]
+    pub const UNDO: Self = Self(cef_dom_code_t::CEF_DOM_CODE_UNDO);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_CUT`] for more documentation."]
+    pub const CUT: Self = Self(cef_dom_code_t::CEF_DOM_CODE_CUT);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_COPY`] for more documentation."]
+    pub const COPY: Self = Self(cef_dom_code_t::CEF_DOM_CODE_COPY);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_PASTE`] for more documentation."]
+    pub const PASTE: Self = Self(cef_dom_code_t::CEF_DOM_CODE_PASTE);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_FIND`] for more documentation."]
+    pub const FIND: Self = Self(cef_dom_code_t::CEF_DOM_CODE_FIND);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_VOLUME_MUTE`] for more documentation."]
+    pub const VOLUME_MUTE: Self = Self(cef_dom_code_t::CEF_DOM_CODE_VOLUME_MUTE);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_VOLUME_UP`] for more documentation."]
+    pub const VOLUME_UP: Self = Self(cef_dom_code_t::CEF_DOM_CODE_VOLUME_UP);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_VOLUME_DOWN`] for more documentation."]
+    pub const VOLUME_DOWN: Self = Self(cef_dom_code_t::CEF_DOM_CODE_VOLUME_DOWN);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_NUMPAD_COMMA`] for more documentation."]
+    pub const NUMPAD_COMMA: Self = Self(cef_dom_code_t::CEF_DOM_CODE_NUMPAD_COMMA);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_INTL_RO`] for more documentation."]
+    pub const INTL_RO: Self = Self(cef_dom_code_t::CEF_DOM_CODE_INTL_RO);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_KANA_MODE`] for more documentation."]
+    pub const KANA_MODE: Self = Self(cef_dom_code_t::CEF_DOM_CODE_KANA_MODE);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_INTL_YEN`] for more documentation."]
+    pub const INTL_YEN: Self = Self(cef_dom_code_t::CEF_DOM_CODE_INTL_YEN);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_CONVERT`] for more documentation."]
+    pub const CONVERT: Self = Self(cef_dom_code_t::CEF_DOM_CODE_CONVERT);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_NON_CONVERT`] for more documentation."]
+    pub const NON_CONVERT: Self = Self(cef_dom_code_t::CEF_DOM_CODE_NON_CONVERT);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_LANG1`] for more documentation."]
+    pub const LANG1: Self = Self(cef_dom_code_t::CEF_DOM_CODE_LANG1);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_LANG2`] for more documentation."]
+    pub const LANG2: Self = Self(cef_dom_code_t::CEF_DOM_CODE_LANG2);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_LANG3`] for more documentation."]
+    pub const LANG3: Self = Self(cef_dom_code_t::CEF_DOM_CODE_LANG3);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_LANG4`] for more documentation."]
+    pub const LANG4: Self = Self(cef_dom_code_t::CEF_DOM_CODE_LANG4);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_LANG5`] for more documentation."]
+    pub const LANG5: Self = Self(cef_dom_code_t::CEF_DOM_CODE_LANG5);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_ABORT`] for more documentation."]
+    pub const ABORT: Self = Self(cef_dom_code_t::CEF_DOM_CODE_ABORT);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_PROPS`] for more documentation."]
+    pub const PROPS: Self = Self(cef_dom_code_t::CEF_DOM_CODE_PROPS);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_NUMPAD_PAREN_LEFT`] for more documentation."]
+    pub const NUMPAD_PAREN_LEFT: Self = Self(cef_dom_code_t::CEF_DOM_CODE_NUMPAD_PAREN_LEFT);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_NUMPAD_PAREN_RIGHT`] for more documentation."]
+    pub const NUMPAD_PAREN_RIGHT: Self = Self(cef_dom_code_t::CEF_DOM_CODE_NUMPAD_PAREN_RIGHT);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_NUMPAD_BACKSPACE`] for more documentation."]
+    pub const NUMPAD_BACKSPACE: Self = Self(cef_dom_code_t::CEF_DOM_CODE_NUMPAD_BACKSPACE);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_NUMPAD_MEMORY_STORE`] for more documentation."]
+    pub const NUMPAD_MEMORY_STORE: Self = Self(cef_dom_code_t::CEF_DOM_CODE_NUMPAD_MEMORY_STORE);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_NUMPAD_MEMORY_RECALL`] for more documentation."]
+    pub const NUMPAD_MEMORY_RECALL: Self = Self(cef_dom_code_t::CEF_DOM_CODE_NUMPAD_MEMORY_RECALL);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_NUMPAD_MEMORY_CLEAR`] for more documentation."]
+    pub const NUMPAD_MEMORY_CLEAR: Self = Self(cef_dom_code_t::CEF_DOM_CODE_NUMPAD_MEMORY_CLEAR);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_NUMPAD_MEMORY_ADD`] for more documentation."]
+    pub const NUMPAD_MEMORY_ADD: Self = Self(cef_dom_code_t::CEF_DOM_CODE_NUMPAD_MEMORY_ADD);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_NUMPAD_MEMORY_SUBTRACT`] for more documentation."]
+    pub const NUMPAD_MEMORY_SUBTRACT: Self =
+        Self(cef_dom_code_t::CEF_DOM_CODE_NUMPAD_MEMORY_SUBTRACT);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_NUMPAD_SIGN_CHANGE`] for more documentation."]
+    pub const NUMPAD_SIGN_CHANGE: Self = Self(cef_dom_code_t::CEF_DOM_CODE_NUMPAD_SIGN_CHANGE);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_NUMPAD_CLEAR`] for more documentation."]
+    pub const NUMPAD_CLEAR: Self = Self(cef_dom_code_t::CEF_DOM_CODE_NUMPAD_CLEAR);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_NUMPAD_CLEAR_ENTRY`] for more documentation."]
+    pub const NUMPAD_CLEAR_ENTRY: Self = Self(cef_dom_code_t::CEF_DOM_CODE_NUMPAD_CLEAR_ENTRY);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_CONTROL_LEFT`] for more documentation."]
+    pub const CONTROL_LEFT: Self = Self(cef_dom_code_t::CEF_DOM_CODE_CONTROL_LEFT);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_SHIFT_LEFT`] for more documentation."]
+    pub const SHIFT_LEFT: Self = Self(cef_dom_code_t::CEF_DOM_CODE_SHIFT_LEFT);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_ALT_LEFT`] for more documentation."]
+    pub const ALT_LEFT: Self = Self(cef_dom_code_t::CEF_DOM_CODE_ALT_LEFT);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_META_LEFT`] for more documentation."]
+    pub const META_LEFT: Self = Self(cef_dom_code_t::CEF_DOM_CODE_META_LEFT);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_CONTROL_RIGHT`] for more documentation."]
+    pub const CONTROL_RIGHT: Self = Self(cef_dom_code_t::CEF_DOM_CODE_CONTROL_RIGHT);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_SHIFT_RIGHT`] for more documentation."]
+    pub const SHIFT_RIGHT: Self = Self(cef_dom_code_t::CEF_DOM_CODE_SHIFT_RIGHT);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_ALT_RIGHT`] for more documentation."]
+    pub const ALT_RIGHT: Self = Self(cef_dom_code_t::CEF_DOM_CODE_ALT_RIGHT);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_META_RIGHT`] for more documentation."]
+    pub const META_RIGHT: Self = Self(cef_dom_code_t::CEF_DOM_CODE_META_RIGHT);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_INFO`] for more documentation."]
+    pub const INFO: Self = Self(cef_dom_code_t::CEF_DOM_CODE_INFO);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_CLOSED_CAPTION_TOGGLE`] for more documentation."]
+    pub const CLOSED_CAPTION_TOGGLE: Self =
+        Self(cef_dom_code_t::CEF_DOM_CODE_CLOSED_CAPTION_TOGGLE);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_BRIGHTNESS_UP`] for more documentation."]
+    pub const BRIGHTNESS_UP: Self = Self(cef_dom_code_t::CEF_DOM_CODE_BRIGHTNESS_UP);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_BRIGHTNESS_DOWN`] for more documentation."]
+    pub const BRIGHTNESS_DOWN: Self = Self(cef_dom_code_t::CEF_DOM_CODE_BRIGHTNESS_DOWN);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_BRIGHTNESS_TOGGLE`] for more documentation."]
+    pub const BRIGHTNESS_TOGGLE: Self = Self(cef_dom_code_t::CEF_DOM_CODE_BRIGHTNESS_TOGGLE);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_BRIGHTNESS_MINIMIUM`] for more documentation."]
+    pub const BRIGHTNESS_MINIMIUM: Self = Self(cef_dom_code_t::CEF_DOM_CODE_BRIGHTNESS_MINIMIUM);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_BRIGHTNESS_MAXIMUM`] for more documentation."]
+    pub const BRIGHTNESS_MAXIMUM: Self = Self(cef_dom_code_t::CEF_DOM_CODE_BRIGHTNESS_MAXIMUM);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_BRIGHTNESS_AUTO`] for more documentation."]
+    pub const BRIGHTNESS_AUTO: Self = Self(cef_dom_code_t::CEF_DOM_CODE_BRIGHTNESS_AUTO);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_CAMERA_ACCESS_TOGGLE`] for more documentation."]
+    pub const CAMERA_ACCESS_TOGGLE: Self = Self(cef_dom_code_t::CEF_DOM_CODE_CAMERA_ACCESS_TOGGLE);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_KBD_ILLUM_UP`] for more documentation."]
+    pub const KBD_ILLUM_UP: Self = Self(cef_dom_code_t::CEF_DOM_CODE_KBD_ILLUM_UP);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_KBD_ILLUM_DOWN`] for more documentation."]
+    pub const KBD_ILLUM_DOWN: Self = Self(cef_dom_code_t::CEF_DOM_CODE_KBD_ILLUM_DOWN);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_KEYBOARD_BACKLIGHT_TOGGLE`] for more documentation."]
+    pub const KEYBOARD_BACKLIGHT_TOGGLE: Self =
+        Self(cef_dom_code_t::CEF_DOM_CODE_KEYBOARD_BACKLIGHT_TOGGLE);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_MEDIA_LAST`] for more documentation."]
+    pub const MEDIA_LAST: Self = Self(cef_dom_code_t::CEF_DOM_CODE_MEDIA_LAST);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_LAUNCH_PHONE`] for more documentation."]
+    pub const LAUNCH_PHONE: Self = Self(cef_dom_code_t::CEF_DOM_CODE_LAUNCH_PHONE);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_PROGRAM_GUIDE`] for more documentation."]
+    pub const PROGRAM_GUIDE: Self = Self(cef_dom_code_t::CEF_DOM_CODE_PROGRAM_GUIDE);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_EXIT`] for more documentation."]
+    pub const EXIT: Self = Self(cef_dom_code_t::CEF_DOM_CODE_EXIT);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_CHANNEL_UP`] for more documentation."]
+    pub const CHANNEL_UP: Self = Self(cef_dom_code_t::CEF_DOM_CODE_CHANNEL_UP);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_CHANNEL_DOWN`] for more documentation."]
+    pub const CHANNEL_DOWN: Self = Self(cef_dom_code_t::CEF_DOM_CODE_CHANNEL_DOWN);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_MEDIA_PLAY`] for more documentation."]
+    pub const MEDIA_PLAY: Self = Self(cef_dom_code_t::CEF_DOM_CODE_MEDIA_PLAY);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_MEDIA_PAUSE`] for more documentation."]
+    pub const MEDIA_PAUSE: Self = Self(cef_dom_code_t::CEF_DOM_CODE_MEDIA_PAUSE);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_MEDIA_RECORD`] for more documentation."]
+    pub const MEDIA_RECORD: Self = Self(cef_dom_code_t::CEF_DOM_CODE_MEDIA_RECORD);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_MEDIA_FAST_FORWARD`] for more documentation."]
+    pub const MEDIA_FAST_FORWARD: Self = Self(cef_dom_code_t::CEF_DOM_CODE_MEDIA_FAST_FORWARD);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_MEDIA_REWIND`] for more documentation."]
+    pub const MEDIA_REWIND: Self = Self(cef_dom_code_t::CEF_DOM_CODE_MEDIA_REWIND);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_MEDIA_TRACK_NEXT`] for more documentation."]
+    pub const MEDIA_TRACK_NEXT: Self = Self(cef_dom_code_t::CEF_DOM_CODE_MEDIA_TRACK_NEXT);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_MEDIA_TRACK_PREVIOUS`] for more documentation."]
+    pub const MEDIA_TRACK_PREVIOUS: Self = Self(cef_dom_code_t::CEF_DOM_CODE_MEDIA_TRACK_PREVIOUS);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_MEDIA_STOP`] for more documentation."]
+    pub const MEDIA_STOP: Self = Self(cef_dom_code_t::CEF_DOM_CODE_MEDIA_STOP);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_EJECT`] for more documentation."]
+    pub const EJECT: Self = Self(cef_dom_code_t::CEF_DOM_CODE_EJECT);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_MEDIA_PLAY_PAUSE`] for more documentation."]
+    pub const MEDIA_PLAY_PAUSE: Self = Self(cef_dom_code_t::CEF_DOM_CODE_MEDIA_PLAY_PAUSE);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_SPEECH_INPUT_TOGGLE`] for more documentation."]
+    pub const SPEECH_INPUT_TOGGLE: Self = Self(cef_dom_code_t::CEF_DOM_CODE_SPEECH_INPUT_TOGGLE);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_DICTATE`] for more documentation."]
+    pub const DICTATE: Self = Self(cef_dom_code_t::CEF_DOM_CODE_DICTATE);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_EMOJI_PICKER`] for more documentation."]
+    pub const EMOJI_PICKER: Self = Self(cef_dom_code_t::CEF_DOM_CODE_EMOJI_PICKER);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_BASS_BOOST`] for more documentation."]
+    pub const BASS_BOOST: Self = Self(cef_dom_code_t::CEF_DOM_CODE_BASS_BOOST);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_MEDIA_SELECT`] for more documentation."]
+    pub const MEDIA_SELECT: Self = Self(cef_dom_code_t::CEF_DOM_CODE_MEDIA_SELECT);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_LAUNCH_WORD_PROCESSOR`] for more documentation."]
+    pub const LAUNCH_WORD_PROCESSOR: Self =
+        Self(cef_dom_code_t::CEF_DOM_CODE_LAUNCH_WORD_PROCESSOR);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_LAUNCH_SPREADSHEET`] for more documentation."]
+    pub const LAUNCH_SPREADSHEET: Self = Self(cef_dom_code_t::CEF_DOM_CODE_LAUNCH_SPREADSHEET);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_LAUNCH_MAIL`] for more documentation."]
+    pub const LAUNCH_MAIL: Self = Self(cef_dom_code_t::CEF_DOM_CODE_LAUNCH_MAIL);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_LAUNCH_CONTACTS`] for more documentation."]
+    pub const LAUNCH_CONTACTS: Self = Self(cef_dom_code_t::CEF_DOM_CODE_LAUNCH_CONTACTS);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_LAUNCH_CALENDAR`] for more documentation."]
+    pub const LAUNCH_CALENDAR: Self = Self(cef_dom_code_t::CEF_DOM_CODE_LAUNCH_CALENDAR);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_LAUNCH_APP2`] for more documentation."]
+    pub const LAUNCH_APP2: Self = Self(cef_dom_code_t::CEF_DOM_CODE_LAUNCH_APP2);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_LAUNCH_APP1`] for more documentation."]
+    pub const LAUNCH_APP1: Self = Self(cef_dom_code_t::CEF_DOM_CODE_LAUNCH_APP1);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_LAUNCH_INTERNET_BROWSER`] for more documentation."]
+    pub const LAUNCH_INTERNET_BROWSER: Self =
+        Self(cef_dom_code_t::CEF_DOM_CODE_LAUNCH_INTERNET_BROWSER);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_LOG_OFF`] for more documentation."]
+    pub const LOG_OFF: Self = Self(cef_dom_code_t::CEF_DOM_CODE_LOG_OFF);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_LOCK_SCREEN`] for more documentation."]
+    pub const LOCK_SCREEN: Self = Self(cef_dom_code_t::CEF_DOM_CODE_LOCK_SCREEN);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_LAUNCH_CONTROL_PANEL`] for more documentation."]
+    pub const LAUNCH_CONTROL_PANEL: Self = Self(cef_dom_code_t::CEF_DOM_CODE_LAUNCH_CONTROL_PANEL);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_SELECT_TASK`] for more documentation."]
+    pub const SELECT_TASK: Self = Self(cef_dom_code_t::CEF_DOM_CODE_SELECT_TASK);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_LAUNCH_DOCUMENTS`] for more documentation."]
+    pub const LAUNCH_DOCUMENTS: Self = Self(cef_dom_code_t::CEF_DOM_CODE_LAUNCH_DOCUMENTS);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_SPELL_CHECK`] for more documentation."]
+    pub const SPELL_CHECK: Self = Self(cef_dom_code_t::CEF_DOM_CODE_SPELL_CHECK);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_LAUNCH_KEYBOARD_LAYOUT`] for more documentation."]
+    pub const LAUNCH_KEYBOARD_LAYOUT: Self =
+        Self(cef_dom_code_t::CEF_DOM_CODE_LAUNCH_KEYBOARD_LAYOUT);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_LAUNCH_SCREEN_SAVER`] for more documentation."]
+    pub const LAUNCH_SCREEN_SAVER: Self = Self(cef_dom_code_t::CEF_DOM_CODE_LAUNCH_SCREEN_SAVER);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_LAUNCH_ASSISTANT`] for more documentation."]
+    pub const LAUNCH_ASSISTANT: Self = Self(cef_dom_code_t::CEF_DOM_CODE_LAUNCH_ASSISTANT);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_LAUNCH_AUDIO_BROWSER`] for more documentation."]
+    pub const LAUNCH_AUDIO_BROWSER: Self = Self(cef_dom_code_t::CEF_DOM_CODE_LAUNCH_AUDIO_BROWSER);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_NEW`] for more documentation."]
+    pub const NEW: Self = Self(cef_dom_code_t::CEF_DOM_CODE_NEW);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_CLOSE`] for more documentation."]
+    pub const CLOSE: Self = Self(cef_dom_code_t::CEF_DOM_CODE_CLOSE);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_SAVE`] for more documentation."]
+    pub const SAVE: Self = Self(cef_dom_code_t::CEF_DOM_CODE_SAVE);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_PRINT`] for more documentation."]
+    pub const PRINT: Self = Self(cef_dom_code_t::CEF_DOM_CODE_PRINT);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_BROWSER_SEARCH`] for more documentation."]
+    pub const BROWSER_SEARCH: Self = Self(cef_dom_code_t::CEF_DOM_CODE_BROWSER_SEARCH);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_BROWSER_HOME`] for more documentation."]
+    pub const BROWSER_HOME: Self = Self(cef_dom_code_t::CEF_DOM_CODE_BROWSER_HOME);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_BROWSER_BACK`] for more documentation."]
+    pub const BROWSER_BACK: Self = Self(cef_dom_code_t::CEF_DOM_CODE_BROWSER_BACK);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_BROWSER_FORWARD`] for more documentation."]
+    pub const BROWSER_FORWARD: Self = Self(cef_dom_code_t::CEF_DOM_CODE_BROWSER_FORWARD);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_BROWSER_STOP`] for more documentation."]
+    pub const BROWSER_STOP: Self = Self(cef_dom_code_t::CEF_DOM_CODE_BROWSER_STOP);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_BROWSER_REFRESH`] for more documentation."]
+    pub const BROWSER_REFRESH: Self = Self(cef_dom_code_t::CEF_DOM_CODE_BROWSER_REFRESH);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_BROWSER_FAVORITES`] for more documentation."]
+    pub const BROWSER_FAVORITES: Self = Self(cef_dom_code_t::CEF_DOM_CODE_BROWSER_FAVORITES);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_ZOOM_IN`] for more documentation."]
+    pub const ZOOM_IN: Self = Self(cef_dom_code_t::CEF_DOM_CODE_ZOOM_IN);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_ZOOM_OUT`] for more documentation."]
+    pub const ZOOM_OUT: Self = Self(cef_dom_code_t::CEF_DOM_CODE_ZOOM_OUT);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_ZOOM_TOGGLE`] for more documentation."]
+    pub const ZOOM_TOGGLE: Self = Self(cef_dom_code_t::CEF_DOM_CODE_ZOOM_TOGGLE);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_REDO`] for more documentation."]
+    pub const REDO: Self = Self(cef_dom_code_t::CEF_DOM_CODE_REDO);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_MAIL_REPLY`] for more documentation."]
+    pub const MAIL_REPLY: Self = Self(cef_dom_code_t::CEF_DOM_CODE_MAIL_REPLY);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_MAIL_FORWARD`] for more documentation."]
+    pub const MAIL_FORWARD: Self = Self(cef_dom_code_t::CEF_DOM_CODE_MAIL_FORWARD);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_MAIL_SEND`] for more documentation."]
+    pub const MAIL_SEND: Self = Self(cef_dom_code_t::CEF_DOM_CODE_MAIL_SEND);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_KEYBOARD_LAYOUT_SELECT`] for more documentation."]
+    pub const KEYBOARD_LAYOUT_SELECT: Self =
+        Self(cef_dom_code_t::CEF_DOM_CODE_KEYBOARD_LAYOUT_SELECT);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_SHOW_ALL_WINDOWS`] for more documentation."]
+    pub const SHOW_ALL_WINDOWS: Self = Self(cef_dom_code_t::CEF_DOM_CODE_SHOW_ALL_WINDOWS);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_ALL_APPLICATIONS`] for more documentation."]
+    pub const ALL_APPLICATIONS: Self = Self(cef_dom_code_t::CEF_DOM_CODE_ALL_APPLICATIONS);
+    #[doc = "See [`cef_dom_code_t::CEF_DOM_CODE_PRIVACY_SCREEN_TOGGLE`] for more documentation."]
+    pub const PRIVACY_SCREEN_TOGGLE: Self =
+        Self(cef_dom_code_t::CEF_DOM_CODE_PRIVACY_SCREEN_TOGGLE);
+}
+impl DomCode {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> i32 {
+        self.0 as i32
+    }
+}
+impl Default for DomCode {
+    fn default() -> Self {
+        Self(cef_dom_code_t::CEF_DOM_CODE_NONE)
+    }
+}
+
+/// See [`cef_dom_key_t`] for more documentation.
+#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+pub struct DomKey(cef_dom_key_t);
+impl AsRef<cef_dom_key_t> for DomKey {
+    fn as_ref(&self) -> &cef_dom_key_t {
+        &self.0
+    }
+}
+impl AsMut<cef_dom_key_t> for DomKey {
+    fn as_mut(&mut self) -> &mut cef_dom_key_t {
+        &mut self.0
+    }
+}
+impl From<cef_dom_key_t> for DomKey {
+    fn from(value: cef_dom_key_t) -> Self {
+        Self(value)
+    }
+}
+impl From<DomKey> for cef_dom_key_t {
+    fn from(value: DomKey) -> Self {
+        value.0
+    }
+}
+impl DomKey {
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_NONE`] for more documentation."]
+    pub const NONE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_NONE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_UNICODE_FLAG`] for more documentation."]
+    pub const UNICODE_FLAG: Self = Self(cef_dom_key_t::CEF_DOM_KEY_UNICODE_FLAG);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_DEAD_FLAG`] for more documentation."]
+    pub const DEAD_FLAG: Self = Self(cef_dom_key_t::CEF_DOM_KEY_DEAD_FLAG);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_BACKSPACE`] for more documentation."]
+    pub const BACKSPACE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_BACKSPACE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_TAB`] for more documentation."]
+    pub const TAB: Self = Self(cef_dom_key_t::CEF_DOM_KEY_TAB);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_ENTER`] for more documentation."]
+    pub const ENTER: Self = Self(cef_dom_key_t::CEF_DOM_KEY_ENTER);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_ESCAPE`] for more documentation."]
+    pub const ESCAPE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_ESCAPE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_DEL`] for more documentation."]
+    pub const DEL: Self = Self(cef_dom_key_t::CEF_DOM_KEY_DEL);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_UNIDENTIFIED`] for more documentation."]
+    pub const UNIDENTIFIED: Self = Self(cef_dom_key_t::CEF_DOM_KEY_UNIDENTIFIED);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_ACCEL`] for more documentation."]
+    pub const ACCEL: Self = Self(cef_dom_key_t::CEF_DOM_KEY_ACCEL);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_ALT`] for more documentation."]
+    pub const ALT: Self = Self(cef_dom_key_t::CEF_DOM_KEY_ALT);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_ALT_GRAPH`] for more documentation."]
+    pub const ALT_GRAPH: Self = Self(cef_dom_key_t::CEF_DOM_KEY_ALT_GRAPH);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_CAPS_LOCK`] for more documentation."]
+    pub const CAPS_LOCK: Self = Self(cef_dom_key_t::CEF_DOM_KEY_CAPS_LOCK);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_CONTROL`] for more documentation."]
+    pub const CONTROL: Self = Self(cef_dom_key_t::CEF_DOM_KEY_CONTROL);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_FN`] for more documentation."]
+    pub const FN: Self = Self(cef_dom_key_t::CEF_DOM_KEY_FN);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_FN_LOCK`] for more documentation."]
+    pub const FN_LOCK: Self = Self(cef_dom_key_t::CEF_DOM_KEY_FN_LOCK);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_HYPER`] for more documentation."]
+    pub const HYPER: Self = Self(cef_dom_key_t::CEF_DOM_KEY_HYPER);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_META`] for more documentation."]
+    pub const META: Self = Self(cef_dom_key_t::CEF_DOM_KEY_META);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_NUM_LOCK`] for more documentation."]
+    pub const NUM_LOCK: Self = Self(cef_dom_key_t::CEF_DOM_KEY_NUM_LOCK);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_SCROLL_LOCK`] for more documentation."]
+    pub const SCROLL_LOCK: Self = Self(cef_dom_key_t::CEF_DOM_KEY_SCROLL_LOCK);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_SHIFT`] for more documentation."]
+    pub const SHIFT: Self = Self(cef_dom_key_t::CEF_DOM_KEY_SHIFT);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_SUPER`] for more documentation."]
+    pub const SUPER: Self = Self(cef_dom_key_t::CEF_DOM_KEY_SUPER);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_SYMBOL`] for more documentation."]
+    pub const SYMBOL: Self = Self(cef_dom_key_t::CEF_DOM_KEY_SYMBOL);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_SYMBOL_LOCK`] for more documentation."]
+    pub const SYMBOL_LOCK: Self = Self(cef_dom_key_t::CEF_DOM_KEY_SYMBOL_LOCK);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_SHIFT_LEVEL5`] for more documentation."]
+    pub const SHIFT_LEVEL5: Self = Self(cef_dom_key_t::CEF_DOM_KEY_SHIFT_LEVEL5);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_ALT_GRAPH_LATCH`] for more documentation."]
+    pub const ALT_GRAPH_LATCH: Self = Self(cef_dom_key_t::CEF_DOM_KEY_ALT_GRAPH_LATCH);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_ARROW_DOWN`] for more documentation."]
+    pub const ARROW_DOWN: Self = Self(cef_dom_key_t::CEF_DOM_KEY_ARROW_DOWN);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_ARROW_LEFT`] for more documentation."]
+    pub const ARROW_LEFT: Self = Self(cef_dom_key_t::CEF_DOM_KEY_ARROW_LEFT);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_ARROW_RIGHT`] for more documentation."]
+    pub const ARROW_RIGHT: Self = Self(cef_dom_key_t::CEF_DOM_KEY_ARROW_RIGHT);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_ARROW_UP`] for more documentation."]
+    pub const ARROW_UP: Self = Self(cef_dom_key_t::CEF_DOM_KEY_ARROW_UP);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_END`] for more documentation."]
+    pub const END: Self = Self(cef_dom_key_t::CEF_DOM_KEY_END);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_HOME`] for more documentation."]
+    pub const HOME: Self = Self(cef_dom_key_t::CEF_DOM_KEY_HOME);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_PAGE_DOWN`] for more documentation."]
+    pub const PAGE_DOWN: Self = Self(cef_dom_key_t::CEF_DOM_KEY_PAGE_DOWN);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_PAGE_UP`] for more documentation."]
+    pub const PAGE_UP: Self = Self(cef_dom_key_t::CEF_DOM_KEY_PAGE_UP);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_CLEAR`] for more documentation."]
+    pub const CLEAR: Self = Self(cef_dom_key_t::CEF_DOM_KEY_CLEAR);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_COPY`] for more documentation."]
+    pub const COPY: Self = Self(cef_dom_key_t::CEF_DOM_KEY_COPY);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_CR_SEL`] for more documentation."]
+    pub const CR_SEL: Self = Self(cef_dom_key_t::CEF_DOM_KEY_CR_SEL);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_CUT`] for more documentation."]
+    pub const CUT: Self = Self(cef_dom_key_t::CEF_DOM_KEY_CUT);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_ERASE_EOF`] for more documentation."]
+    pub const ERASE_EOF: Self = Self(cef_dom_key_t::CEF_DOM_KEY_ERASE_EOF);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_EX_SEL`] for more documentation."]
+    pub const EX_SEL: Self = Self(cef_dom_key_t::CEF_DOM_KEY_EX_SEL);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_INSERT`] for more documentation."]
+    pub const INSERT: Self = Self(cef_dom_key_t::CEF_DOM_KEY_INSERT);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_PASTE`] for more documentation."]
+    pub const PASTE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_PASTE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_REDO`] for more documentation."]
+    pub const REDO: Self = Self(cef_dom_key_t::CEF_DOM_KEY_REDO);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_UNDO`] for more documentation."]
+    pub const UNDO: Self = Self(cef_dom_key_t::CEF_DOM_KEY_UNDO);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_ACCEPT`] for more documentation."]
+    pub const ACCEPT: Self = Self(cef_dom_key_t::CEF_DOM_KEY_ACCEPT);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_AGAIN`] for more documentation."]
+    pub const AGAIN: Self = Self(cef_dom_key_t::CEF_DOM_KEY_AGAIN);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_ATTN`] for more documentation."]
+    pub const ATTN: Self = Self(cef_dom_key_t::CEF_DOM_KEY_ATTN);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_CANCEL`] for more documentation."]
+    pub const CANCEL: Self = Self(cef_dom_key_t::CEF_DOM_KEY_CANCEL);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_CONTEXT_MENU`] for more documentation."]
+    pub const CONTEXT_MENU: Self = Self(cef_dom_key_t::CEF_DOM_KEY_CONTEXT_MENU);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_EXECUTE`] for more documentation."]
+    pub const EXECUTE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_EXECUTE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_FIND`] for more documentation."]
+    pub const FIND: Self = Self(cef_dom_key_t::CEF_DOM_KEY_FIND);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_HELP`] for more documentation."]
+    pub const HELP: Self = Self(cef_dom_key_t::CEF_DOM_KEY_HELP);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_PAUSE`] for more documentation."]
+    pub const PAUSE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_PAUSE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_PLAY`] for more documentation."]
+    pub const PLAY: Self = Self(cef_dom_key_t::CEF_DOM_KEY_PLAY);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_PROPS`] for more documentation."]
+    pub const PROPS: Self = Self(cef_dom_key_t::CEF_DOM_KEY_PROPS);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_SELECT`] for more documentation."]
+    pub const SELECT: Self = Self(cef_dom_key_t::CEF_DOM_KEY_SELECT);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_ZOOM_IN`] for more documentation."]
+    pub const ZOOM_IN: Self = Self(cef_dom_key_t::CEF_DOM_KEY_ZOOM_IN);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_ZOOM_OUT`] for more documentation."]
+    pub const ZOOM_OUT: Self = Self(cef_dom_key_t::CEF_DOM_KEY_ZOOM_OUT);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_BRIGHTNESS_DOWN`] for more documentation."]
+    pub const BRIGHTNESS_DOWN: Self = Self(cef_dom_key_t::CEF_DOM_KEY_BRIGHTNESS_DOWN);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_BRIGHTNESS_UP`] for more documentation."]
+    pub const BRIGHTNESS_UP: Self = Self(cef_dom_key_t::CEF_DOM_KEY_BRIGHTNESS_UP);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_EJECT`] for more documentation."]
+    pub const EJECT: Self = Self(cef_dom_key_t::CEF_DOM_KEY_EJECT);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_LOG_OFF`] for more documentation."]
+    pub const LOG_OFF: Self = Self(cef_dom_key_t::CEF_DOM_KEY_LOG_OFF);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_POWER`] for more documentation."]
+    pub const POWER: Self = Self(cef_dom_key_t::CEF_DOM_KEY_POWER);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_POWER_OFF`] for more documentation."]
+    pub const POWER_OFF: Self = Self(cef_dom_key_t::CEF_DOM_KEY_POWER_OFF);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_PRINT_SCREEN`] for more documentation."]
+    pub const PRINT_SCREEN: Self = Self(cef_dom_key_t::CEF_DOM_KEY_PRINT_SCREEN);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_HIBERNATE`] for more documentation."]
+    pub const HIBERNATE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_HIBERNATE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_STANDBY`] for more documentation."]
+    pub const STANDBY: Self = Self(cef_dom_key_t::CEF_DOM_KEY_STANDBY);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_WAKE_UP`] for more documentation."]
+    pub const WAKE_UP: Self = Self(cef_dom_key_t::CEF_DOM_KEY_WAKE_UP);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_ALL_CANDIDATES`] for more documentation."]
+    pub const ALL_CANDIDATES: Self = Self(cef_dom_key_t::CEF_DOM_KEY_ALL_CANDIDATES);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_ALPHANUMERIC`] for more documentation."]
+    pub const ALPHANUMERIC: Self = Self(cef_dom_key_t::CEF_DOM_KEY_ALPHANUMERIC);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_CODE_INPUT`] for more documentation."]
+    pub const CODE_INPUT: Self = Self(cef_dom_key_t::CEF_DOM_KEY_CODE_INPUT);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_COMPOSE`] for more documentation."]
+    pub const COMPOSE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_COMPOSE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_CONVERT`] for more documentation."]
+    pub const CONVERT: Self = Self(cef_dom_key_t::CEF_DOM_KEY_CONVERT);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_FINAL_MODE`] for more documentation."]
+    pub const FINAL_MODE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_FINAL_MODE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_GROUP_FIRST`] for more documentation."]
+    pub const GROUP_FIRST: Self = Self(cef_dom_key_t::CEF_DOM_KEY_GROUP_FIRST);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_GROUP_LAST`] for more documentation."]
+    pub const GROUP_LAST: Self = Self(cef_dom_key_t::CEF_DOM_KEY_GROUP_LAST);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_GROUP_NEXT`] for more documentation."]
+    pub const GROUP_NEXT: Self = Self(cef_dom_key_t::CEF_DOM_KEY_GROUP_NEXT);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_GROUP_PREVIOUS`] for more documentation."]
+    pub const GROUP_PREVIOUS: Self = Self(cef_dom_key_t::CEF_DOM_KEY_GROUP_PREVIOUS);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_MODE_CHANGE`] for more documentation."]
+    pub const MODE_CHANGE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_MODE_CHANGE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_NEXT_CANDIDATE`] for more documentation."]
+    pub const NEXT_CANDIDATE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_NEXT_CANDIDATE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_NON_CONVERT`] for more documentation."]
+    pub const NON_CONVERT: Self = Self(cef_dom_key_t::CEF_DOM_KEY_NON_CONVERT);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_PREVIOUS_CANDIDATE`] for more documentation."]
+    pub const PREVIOUS_CANDIDATE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_PREVIOUS_CANDIDATE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_PROCESS`] for more documentation."]
+    pub const PROCESS: Self = Self(cef_dom_key_t::CEF_DOM_KEY_PROCESS);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_SINGLE_CANDIDATE`] for more documentation."]
+    pub const SINGLE_CANDIDATE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_SINGLE_CANDIDATE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_HANGUL_MODE`] for more documentation."]
+    pub const HANGUL_MODE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_HANGUL_MODE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_HANJA_MODE`] for more documentation."]
+    pub const HANJA_MODE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_HANJA_MODE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_JUNJA_MODE`] for more documentation."]
+    pub const JUNJA_MODE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_JUNJA_MODE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_EISU`] for more documentation."]
+    pub const EISU: Self = Self(cef_dom_key_t::CEF_DOM_KEY_EISU);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_HANKAKU`] for more documentation."]
+    pub const HANKAKU: Self = Self(cef_dom_key_t::CEF_DOM_KEY_HANKAKU);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_HIRAGANA`] for more documentation."]
+    pub const HIRAGANA: Self = Self(cef_dom_key_t::CEF_DOM_KEY_HIRAGANA);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_HIRAGANA_KATAKANA`] for more documentation."]
+    pub const HIRAGANA_KATAKANA: Self = Self(cef_dom_key_t::CEF_DOM_KEY_HIRAGANA_KATAKANA);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_KANA_MODE`] for more documentation."]
+    pub const KANA_MODE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_KANA_MODE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_KANJI_MODE`] for more documentation."]
+    pub const KANJI_MODE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_KANJI_MODE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_KATAKANA`] for more documentation."]
+    pub const KATAKANA: Self = Self(cef_dom_key_t::CEF_DOM_KEY_KATAKANA);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_ROMAJI`] for more documentation."]
+    pub const ROMAJI: Self = Self(cef_dom_key_t::CEF_DOM_KEY_ROMAJI);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_ZENKAKU`] for more documentation."]
+    pub const ZENKAKU: Self = Self(cef_dom_key_t::CEF_DOM_KEY_ZENKAKU);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_ZENKAKU_HANKAKU`] for more documentation."]
+    pub const ZENKAKU_HANKAKU: Self = Self(cef_dom_key_t::CEF_DOM_KEY_ZENKAKU_HANKAKU);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_F1`] for more documentation."]
+    pub const F1: Self = Self(cef_dom_key_t::CEF_DOM_KEY_F1);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_F2`] for more documentation."]
+    pub const F2: Self = Self(cef_dom_key_t::CEF_DOM_KEY_F2);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_F3`] for more documentation."]
+    pub const F3: Self = Self(cef_dom_key_t::CEF_DOM_KEY_F3);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_F4`] for more documentation."]
+    pub const F4: Self = Self(cef_dom_key_t::CEF_DOM_KEY_F4);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_F5`] for more documentation."]
+    pub const F5: Self = Self(cef_dom_key_t::CEF_DOM_KEY_F5);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_F6`] for more documentation."]
+    pub const F6: Self = Self(cef_dom_key_t::CEF_DOM_KEY_F6);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_F7`] for more documentation."]
+    pub const F7: Self = Self(cef_dom_key_t::CEF_DOM_KEY_F7);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_F8`] for more documentation."]
+    pub const F8: Self = Self(cef_dom_key_t::CEF_DOM_KEY_F8);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_F9`] for more documentation."]
+    pub const F9: Self = Self(cef_dom_key_t::CEF_DOM_KEY_F9);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_F10`] for more documentation."]
+    pub const F10: Self = Self(cef_dom_key_t::CEF_DOM_KEY_F10);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_F11`] for more documentation."]
+    pub const F11: Self = Self(cef_dom_key_t::CEF_DOM_KEY_F11);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_F12`] for more documentation."]
+    pub const F12: Self = Self(cef_dom_key_t::CEF_DOM_KEY_F12);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_F13`] for more documentation."]
+    pub const F13: Self = Self(cef_dom_key_t::CEF_DOM_KEY_F13);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_F14`] for more documentation."]
+    pub const F14: Self = Self(cef_dom_key_t::CEF_DOM_KEY_F14);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_F15`] for more documentation."]
+    pub const F15: Self = Self(cef_dom_key_t::CEF_DOM_KEY_F15);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_F16`] for more documentation."]
+    pub const F16: Self = Self(cef_dom_key_t::CEF_DOM_KEY_F16);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_F17`] for more documentation."]
+    pub const F17: Self = Self(cef_dom_key_t::CEF_DOM_KEY_F17);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_F18`] for more documentation."]
+    pub const F18: Self = Self(cef_dom_key_t::CEF_DOM_KEY_F18);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_F19`] for more documentation."]
+    pub const F19: Self = Self(cef_dom_key_t::CEF_DOM_KEY_F19);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_F20`] for more documentation."]
+    pub const F20: Self = Self(cef_dom_key_t::CEF_DOM_KEY_F20);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_F21`] for more documentation."]
+    pub const F21: Self = Self(cef_dom_key_t::CEF_DOM_KEY_F21);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_F22`] for more documentation."]
+    pub const F22: Self = Self(cef_dom_key_t::CEF_DOM_KEY_F22);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_F23`] for more documentation."]
+    pub const F23: Self = Self(cef_dom_key_t::CEF_DOM_KEY_F23);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_F24`] for more documentation."]
+    pub const F24: Self = Self(cef_dom_key_t::CEF_DOM_KEY_F24);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_SOFT1`] for more documentation."]
+    pub const SOFT1: Self = Self(cef_dom_key_t::CEF_DOM_KEY_SOFT1);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_SOFT2`] for more documentation."]
+    pub const SOFT2: Self = Self(cef_dom_key_t::CEF_DOM_KEY_SOFT2);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_SOFT3`] for more documentation."]
+    pub const SOFT3: Self = Self(cef_dom_key_t::CEF_DOM_KEY_SOFT3);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_SOFT4`] for more documentation."]
+    pub const SOFT4: Self = Self(cef_dom_key_t::CEF_DOM_KEY_SOFT4);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_SOFT5`] for more documentation."]
+    pub const SOFT5: Self = Self(cef_dom_key_t::CEF_DOM_KEY_SOFT5);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_SOFT6`] for more documentation."]
+    pub const SOFT6: Self = Self(cef_dom_key_t::CEF_DOM_KEY_SOFT6);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_SOFT7`] for more documentation."]
+    pub const SOFT7: Self = Self(cef_dom_key_t::CEF_DOM_KEY_SOFT7);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_SOFT8`] for more documentation."]
+    pub const SOFT8: Self = Self(cef_dom_key_t::CEF_DOM_KEY_SOFT8);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_CHANNEL_DOWN`] for more documentation."]
+    pub const CHANNEL_DOWN: Self = Self(cef_dom_key_t::CEF_DOM_KEY_CHANNEL_DOWN);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_CHANNEL_UP`] for more documentation."]
+    pub const CHANNEL_UP: Self = Self(cef_dom_key_t::CEF_DOM_KEY_CHANNEL_UP);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_CLOSE`] for more documentation."]
+    pub const CLOSE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_CLOSE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_MAIL_FORWARD`] for more documentation."]
+    pub const MAIL_FORWARD: Self = Self(cef_dom_key_t::CEF_DOM_KEY_MAIL_FORWARD);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_MAIL_REPLY`] for more documentation."]
+    pub const MAIL_REPLY: Self = Self(cef_dom_key_t::CEF_DOM_KEY_MAIL_REPLY);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_MAIL_SEND`] for more documentation."]
+    pub const MAIL_SEND: Self = Self(cef_dom_key_t::CEF_DOM_KEY_MAIL_SEND);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_MEDIA_CLOSE`] for more documentation."]
+    pub const MEDIA_CLOSE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_MEDIA_CLOSE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_MEDIA_FAST_FORWARD`] for more documentation."]
+    pub const MEDIA_FAST_FORWARD: Self = Self(cef_dom_key_t::CEF_DOM_KEY_MEDIA_FAST_FORWARD);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_MEDIA_PAUSE`] for more documentation."]
+    pub const MEDIA_PAUSE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_MEDIA_PAUSE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_MEDIA_PLAY`] for more documentation."]
+    pub const MEDIA_PLAY: Self = Self(cef_dom_key_t::CEF_DOM_KEY_MEDIA_PLAY);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_MEDIA_PLAY_PAUSE`] for more documentation."]
+    pub const MEDIA_PLAY_PAUSE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_MEDIA_PLAY_PAUSE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_MEDIA_RECORD`] for more documentation."]
+    pub const MEDIA_RECORD: Self = Self(cef_dom_key_t::CEF_DOM_KEY_MEDIA_RECORD);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_MEDIA_REWIND`] for more documentation."]
+    pub const MEDIA_REWIND: Self = Self(cef_dom_key_t::CEF_DOM_KEY_MEDIA_REWIND);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_MEDIA_STOP`] for more documentation."]
+    pub const MEDIA_STOP: Self = Self(cef_dom_key_t::CEF_DOM_KEY_MEDIA_STOP);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_MEDIA_TRACK_NEXT`] for more documentation."]
+    pub const MEDIA_TRACK_NEXT: Self = Self(cef_dom_key_t::CEF_DOM_KEY_MEDIA_TRACK_NEXT);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_MEDIA_TRACK_PREVIOUS`] for more documentation."]
+    pub const MEDIA_TRACK_PREVIOUS: Self = Self(cef_dom_key_t::CEF_DOM_KEY_MEDIA_TRACK_PREVIOUS);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_NEW`] for more documentation."]
+    pub const NEW: Self = Self(cef_dom_key_t::CEF_DOM_KEY_NEW);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_OPEN`] for more documentation."]
+    pub const OPEN: Self = Self(cef_dom_key_t::CEF_DOM_KEY_OPEN);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_PRINT`] for more documentation."]
+    pub const PRINT: Self = Self(cef_dom_key_t::CEF_DOM_KEY_PRINT);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_SAVE`] for more documentation."]
+    pub const SAVE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_SAVE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_SPELL_CHECK`] for more documentation."]
+    pub const SPELL_CHECK: Self = Self(cef_dom_key_t::CEF_DOM_KEY_SPELL_CHECK);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_KEY11`] for more documentation."]
+    pub const KEY11: Self = Self(cef_dom_key_t::CEF_DOM_KEY_KEY11);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_KEY12`] for more documentation."]
+    pub const KEY12: Self = Self(cef_dom_key_t::CEF_DOM_KEY_KEY12);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_AUDIO_BALANCE_LEFT`] for more documentation."]
+    pub const AUDIO_BALANCE_LEFT: Self = Self(cef_dom_key_t::CEF_DOM_KEY_AUDIO_BALANCE_LEFT);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_AUDIO_BALANCE_RIGHT`] for more documentation."]
+    pub const AUDIO_BALANCE_RIGHT: Self = Self(cef_dom_key_t::CEF_DOM_KEY_AUDIO_BALANCE_RIGHT);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_AUDIO_BASS_BOOST_DOWN`] for more documentation."]
+    pub const AUDIO_BASS_BOOST_DOWN: Self = Self(cef_dom_key_t::CEF_DOM_KEY_AUDIO_BASS_BOOST_DOWN);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_AUDIO_BASS_BOOST_TOGGLE`] for more documentation."]
+    pub const AUDIO_BASS_BOOST_TOGGLE: Self =
+        Self(cef_dom_key_t::CEF_DOM_KEY_AUDIO_BASS_BOOST_TOGGLE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_AUDIO_BASS_BOOST_UP`] for more documentation."]
+    pub const AUDIO_BASS_BOOST_UP: Self = Self(cef_dom_key_t::CEF_DOM_KEY_AUDIO_BASS_BOOST_UP);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_AUDIO_FADER_FRONT`] for more documentation."]
+    pub const AUDIO_FADER_FRONT: Self = Self(cef_dom_key_t::CEF_DOM_KEY_AUDIO_FADER_FRONT);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_AUDIO_FADER_REAR`] for more documentation."]
+    pub const AUDIO_FADER_REAR: Self = Self(cef_dom_key_t::CEF_DOM_KEY_AUDIO_FADER_REAR);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_AUDIO_SURROUND_MODE_NEXT`] for more documentation."]
+    pub const AUDIO_SURROUND_MODE_NEXT: Self =
+        Self(cef_dom_key_t::CEF_DOM_KEY_AUDIO_SURROUND_MODE_NEXT);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_AUDIO_TREBLE_DOWN`] for more documentation."]
+    pub const AUDIO_TREBLE_DOWN: Self = Self(cef_dom_key_t::CEF_DOM_KEY_AUDIO_TREBLE_DOWN);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_AUDIO_TREBLE_UP`] for more documentation."]
+    pub const AUDIO_TREBLE_UP: Self = Self(cef_dom_key_t::CEF_DOM_KEY_AUDIO_TREBLE_UP);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_AUDIO_VOLUME_DOWN`] for more documentation."]
+    pub const AUDIO_VOLUME_DOWN: Self = Self(cef_dom_key_t::CEF_DOM_KEY_AUDIO_VOLUME_DOWN);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_AUDIO_VOLUME_UP`] for more documentation."]
+    pub const AUDIO_VOLUME_UP: Self = Self(cef_dom_key_t::CEF_DOM_KEY_AUDIO_VOLUME_UP);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_AUDIO_VOLUME_MUTE`] for more documentation."]
+    pub const AUDIO_VOLUME_MUTE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_AUDIO_VOLUME_MUTE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_MICROPHONE_TOGGLE`] for more documentation."]
+    pub const MICROPHONE_TOGGLE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_MICROPHONE_TOGGLE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_MICROPHONE_VOLUME_DOWN`] for more documentation."]
+    pub const MICROPHONE_VOLUME_DOWN: Self =
+        Self(cef_dom_key_t::CEF_DOM_KEY_MICROPHONE_VOLUME_DOWN);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_MICROPHONE_VOLUME_UP`] for more documentation."]
+    pub const MICROPHONE_VOLUME_UP: Self = Self(cef_dom_key_t::CEF_DOM_KEY_MICROPHONE_VOLUME_UP);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_MICROPHONE_VOLUME_MUTE`] for more documentation."]
+    pub const MICROPHONE_VOLUME_MUTE: Self =
+        Self(cef_dom_key_t::CEF_DOM_KEY_MICROPHONE_VOLUME_MUTE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_SPEECH_CORRECTION_LIST`] for more documentation."]
+    pub const SPEECH_CORRECTION_LIST: Self =
+        Self(cef_dom_key_t::CEF_DOM_KEY_SPEECH_CORRECTION_LIST);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_SPEECH_INPUT_TOGGLE`] for more documentation."]
+    pub const SPEECH_INPUT_TOGGLE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_SPEECH_INPUT_TOGGLE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_LAUNCH_MY_COMPUTER`] for more documentation."]
+    pub const LAUNCH_MY_COMPUTER: Self = Self(cef_dom_key_t::CEF_DOM_KEY_LAUNCH_MY_COMPUTER);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_LAUNCH_CALCULATOR`] for more documentation."]
+    pub const LAUNCH_CALCULATOR: Self = Self(cef_dom_key_t::CEF_DOM_KEY_LAUNCH_CALCULATOR);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_LAUNCH_CALENDAR`] for more documentation."]
+    pub const LAUNCH_CALENDAR: Self = Self(cef_dom_key_t::CEF_DOM_KEY_LAUNCH_CALENDAR);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_LAUNCH_CONTACTS`] for more documentation."]
+    pub const LAUNCH_CONTACTS: Self = Self(cef_dom_key_t::CEF_DOM_KEY_LAUNCH_CONTACTS);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_LAUNCH_MAIL`] for more documentation."]
+    pub const LAUNCH_MAIL: Self = Self(cef_dom_key_t::CEF_DOM_KEY_LAUNCH_MAIL);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_LAUNCH_MEDIA_PLAYER`] for more documentation."]
+    pub const LAUNCH_MEDIA_PLAYER: Self = Self(cef_dom_key_t::CEF_DOM_KEY_LAUNCH_MEDIA_PLAYER);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_LAUNCH_MUSIC_PLAYER`] for more documentation."]
+    pub const LAUNCH_MUSIC_PLAYER: Self = Self(cef_dom_key_t::CEF_DOM_KEY_LAUNCH_MUSIC_PLAYER);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_LAUNCH_PHONE`] for more documentation."]
+    pub const LAUNCH_PHONE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_LAUNCH_PHONE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_LAUNCH_SCREEN_SAVER`] for more documentation."]
+    pub const LAUNCH_SCREEN_SAVER: Self = Self(cef_dom_key_t::CEF_DOM_KEY_LAUNCH_SCREEN_SAVER);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_LAUNCH_SPREADSHEET`] for more documentation."]
+    pub const LAUNCH_SPREADSHEET: Self = Self(cef_dom_key_t::CEF_DOM_KEY_LAUNCH_SPREADSHEET);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_LAUNCH_WEB_BROWSER`] for more documentation."]
+    pub const LAUNCH_WEB_BROWSER: Self = Self(cef_dom_key_t::CEF_DOM_KEY_LAUNCH_WEB_BROWSER);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_LAUNCH_WEB_CAM`] for more documentation."]
+    pub const LAUNCH_WEB_CAM: Self = Self(cef_dom_key_t::CEF_DOM_KEY_LAUNCH_WEB_CAM);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_LAUNCH_WORD_PROCESSOR`] for more documentation."]
+    pub const LAUNCH_WORD_PROCESSOR: Self = Self(cef_dom_key_t::CEF_DOM_KEY_LAUNCH_WORD_PROCESSOR);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_LAUNCH_ASSISTANT`] for more documentation."]
+    pub const LAUNCH_ASSISTANT: Self = Self(cef_dom_key_t::CEF_DOM_KEY_LAUNCH_ASSISTANT);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_LAUNCH_CONTROL_PANEL`] for more documentation."]
+    pub const LAUNCH_CONTROL_PANEL: Self = Self(cef_dom_key_t::CEF_DOM_KEY_LAUNCH_CONTROL_PANEL);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_BROWSER_BACK`] for more documentation."]
+    pub const BROWSER_BACK: Self = Self(cef_dom_key_t::CEF_DOM_KEY_BROWSER_BACK);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_BROWSER_FAVORITES`] for more documentation."]
+    pub const BROWSER_FAVORITES: Self = Self(cef_dom_key_t::CEF_DOM_KEY_BROWSER_FAVORITES);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_BROWSER_FORWARD`] for more documentation."]
+    pub const BROWSER_FORWARD: Self = Self(cef_dom_key_t::CEF_DOM_KEY_BROWSER_FORWARD);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_BROWSER_HOME`] for more documentation."]
+    pub const BROWSER_HOME: Self = Self(cef_dom_key_t::CEF_DOM_KEY_BROWSER_HOME);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_BROWSER_REFRESH`] for more documentation."]
+    pub const BROWSER_REFRESH: Self = Self(cef_dom_key_t::CEF_DOM_KEY_BROWSER_REFRESH);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_BROWSER_SEARCH`] for more documentation."]
+    pub const BROWSER_SEARCH: Self = Self(cef_dom_key_t::CEF_DOM_KEY_BROWSER_SEARCH);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_BROWSER_STOP`] for more documentation."]
+    pub const BROWSER_STOP: Self = Self(cef_dom_key_t::CEF_DOM_KEY_BROWSER_STOP);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_APP_SWITCH`] for more documentation."]
+    pub const APP_SWITCH: Self = Self(cef_dom_key_t::CEF_DOM_KEY_APP_SWITCH);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_CALL`] for more documentation."]
+    pub const CALL: Self = Self(cef_dom_key_t::CEF_DOM_KEY_CALL);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_CAMERA`] for more documentation."]
+    pub const CAMERA: Self = Self(cef_dom_key_t::CEF_DOM_KEY_CAMERA);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_CAMERA_FOCUS`] for more documentation."]
+    pub const CAMERA_FOCUS: Self = Self(cef_dom_key_t::CEF_DOM_KEY_CAMERA_FOCUS);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_END_CALL`] for more documentation."]
+    pub const END_CALL: Self = Self(cef_dom_key_t::CEF_DOM_KEY_END_CALL);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_GO_BACK`] for more documentation."]
+    pub const GO_BACK: Self = Self(cef_dom_key_t::CEF_DOM_KEY_GO_BACK);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_GO_HOME`] for more documentation."]
+    pub const GO_HOME: Self = Self(cef_dom_key_t::CEF_DOM_KEY_GO_HOME);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_HEADSET_HOOK`] for more documentation."]
+    pub const HEADSET_HOOK: Self = Self(cef_dom_key_t::CEF_DOM_KEY_HEADSET_HOOK);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_LAST_NUMBER_REDIAL`] for more documentation."]
+    pub const LAST_NUMBER_REDIAL: Self = Self(cef_dom_key_t::CEF_DOM_KEY_LAST_NUMBER_REDIAL);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_NOTIFICATION`] for more documentation."]
+    pub const NOTIFICATION: Self = Self(cef_dom_key_t::CEF_DOM_KEY_NOTIFICATION);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_MANNER_MODE`] for more documentation."]
+    pub const MANNER_MODE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_MANNER_MODE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_VOICE_DIAL`] for more documentation."]
+    pub const VOICE_DIAL: Self = Self(cef_dom_key_t::CEF_DOM_KEY_VOICE_DIAL);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_TV`] for more documentation."]
+    pub const TV: Self = Self(cef_dom_key_t::CEF_DOM_KEY_TV);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_TV_3D_MODE`] for more documentation."]
+    pub const TV_3D_MODE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_TV_3D_MODE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_TV_ANTENNA_CABLE`] for more documentation."]
+    pub const TV_ANTENNA_CABLE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_TV_ANTENNA_CABLE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_TV_AUDIO_DESCRIPTION`] for more documentation."]
+    pub const TV_AUDIO_DESCRIPTION: Self = Self(cef_dom_key_t::CEF_DOM_KEY_TV_AUDIO_DESCRIPTION);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_TV_AUDIO_DESCRIPTION_MIX_DOWN`] for more documentation."]
+    pub const TV_AUDIO_DESCRIPTION_MIX_DOWN: Self =
+        Self(cef_dom_key_t::CEF_DOM_KEY_TV_AUDIO_DESCRIPTION_MIX_DOWN);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_TV_AUDIO_DESCRIPTION_MIX_UP`] for more documentation."]
+    pub const TV_AUDIO_DESCRIPTION_MIX_UP: Self =
+        Self(cef_dom_key_t::CEF_DOM_KEY_TV_AUDIO_DESCRIPTION_MIX_UP);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_TV_CONTENTS_MENU`] for more documentation."]
+    pub const TV_CONTENTS_MENU: Self = Self(cef_dom_key_t::CEF_DOM_KEY_TV_CONTENTS_MENU);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_TV_DATA_SERVICE`] for more documentation."]
+    pub const TV_DATA_SERVICE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_TV_DATA_SERVICE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_TV_INPUT`] for more documentation."]
+    pub const TV_INPUT: Self = Self(cef_dom_key_t::CEF_DOM_KEY_TV_INPUT);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_TV_INPUT_COMPONENT1`] for more documentation."]
+    pub const TV_INPUT_COMPONENT1: Self = Self(cef_dom_key_t::CEF_DOM_KEY_TV_INPUT_COMPONENT1);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_TV_INPUT_COMPONENT2`] for more documentation."]
+    pub const TV_INPUT_COMPONENT2: Self = Self(cef_dom_key_t::CEF_DOM_KEY_TV_INPUT_COMPONENT2);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_TV_INPUT_COMPOSITE1`] for more documentation."]
+    pub const TV_INPUT_COMPOSITE1: Self = Self(cef_dom_key_t::CEF_DOM_KEY_TV_INPUT_COMPOSITE1);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_TV_INPUT_COMPOSITE2`] for more documentation."]
+    pub const TV_INPUT_COMPOSITE2: Self = Self(cef_dom_key_t::CEF_DOM_KEY_TV_INPUT_COMPOSITE2);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_TV_INPUT_HDMI1`] for more documentation."]
+    pub const TV_INPUT_HDMI1: Self = Self(cef_dom_key_t::CEF_DOM_KEY_TV_INPUT_HDMI1);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_TV_INPUT_HDMI2`] for more documentation."]
+    pub const TV_INPUT_HDMI2: Self = Self(cef_dom_key_t::CEF_DOM_KEY_TV_INPUT_HDMI2);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_TV_INPUT_HDMI3`] for more documentation."]
+    pub const TV_INPUT_HDMI3: Self = Self(cef_dom_key_t::CEF_DOM_KEY_TV_INPUT_HDMI3);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_TV_INPUT_HDMI4`] for more documentation."]
+    pub const TV_INPUT_HDMI4: Self = Self(cef_dom_key_t::CEF_DOM_KEY_TV_INPUT_HDMI4);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_TV_INPUT_VGA1`] for more documentation."]
+    pub const TV_INPUT_VGA1: Self = Self(cef_dom_key_t::CEF_DOM_KEY_TV_INPUT_VGA1);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_TV_MEDIA_CONTEXT`] for more documentation."]
+    pub const TV_MEDIA_CONTEXT: Self = Self(cef_dom_key_t::CEF_DOM_KEY_TV_MEDIA_CONTEXT);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_TV_NETWORK`] for more documentation."]
+    pub const TV_NETWORK: Self = Self(cef_dom_key_t::CEF_DOM_KEY_TV_NETWORK);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_TV_NUMBER_ENTRY`] for more documentation."]
+    pub const TV_NUMBER_ENTRY: Self = Self(cef_dom_key_t::CEF_DOM_KEY_TV_NUMBER_ENTRY);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_TV_POWER`] for more documentation."]
+    pub const TV_POWER: Self = Self(cef_dom_key_t::CEF_DOM_KEY_TV_POWER);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_TV_RADIO_SERVICE`] for more documentation."]
+    pub const TV_RADIO_SERVICE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_TV_RADIO_SERVICE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_TV_SATELLITE`] for more documentation."]
+    pub const TV_SATELLITE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_TV_SATELLITE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_TV_SATELLITE_BS`] for more documentation."]
+    pub const TV_SATELLITE_BS: Self = Self(cef_dom_key_t::CEF_DOM_KEY_TV_SATELLITE_BS);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_TV_SATELLITE_CS`] for more documentation."]
+    pub const TV_SATELLITE_CS: Self = Self(cef_dom_key_t::CEF_DOM_KEY_TV_SATELLITE_CS);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_TV_SATELLITE_TOGGLE`] for more documentation."]
+    pub const TV_SATELLITE_TOGGLE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_TV_SATELLITE_TOGGLE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_TV_TERRESTRIAL_ANALOG`] for more documentation."]
+    pub const TV_TERRESTRIAL_ANALOG: Self = Self(cef_dom_key_t::CEF_DOM_KEY_TV_TERRESTRIAL_ANALOG);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_TV_TERRESTRIAL_DIGITAL`] for more documentation."]
+    pub const TV_TERRESTRIAL_DIGITAL: Self =
+        Self(cef_dom_key_t::CEF_DOM_KEY_TV_TERRESTRIAL_DIGITAL);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_TV_TIMER`] for more documentation."]
+    pub const TV_TIMER: Self = Self(cef_dom_key_t::CEF_DOM_KEY_TV_TIMER);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_AVR_INPUT`] for more documentation."]
+    pub const AVR_INPUT: Self = Self(cef_dom_key_t::CEF_DOM_KEY_AVR_INPUT);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_AVR_POWER`] for more documentation."]
+    pub const AVR_POWER: Self = Self(cef_dom_key_t::CEF_DOM_KEY_AVR_POWER);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_COLOR_F0_RED`] for more documentation."]
+    pub const COLOR_F0_RED: Self = Self(cef_dom_key_t::CEF_DOM_KEY_COLOR_F0_RED);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_COLOR_F1_GREEN`] for more documentation."]
+    pub const COLOR_F1_GREEN: Self = Self(cef_dom_key_t::CEF_DOM_KEY_COLOR_F1_GREEN);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_COLOR_F2_YELLOW`] for more documentation."]
+    pub const COLOR_F2_YELLOW: Self = Self(cef_dom_key_t::CEF_DOM_KEY_COLOR_F2_YELLOW);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_COLOR_F3_BLUE`] for more documentation."]
+    pub const COLOR_F3_BLUE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_COLOR_F3_BLUE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_COLOR_F4_GREY`] for more documentation."]
+    pub const COLOR_F4_GREY: Self = Self(cef_dom_key_t::CEF_DOM_KEY_COLOR_F4_GREY);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_COLOR_F5_BROWN`] for more documentation."]
+    pub const COLOR_F5_BROWN: Self = Self(cef_dom_key_t::CEF_DOM_KEY_COLOR_F5_BROWN);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_CLOSED_CAPTION_TOGGLE`] for more documentation."]
+    pub const CLOSED_CAPTION_TOGGLE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_CLOSED_CAPTION_TOGGLE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_DIMMER`] for more documentation."]
+    pub const DIMMER: Self = Self(cef_dom_key_t::CEF_DOM_KEY_DIMMER);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_DISPLAY_SWAP`] for more documentation."]
+    pub const DISPLAY_SWAP: Self = Self(cef_dom_key_t::CEF_DOM_KEY_DISPLAY_SWAP);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_DVR`] for more documentation."]
+    pub const DVR: Self = Self(cef_dom_key_t::CEF_DOM_KEY_DVR);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_EXIT`] for more documentation."]
+    pub const EXIT: Self = Self(cef_dom_key_t::CEF_DOM_KEY_EXIT);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_FAVORITE_CLEAR0`] for more documentation."]
+    pub const FAVORITE_CLEAR0: Self = Self(cef_dom_key_t::CEF_DOM_KEY_FAVORITE_CLEAR0);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_FAVORITE_CLEAR1`] for more documentation."]
+    pub const FAVORITE_CLEAR1: Self = Self(cef_dom_key_t::CEF_DOM_KEY_FAVORITE_CLEAR1);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_FAVORITE_CLEAR2`] for more documentation."]
+    pub const FAVORITE_CLEAR2: Self = Self(cef_dom_key_t::CEF_DOM_KEY_FAVORITE_CLEAR2);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_FAVORITE_CLEAR3`] for more documentation."]
+    pub const FAVORITE_CLEAR3: Self = Self(cef_dom_key_t::CEF_DOM_KEY_FAVORITE_CLEAR3);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_FAVORITE_RECALL0`] for more documentation."]
+    pub const FAVORITE_RECALL0: Self = Self(cef_dom_key_t::CEF_DOM_KEY_FAVORITE_RECALL0);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_FAVORITE_RECALL1`] for more documentation."]
+    pub const FAVORITE_RECALL1: Self = Self(cef_dom_key_t::CEF_DOM_KEY_FAVORITE_RECALL1);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_FAVORITE_RECALL2`] for more documentation."]
+    pub const FAVORITE_RECALL2: Self = Self(cef_dom_key_t::CEF_DOM_KEY_FAVORITE_RECALL2);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_FAVORITE_RECALL3`] for more documentation."]
+    pub const FAVORITE_RECALL3: Self = Self(cef_dom_key_t::CEF_DOM_KEY_FAVORITE_RECALL3);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_FAVORITE_STORE0`] for more documentation."]
+    pub const FAVORITE_STORE0: Self = Self(cef_dom_key_t::CEF_DOM_KEY_FAVORITE_STORE0);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_FAVORITE_STORE1`] for more documentation."]
+    pub const FAVORITE_STORE1: Self = Self(cef_dom_key_t::CEF_DOM_KEY_FAVORITE_STORE1);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_FAVORITE_STORE2`] for more documentation."]
+    pub const FAVORITE_STORE2: Self = Self(cef_dom_key_t::CEF_DOM_KEY_FAVORITE_STORE2);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_FAVORITE_STORE3`] for more documentation."]
+    pub const FAVORITE_STORE3: Self = Self(cef_dom_key_t::CEF_DOM_KEY_FAVORITE_STORE3);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_GUIDE`] for more documentation."]
+    pub const GUIDE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_GUIDE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_GUIDE_NEXT_DAY`] for more documentation."]
+    pub const GUIDE_NEXT_DAY: Self = Self(cef_dom_key_t::CEF_DOM_KEY_GUIDE_NEXT_DAY);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_GUIDE_PREVIOUS_DAY`] for more documentation."]
+    pub const GUIDE_PREVIOUS_DAY: Self = Self(cef_dom_key_t::CEF_DOM_KEY_GUIDE_PREVIOUS_DAY);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_INFO`] for more documentation."]
+    pub const INFO: Self = Self(cef_dom_key_t::CEF_DOM_KEY_INFO);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_INSTANT_REPLAY`] for more documentation."]
+    pub const INSTANT_REPLAY: Self = Self(cef_dom_key_t::CEF_DOM_KEY_INSTANT_REPLAY);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_LINK`] for more documentation."]
+    pub const LINK: Self = Self(cef_dom_key_t::CEF_DOM_KEY_LINK);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_LIST_PROGRAM`] for more documentation."]
+    pub const LIST_PROGRAM: Self = Self(cef_dom_key_t::CEF_DOM_KEY_LIST_PROGRAM);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_LIVE_CONTENT`] for more documentation."]
+    pub const LIVE_CONTENT: Self = Self(cef_dom_key_t::CEF_DOM_KEY_LIVE_CONTENT);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_LOCK`] for more documentation."]
+    pub const LOCK: Self = Self(cef_dom_key_t::CEF_DOM_KEY_LOCK);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_MEDIA_APPS`] for more documentation."]
+    pub const MEDIA_APPS: Self = Self(cef_dom_key_t::CEF_DOM_KEY_MEDIA_APPS);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_MEDIA_AUDIO_TRACK`] for more documentation."]
+    pub const MEDIA_AUDIO_TRACK: Self = Self(cef_dom_key_t::CEF_DOM_KEY_MEDIA_AUDIO_TRACK);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_MEDIA_LAST`] for more documentation."]
+    pub const MEDIA_LAST: Self = Self(cef_dom_key_t::CEF_DOM_KEY_MEDIA_LAST);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_MEDIA_SKIP_BACKWARD`] for more documentation."]
+    pub const MEDIA_SKIP_BACKWARD: Self = Self(cef_dom_key_t::CEF_DOM_KEY_MEDIA_SKIP_BACKWARD);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_MEDIA_SKIP_FORWARD`] for more documentation."]
+    pub const MEDIA_SKIP_FORWARD: Self = Self(cef_dom_key_t::CEF_DOM_KEY_MEDIA_SKIP_FORWARD);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_MEDIA_SKIP`] for more documentation."]
+    pub const MEDIA_SKIP: Self = Self(cef_dom_key_t::CEF_DOM_KEY_MEDIA_SKIP);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_MEDIA_STEP_BACKWARD`] for more documentation."]
+    pub const MEDIA_STEP_BACKWARD: Self = Self(cef_dom_key_t::CEF_DOM_KEY_MEDIA_STEP_BACKWARD);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_MEDIA_STEP_FORWARD`] for more documentation."]
+    pub const MEDIA_STEP_FORWARD: Self = Self(cef_dom_key_t::CEF_DOM_KEY_MEDIA_STEP_FORWARD);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_MEDIA_TOP_MENU`] for more documentation."]
+    pub const MEDIA_TOP_MENU: Self = Self(cef_dom_key_t::CEF_DOM_KEY_MEDIA_TOP_MENU);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_NAVIGATE_IN`] for more documentation."]
+    pub const NAVIGATE_IN: Self = Self(cef_dom_key_t::CEF_DOM_KEY_NAVIGATE_IN);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_NAVIGATE_NEXT`] for more documentation."]
+    pub const NAVIGATE_NEXT: Self = Self(cef_dom_key_t::CEF_DOM_KEY_NAVIGATE_NEXT);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_NAVIGATE_OUT`] for more documentation."]
+    pub const NAVIGATE_OUT: Self = Self(cef_dom_key_t::CEF_DOM_KEY_NAVIGATE_OUT);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_NAVIGATE_PREVIOUS`] for more documentation."]
+    pub const NAVIGATE_PREVIOUS: Self = Self(cef_dom_key_t::CEF_DOM_KEY_NAVIGATE_PREVIOUS);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_NEXT_FAVORITE_CHANNEL`] for more documentation."]
+    pub const NEXT_FAVORITE_CHANNEL: Self = Self(cef_dom_key_t::CEF_DOM_KEY_NEXT_FAVORITE_CHANNEL);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_NEXT_USER_PROFILE`] for more documentation."]
+    pub const NEXT_USER_PROFILE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_NEXT_USER_PROFILE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_ON_DEMAND`] for more documentation."]
+    pub const ON_DEMAND: Self = Self(cef_dom_key_t::CEF_DOM_KEY_ON_DEMAND);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_PAIRING`] for more documentation."]
+    pub const PAIRING: Self = Self(cef_dom_key_t::CEF_DOM_KEY_PAIRING);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_PINP_DOWN`] for more documentation."]
+    pub const PINP_DOWN: Self = Self(cef_dom_key_t::CEF_DOM_KEY_PINP_DOWN);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_PINP_MOVE`] for more documentation."]
+    pub const PINP_MOVE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_PINP_MOVE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_PINP_TOGGLE`] for more documentation."]
+    pub const PINP_TOGGLE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_PINP_TOGGLE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_PINP_UP`] for more documentation."]
+    pub const PINP_UP: Self = Self(cef_dom_key_t::CEF_DOM_KEY_PINP_UP);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_PLAY_SPEED_DOWN`] for more documentation."]
+    pub const PLAY_SPEED_DOWN: Self = Self(cef_dom_key_t::CEF_DOM_KEY_PLAY_SPEED_DOWN);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_PLAY_SPEED_RESET`] for more documentation."]
+    pub const PLAY_SPEED_RESET: Self = Self(cef_dom_key_t::CEF_DOM_KEY_PLAY_SPEED_RESET);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_PLAY_SPEED_UP`] for more documentation."]
+    pub const PLAY_SPEED_UP: Self = Self(cef_dom_key_t::CEF_DOM_KEY_PLAY_SPEED_UP);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_RANDOM_TOGGLE`] for more documentation."]
+    pub const RANDOM_TOGGLE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_RANDOM_TOGGLE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_RC_LOW_BATTERY`] for more documentation."]
+    pub const RC_LOW_BATTERY: Self = Self(cef_dom_key_t::CEF_DOM_KEY_RC_LOW_BATTERY);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_RECORD_SPEED_NEXT`] for more documentation."]
+    pub const RECORD_SPEED_NEXT: Self = Self(cef_dom_key_t::CEF_DOM_KEY_RECORD_SPEED_NEXT);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_RF_BYPASS`] for more documentation."]
+    pub const RF_BYPASS: Self = Self(cef_dom_key_t::CEF_DOM_KEY_RF_BYPASS);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_SCAN_CHANNELS_TOGGLE`] for more documentation."]
+    pub const SCAN_CHANNELS_TOGGLE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_SCAN_CHANNELS_TOGGLE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_SCREEN_MODE_NEXT`] for more documentation."]
+    pub const SCREEN_MODE_NEXT: Self = Self(cef_dom_key_t::CEF_DOM_KEY_SCREEN_MODE_NEXT);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_SETTINGS`] for more documentation."]
+    pub const SETTINGS: Self = Self(cef_dom_key_t::CEF_DOM_KEY_SETTINGS);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_SPLIT_SCREEN_TOGGLE`] for more documentation."]
+    pub const SPLIT_SCREEN_TOGGLE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_SPLIT_SCREEN_TOGGLE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_STB_INPUT`] for more documentation."]
+    pub const STB_INPUT: Self = Self(cef_dom_key_t::CEF_DOM_KEY_STB_INPUT);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_STB_POWER`] for more documentation."]
+    pub const STB_POWER: Self = Self(cef_dom_key_t::CEF_DOM_KEY_STB_POWER);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_SUBTITLE`] for more documentation."]
+    pub const SUBTITLE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_SUBTITLE);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_TELETEXT`] for more documentation."]
+    pub const TELETEXT: Self = Self(cef_dom_key_t::CEF_DOM_KEY_TELETEXT);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_VIDEO_MODE_NEXT`] for more documentation."]
+    pub const VIDEO_MODE_NEXT: Self = Self(cef_dom_key_t::CEF_DOM_KEY_VIDEO_MODE_NEXT);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_WINK`] for more documentation."]
+    pub const WINK: Self = Self(cef_dom_key_t::CEF_DOM_KEY_WINK);
+    #[doc = "See [`cef_dom_key_t::CEF_DOM_KEY_ZOOM_TOGGLE`] for more documentation."]
+    pub const ZOOM_TOGGLE: Self = Self(cef_dom_key_t::CEF_DOM_KEY_ZOOM_TOGGLE);
+}
+impl DomKey {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> i32 {
+        self.0 as i32
+    }
+}
+impl Default for DomKey {
+    fn default() -> Self {
+        Self(cef_dom_key_t::CEF_DOM_KEY_NONE)
+    }
+}
+
 /// See [`cef_color_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct ColorType(cef_color_type_t);
@@ -45822,6 +47983,462 @@ impl RuntimeStyle {
 impl Default for RuntimeStyle {
     fn default() -> Self {
         Self(cef_runtime_style_t::CEF_RUNTIME_STYLE_DEFAULT)
+    }
+}
+
+/// See [`cef_event_flags_t`] for more documentation.
+#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+pub struct EventFlags(cef_event_flags_t);
+impl AsRef<cef_event_flags_t> for EventFlags {
+    fn as_ref(&self) -> &cef_event_flags_t {
+        &self.0
+    }
+}
+impl AsMut<cef_event_flags_t> for EventFlags {
+    fn as_mut(&mut self) -> &mut cef_event_flags_t {
+        &mut self.0
+    }
+}
+impl From<cef_event_flags_t> for EventFlags {
+    fn from(value: cef_event_flags_t) -> Self {
+        Self(value)
+    }
+}
+impl From<EventFlags> for cef_event_flags_t {
+    fn from(value: EventFlags) -> Self {
+        value.0
+    }
+}
+impl Default for EventFlags {
+    fn default() -> Self {
+        unsafe { std::mem::zeroed() }
+    }
+}
+
+/// See [`cef_key_event_type_t`] for more documentation.
+#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+pub struct KeyEventType(cef_key_event_type_t);
+impl AsRef<cef_key_event_type_t> for KeyEventType {
+    fn as_ref(&self) -> &cef_key_event_type_t {
+        &self.0
+    }
+}
+impl AsMut<cef_key_event_type_t> for KeyEventType {
+    fn as_mut(&mut self) -> &mut cef_key_event_type_t {
+        &mut self.0
+    }
+}
+impl From<cef_key_event_type_t> for KeyEventType {
+    fn from(value: cef_key_event_type_t) -> Self {
+        Self(value)
+    }
+}
+impl From<KeyEventType> for cef_key_event_type_t {
+    fn from(value: KeyEventType) -> Self {
+        value.0
+    }
+}
+impl KeyEventType {
+    #[doc = "See [`cef_key_event_type_t::CEF_KEY_EVENT_RAWKEYDOWN`] for more documentation."]
+    pub const RAWKEYDOWN: Self = Self(cef_key_event_type_t::CEF_KEY_EVENT_RAWKEYDOWN);
+    #[doc = "See [`cef_key_event_type_t::CEF_KEY_EVENT_KEYDOWN`] for more documentation."]
+    pub const KEYDOWN: Self = Self(cef_key_event_type_t::CEF_KEY_EVENT_KEYDOWN);
+    #[doc = "See [`cef_key_event_type_t::CEF_KEY_EVENT_KEYUP`] for more documentation."]
+    pub const KEYUP: Self = Self(cef_key_event_type_t::CEF_KEY_EVENT_KEYUP);
+    #[doc = "See [`cef_key_event_type_t::CEF_KEY_EVENT_CHAR`] for more documentation."]
+    pub const CHAR: Self = Self(cef_key_event_type_t::CEF_KEY_EVENT_CHAR);
+}
+impl KeyEventType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> i32 {
+        self.0 as i32
+    }
+}
+impl Default for KeyEventType {
+    fn default() -> Self {
+        Self(cef_key_event_type_t::CEF_KEY_EVENT_RAWKEYDOWN)
+    }
+}
+
+/// See [`cef_mouse_button_type_t`] for more documentation.
+#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+pub struct MouseButtonType(cef_mouse_button_type_t);
+impl AsRef<cef_mouse_button_type_t> for MouseButtonType {
+    fn as_ref(&self) -> &cef_mouse_button_type_t {
+        &self.0
+    }
+}
+impl AsMut<cef_mouse_button_type_t> for MouseButtonType {
+    fn as_mut(&mut self) -> &mut cef_mouse_button_type_t {
+        &mut self.0
+    }
+}
+impl From<cef_mouse_button_type_t> for MouseButtonType {
+    fn from(value: cef_mouse_button_type_t) -> Self {
+        Self(value)
+    }
+}
+impl From<MouseButtonType> for cef_mouse_button_type_t {
+    fn from(value: MouseButtonType) -> Self {
+        value.0
+    }
+}
+impl MouseButtonType {
+    #[doc = "See [`cef_mouse_button_type_t::CEF_MOUSE_BUTTON_NONE`] for more documentation."]
+    pub const NONE: Self = Self(cef_mouse_button_type_t::CEF_MOUSE_BUTTON_NONE);
+    #[doc = "See [`cef_mouse_button_type_t::CEF_MOUSE_BUTTON_LEFT`] for more documentation."]
+    pub const LEFT: Self = Self(cef_mouse_button_type_t::CEF_MOUSE_BUTTON_LEFT);
+    #[doc = "See [`cef_mouse_button_type_t::CEF_MOUSE_BUTTON_MIDDLE`] for more documentation."]
+    pub const MIDDLE: Self = Self(cef_mouse_button_type_t::CEF_MOUSE_BUTTON_MIDDLE);
+    #[doc = "See [`cef_mouse_button_type_t::CEF_MOUSE_BUTTON_RIGHT`] for more documentation."]
+    pub const RIGHT: Self = Self(cef_mouse_button_type_t::CEF_MOUSE_BUTTON_RIGHT);
+    #[doc = "See [`cef_mouse_button_type_t::CEF_MOUSE_BUTTON_BACK`] for more documentation."]
+    pub const BACK: Self = Self(cef_mouse_button_type_t::CEF_MOUSE_BUTTON_BACK);
+    #[doc = "See [`cef_mouse_button_type_t::CEF_MOUSE_BUTTON_FORWARD`] for more documentation."]
+    pub const FORWARD: Self = Self(cef_mouse_button_type_t::CEF_MOUSE_BUTTON_FORWARD);
+    #[doc = "See [`cef_mouse_button_type_t::CEF_MOUSE_BUTTON_ERASER`] for more documentation."]
+    pub const ERASER: Self = Self(cef_mouse_button_type_t::CEF_MOUSE_BUTTON_ERASER);
+}
+impl MouseButtonType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> i32 {
+        self.0 as i32
+    }
+}
+impl Default for MouseButtonType {
+    fn default() -> Self {
+        Self(cef_mouse_button_type_t::CEF_MOUSE_BUTTON_NONE)
+    }
+}
+
+/// See [`cef_pointer_type_t`] for more documentation.
+#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+pub struct PointerType(cef_pointer_type_t);
+impl AsRef<cef_pointer_type_t> for PointerType {
+    fn as_ref(&self) -> &cef_pointer_type_t {
+        &self.0
+    }
+}
+impl AsMut<cef_pointer_type_t> for PointerType {
+    fn as_mut(&mut self) -> &mut cef_pointer_type_t {
+        &mut self.0
+    }
+}
+impl From<cef_pointer_type_t> for PointerType {
+    fn from(value: cef_pointer_type_t) -> Self {
+        Self(value)
+    }
+}
+impl From<PointerType> for cef_pointer_type_t {
+    fn from(value: PointerType) -> Self {
+        value.0
+    }
+}
+impl PointerType {
+    #[doc = "See [`cef_pointer_type_t::CEF_POINTER_TYPE_TOUCH`] for more documentation."]
+    pub const TOUCH: Self = Self(cef_pointer_type_t::CEF_POINTER_TYPE_TOUCH);
+    #[doc = "See [`cef_pointer_type_t::CEF_POINTER_TYPE_MOUSE`] for more documentation."]
+    pub const MOUSE: Self = Self(cef_pointer_type_t::CEF_POINTER_TYPE_MOUSE);
+    #[doc = "See [`cef_pointer_type_t::CEF_POINTER_TYPE_PEN`] for more documentation."]
+    pub const PEN: Self = Self(cef_pointer_type_t::CEF_POINTER_TYPE_PEN);
+    #[doc = "See [`cef_pointer_type_t::CEF_POINTER_TYPE_ERASER`] for more documentation."]
+    pub const ERASER: Self = Self(cef_pointer_type_t::CEF_POINTER_TYPE_ERASER);
+    #[doc = "See [`cef_pointer_type_t::CEF_POINTER_TYPE_UNKNOWN`] for more documentation."]
+    pub const UNKNOWN: Self = Self(cef_pointer_type_t::CEF_POINTER_TYPE_UNKNOWN);
+}
+impl PointerType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> i32 {
+        self.0 as i32
+    }
+}
+impl Default for PointerType {
+    fn default() -> Self {
+        Self(cef_pointer_type_t::CEF_POINTER_TYPE_TOUCH)
+    }
+}
+
+/// See [`cef_mouse_input_event_type_t`] for more documentation.
+#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+pub struct MouseInputEventType(cef_mouse_input_event_type_t);
+impl AsRef<cef_mouse_input_event_type_t> for MouseInputEventType {
+    fn as_ref(&self) -> &cef_mouse_input_event_type_t {
+        &self.0
+    }
+}
+impl AsMut<cef_mouse_input_event_type_t> for MouseInputEventType {
+    fn as_mut(&mut self) -> &mut cef_mouse_input_event_type_t {
+        &mut self.0
+    }
+}
+impl From<cef_mouse_input_event_type_t> for MouseInputEventType {
+    fn from(value: cef_mouse_input_event_type_t) -> Self {
+        Self(value)
+    }
+}
+impl From<MouseInputEventType> for cef_mouse_input_event_type_t {
+    fn from(value: MouseInputEventType) -> Self {
+        value.0
+    }
+}
+impl MouseInputEventType {
+    #[doc = "See [`cef_mouse_input_event_type_t::CEF_MOUSE_EVENT_DOWN`] for more documentation."]
+    pub const DOWN: Self = Self(cef_mouse_input_event_type_t::CEF_MOUSE_EVENT_DOWN);
+    #[doc = "See [`cef_mouse_input_event_type_t::CEF_MOUSE_EVENT_UP`] for more documentation."]
+    pub const UP: Self = Self(cef_mouse_input_event_type_t::CEF_MOUSE_EVENT_UP);
+    #[doc = "See [`cef_mouse_input_event_type_t::CEF_MOUSE_EVENT_MOVE`] for more documentation."]
+    pub const MOVE: Self = Self(cef_mouse_input_event_type_t::CEF_MOUSE_EVENT_MOVE);
+    #[doc = "See [`cef_mouse_input_event_type_t::CEF_MOUSE_EVENT_ENTER`] for more documentation."]
+    pub const ENTER: Self = Self(cef_mouse_input_event_type_t::CEF_MOUSE_EVENT_ENTER);
+    #[doc = "See [`cef_mouse_input_event_type_t::CEF_MOUSE_EVENT_LEAVE`] for more documentation."]
+    pub const LEAVE: Self = Self(cef_mouse_input_event_type_t::CEF_MOUSE_EVENT_LEAVE);
+    #[doc = "See [`cef_mouse_input_event_type_t::CEF_MOUSE_EVENT_CONTEXT_MENU`] for more documentation."]
+    pub const CONTEXT_MENU: Self = Self(cef_mouse_input_event_type_t::CEF_MOUSE_EVENT_CONTEXT_MENU);
+}
+impl MouseInputEventType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> i32 {
+        self.0 as i32
+    }
+}
+impl Default for MouseInputEventType {
+    fn default() -> Self {
+        Self(cef_mouse_input_event_type_t::CEF_MOUSE_EVENT_DOWN)
+    }
+}
+
+/// See [`cef_gesture_input_event_type_t`] for more documentation.
+#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+pub struct GestureInputEventType(cef_gesture_input_event_type_t);
+impl AsRef<cef_gesture_input_event_type_t> for GestureInputEventType {
+    fn as_ref(&self) -> &cef_gesture_input_event_type_t {
+        &self.0
+    }
+}
+impl AsMut<cef_gesture_input_event_type_t> for GestureInputEventType {
+    fn as_mut(&mut self) -> &mut cef_gesture_input_event_type_t {
+        &mut self.0
+    }
+}
+impl From<cef_gesture_input_event_type_t> for GestureInputEventType {
+    fn from(value: cef_gesture_input_event_type_t) -> Self {
+        Self(value)
+    }
+}
+impl From<GestureInputEventType> for cef_gesture_input_event_type_t {
+    fn from(value: GestureInputEventType) -> Self {
+        value.0
+    }
+}
+impl GestureInputEventType {
+    #[doc = "See [`cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_SCROLL_BEGIN`] for more documentation."]
+    pub const SCROLL_BEGIN: Self =
+        Self(cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_SCROLL_BEGIN);
+    #[doc = "See [`cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_SCROLL_END`] for more documentation."]
+    pub const SCROLL_END: Self = Self(cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_SCROLL_END);
+    #[doc = "See [`cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_SCROLL_UPDATE`] for more documentation."]
+    pub const SCROLL_UPDATE: Self =
+        Self(cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_SCROLL_UPDATE);
+    #[doc = "See [`cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_FLING_START`] for more documentation."]
+    pub const FLING_START: Self =
+        Self(cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_FLING_START);
+    #[doc = "See [`cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_FLING_CANCEL`] for more documentation."]
+    pub const FLING_CANCEL: Self =
+        Self(cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_FLING_CANCEL);
+    #[doc = "See [`cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_PINCH_BEGIN`] for more documentation."]
+    pub const PINCH_BEGIN: Self =
+        Self(cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_PINCH_BEGIN);
+    #[doc = "See [`cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_PINCH_END`] for more documentation."]
+    pub const PINCH_END: Self = Self(cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_PINCH_END);
+    #[doc = "See [`cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_PINCH_UPDATE`] for more documentation."]
+    pub const PINCH_UPDATE: Self =
+        Self(cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_PINCH_UPDATE);
+    #[doc = "See [`cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_BEGIN`] for more documentation."]
+    pub const BEGIN: Self = Self(cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_BEGIN);
+    #[doc = "See [`cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_TAP_DOWN`] for more documentation."]
+    pub const TAP_DOWN: Self = Self(cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_TAP_DOWN);
+    #[doc = "See [`cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_SHOW_PRESS`] for more documentation."]
+    pub const SHOW_PRESS: Self = Self(cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_SHOW_PRESS);
+    #[doc = "See [`cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_TAP`] for more documentation."]
+    pub const TAP: Self = Self(cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_TAP);
+    #[doc = "See [`cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_TAP_CANCEL`] for more documentation."]
+    pub const TAP_CANCEL: Self = Self(cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_TAP_CANCEL);
+    #[doc = "See [`cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_SHORT_PRESS`] for more documentation."]
+    pub const SHORT_PRESS: Self =
+        Self(cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_SHORT_PRESS);
+    #[doc = "See [`cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_LONG_PRESS`] for more documentation."]
+    pub const LONG_PRESS: Self = Self(cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_LONG_PRESS);
+    #[doc = "See [`cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_LONG_TAP`] for more documentation."]
+    pub const LONG_TAP: Self = Self(cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_LONG_TAP);
+    #[doc = "See [`cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_TWO_FINGER_TAP`] for more documentation."]
+    pub const TWO_FINGER_TAP: Self =
+        Self(cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_TWO_FINGER_TAP);
+    #[doc = "See [`cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_TAP_UNCONFIRMED`] for more documentation."]
+    pub const TAP_UNCONFIRMED: Self =
+        Self(cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_TAP_UNCONFIRMED);
+    #[doc = "See [`cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_DOUBLE_TAP`] for more documentation."]
+    pub const DOUBLE_TAP: Self = Self(cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_DOUBLE_TAP);
+    #[doc = "See [`cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_END`] for more documentation."]
+    pub const END: Self = Self(cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_END);
+}
+impl GestureInputEventType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> i32 {
+        self.0 as i32
+    }
+}
+impl Default for GestureInputEventType {
+    fn default() -> Self {
+        Self(cef_gesture_input_event_type_t::CEF_GESTURE_EVENT_SCROLL_BEGIN)
+    }
+}
+
+/// See [`cef_gesture_device_t`] for more documentation.
+#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+pub struct GestureDevice(cef_gesture_device_t);
+impl AsRef<cef_gesture_device_t> for GestureDevice {
+    fn as_ref(&self) -> &cef_gesture_device_t {
+        &self.0
+    }
+}
+impl AsMut<cef_gesture_device_t> for GestureDevice {
+    fn as_mut(&mut self) -> &mut cef_gesture_device_t {
+        &mut self.0
+    }
+}
+impl From<cef_gesture_device_t> for GestureDevice {
+    fn from(value: cef_gesture_device_t) -> Self {
+        Self(value)
+    }
+}
+impl From<GestureDevice> for cef_gesture_device_t {
+    fn from(value: GestureDevice) -> Self {
+        value.0
+    }
+}
+impl GestureDevice {
+    #[doc = "See [`cef_gesture_device_t::CEF_GESTURE_DEVICE_UNINITIALIZED`] for more documentation."]
+    pub const UNINITIALIZED: Self = Self(cef_gesture_device_t::CEF_GESTURE_DEVICE_UNINITIALIZED);
+    #[doc = "See [`cef_gesture_device_t::CEF_GESTURE_DEVICE_TOUCHPAD`] for more documentation."]
+    pub const TOUCHPAD: Self = Self(cef_gesture_device_t::CEF_GESTURE_DEVICE_TOUCHPAD);
+    #[doc = "See [`cef_gesture_device_t::CEF_GESTURE_DEVICE_TOUCHSCREEN`] for more documentation."]
+    pub const TOUCHSCREEN: Self = Self(cef_gesture_device_t::CEF_GESTURE_DEVICE_TOUCHSCREEN);
+    #[doc = "See [`cef_gesture_device_t::CEF_GESTURE_DEVICE_SYNTHETIC_AUTOSCROLL`] for more documentation."]
+    pub const SYNTHETIC_AUTOSCROLL: Self =
+        Self(cef_gesture_device_t::CEF_GESTURE_DEVICE_SYNTHETIC_AUTOSCROLL);
+    #[doc = "See [`cef_gesture_device_t::CEF_GESTURE_DEVICE_SCROLLBAR`] for more documentation."]
+    pub const SCROLLBAR: Self = Self(cef_gesture_device_t::CEF_GESTURE_DEVICE_SCROLLBAR);
+}
+impl GestureDevice {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> i32 {
+        self.0 as i32
+    }
+}
+impl Default for GestureDevice {
+    fn default() -> Self {
+        Self(cef_gesture_device_t::CEF_GESTURE_DEVICE_UNINITIALIZED)
+    }
+}
+
+/// See [`cef_gesture_scroll_units_t`] for more documentation.
+#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+pub struct GestureScrollUnits(cef_gesture_scroll_units_t);
+impl AsRef<cef_gesture_scroll_units_t> for GestureScrollUnits {
+    fn as_ref(&self) -> &cef_gesture_scroll_units_t {
+        &self.0
+    }
+}
+impl AsMut<cef_gesture_scroll_units_t> for GestureScrollUnits {
+    fn as_mut(&mut self) -> &mut cef_gesture_scroll_units_t {
+        &mut self.0
+    }
+}
+impl From<cef_gesture_scroll_units_t> for GestureScrollUnits {
+    fn from(value: cef_gesture_scroll_units_t) -> Self {
+        Self(value)
+    }
+}
+impl From<GestureScrollUnits> for cef_gesture_scroll_units_t {
+    fn from(value: GestureScrollUnits) -> Self {
+        value.0
+    }
+}
+impl GestureScrollUnits {
+    #[doc = "See [`cef_gesture_scroll_units_t::CEF_GESTURE_SCROLL_PRECISE_PIXEL`] for more documentation."]
+    pub const PRECISE_PIXEL: Self =
+        Self(cef_gesture_scroll_units_t::CEF_GESTURE_SCROLL_PRECISE_PIXEL);
+    #[doc = "See [`cef_gesture_scroll_units_t::CEF_GESTURE_SCROLL_PIXEL`] for more documentation."]
+    pub const PIXEL: Self = Self(cef_gesture_scroll_units_t::CEF_GESTURE_SCROLL_PIXEL);
+    #[doc = "See [`cef_gesture_scroll_units_t::CEF_GESTURE_SCROLL_LINE`] for more documentation."]
+    pub const LINE: Self = Self(cef_gesture_scroll_units_t::CEF_GESTURE_SCROLL_LINE);
+    #[doc = "See [`cef_gesture_scroll_units_t::CEF_GESTURE_SCROLL_PAGE`] for more documentation."]
+    pub const PAGE: Self = Self(cef_gesture_scroll_units_t::CEF_GESTURE_SCROLL_PAGE);
+    #[doc = "See [`cef_gesture_scroll_units_t::CEF_GESTURE_SCROLL_DOCUMENT`] for more documentation."]
+    pub const DOCUMENT: Self = Self(cef_gesture_scroll_units_t::CEF_GESTURE_SCROLL_DOCUMENT);
+}
+impl GestureScrollUnits {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> i32 {
+        self.0 as i32
+    }
+}
+impl Default for GestureScrollUnits {
+    fn default() -> Self {
+        Self(cef_gesture_scroll_units_t::CEF_GESTURE_SCROLL_PRECISE_PIXEL)
+    }
+}
+
+/// See [`cef_wheel_event_phase_t`] for more documentation.
+#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+pub struct WheelEventPhase(cef_wheel_event_phase_t);
+impl AsRef<cef_wheel_event_phase_t> for WheelEventPhase {
+    fn as_ref(&self) -> &cef_wheel_event_phase_t {
+        &self.0
+    }
+}
+impl AsMut<cef_wheel_event_phase_t> for WheelEventPhase {
+    fn as_mut(&mut self) -> &mut cef_wheel_event_phase_t {
+        &mut self.0
+    }
+}
+impl From<cef_wheel_event_phase_t> for WheelEventPhase {
+    fn from(value: cef_wheel_event_phase_t) -> Self {
+        Self(value)
+    }
+}
+impl From<WheelEventPhase> for cef_wheel_event_phase_t {
+    fn from(value: WheelEventPhase) -> Self {
+        value.0
+    }
+}
+impl WheelEventPhase {
+    #[doc = "See [`cef_wheel_event_phase_t::CEF_WHEEL_PHASE_NONE`] for more documentation."]
+    pub const NONE: Self = Self(cef_wheel_event_phase_t::CEF_WHEEL_PHASE_NONE);
+    #[doc = "See [`cef_wheel_event_phase_t::CEF_WHEEL_PHASE_BEGAN`] for more documentation."]
+    pub const BEGAN: Self = Self(cef_wheel_event_phase_t::CEF_WHEEL_PHASE_BEGAN);
+    #[doc = "See [`cef_wheel_event_phase_t::CEF_WHEEL_PHASE_STATIONARY`] for more documentation."]
+    pub const STATIONARY: Self = Self(cef_wheel_event_phase_t::CEF_WHEEL_PHASE_STATIONARY);
+    #[doc = "See [`cef_wheel_event_phase_t::CEF_WHEEL_PHASE_CHANGED`] for more documentation."]
+    pub const CHANGED: Self = Self(cef_wheel_event_phase_t::CEF_WHEEL_PHASE_CHANGED);
+    #[doc = "See [`cef_wheel_event_phase_t::CEF_WHEEL_PHASE_ENDED`] for more documentation."]
+    pub const ENDED: Self = Self(cef_wheel_event_phase_t::CEF_WHEEL_PHASE_ENDED);
+    #[doc = "See [`cef_wheel_event_phase_t::CEF_WHEEL_PHASE_CANCELLED`] for more documentation."]
+    pub const CANCELLED: Self = Self(cef_wheel_event_phase_t::CEF_WHEEL_PHASE_CANCELLED);
+    #[doc = "See [`cef_wheel_event_phase_t::CEF_WHEEL_PHASE_MAY_BEGIN`] for more documentation."]
+    pub const MAY_BEGIN: Self = Self(cef_wheel_event_phase_t::CEF_WHEEL_PHASE_MAY_BEGIN);
+    #[doc = "See [`cef_wheel_event_phase_t::CEF_WHEEL_PHASE_BLOCKED`] for more documentation."]
+    pub const BLOCKED: Self = Self(cef_wheel_event_phase_t::CEF_WHEEL_PHASE_BLOCKED);
+}
+impl WheelEventPhase {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> i32 {
+        self.0 as i32
+    }
+}
+impl Default for WheelEventPhase {
+    fn default() -> Self {
+        Self(cef_wheel_event_phase_t::CEF_WHEEL_PHASE_NONE)
     }
 }
 
@@ -46138,6 +48755,8 @@ impl TerminationStatus {
     pub const LAUNCH_FAILED: Self = Self(cef_termination_status_t::TS_LAUNCH_FAILED);
     #[doc = "See [`cef_termination_status_t::TS_INTEGRITY_FAILURE`] for more documentation."]
     pub const INTEGRITY_FAILURE: Self = Self(cef_termination_status_t::TS_INTEGRITY_FAILURE);
+    #[doc = "See [`cef_termination_status_t::TS_EVICTED_FOR_MEMORY`] for more documentation."]
+    pub const EVICTED_FOR_MEMORY: Self = Self(cef_termination_status_t::TS_EVICTED_FOR_MEMORY);
     #[doc = "See [`cef_termination_status_t::TS_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_termination_status_t::TS_NUM_VALUES);
 }
@@ -47981,49 +50600,6 @@ impl Default for MenuId {
     }
 }
 
-/// See [`cef_mouse_button_type_t`] for more documentation.
-#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
-pub struct MouseButtonType(cef_mouse_button_type_t);
-impl AsRef<cef_mouse_button_type_t> for MouseButtonType {
-    fn as_ref(&self) -> &cef_mouse_button_type_t {
-        &self.0
-    }
-}
-impl AsMut<cef_mouse_button_type_t> for MouseButtonType {
-    fn as_mut(&mut self) -> &mut cef_mouse_button_type_t {
-        &mut self.0
-    }
-}
-impl From<cef_mouse_button_type_t> for MouseButtonType {
-    fn from(value: cef_mouse_button_type_t) -> Self {
-        Self(value)
-    }
-}
-impl From<MouseButtonType> for cef_mouse_button_type_t {
-    fn from(value: MouseButtonType) -> Self {
-        value.0
-    }
-}
-impl MouseButtonType {
-    #[doc = "See [`cef_mouse_button_type_t::MBT_LEFT`] for more documentation."]
-    pub const LEFT: Self = Self(cef_mouse_button_type_t::MBT_LEFT);
-    #[doc = "See [`cef_mouse_button_type_t::MBT_MIDDLE`] for more documentation."]
-    pub const MIDDLE: Self = Self(cef_mouse_button_type_t::MBT_MIDDLE);
-    #[doc = "See [`cef_mouse_button_type_t::MBT_RIGHT`] for more documentation."]
-    pub const RIGHT: Self = Self(cef_mouse_button_type_t::MBT_RIGHT);
-}
-impl MouseButtonType {
-    #[doc = "Get the raw integer representation."]
-    pub fn get_raw(&self) -> i32 {
-        self.0 as i32
-    }
-}
-impl Default for MouseButtonType {
-    fn default() -> Self {
-        Self(cef_mouse_button_type_t::MBT_LEFT)
-    }
-}
-
 /// See [`cef_touch_event_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct TouchEventType(cef_touch_event_type_t);
@@ -48069,53 +50645,6 @@ impl Default for TouchEventType {
     }
 }
 
-/// See [`cef_pointer_type_t`] for more documentation.
-#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
-pub struct PointerType(cef_pointer_type_t);
-impl AsRef<cef_pointer_type_t> for PointerType {
-    fn as_ref(&self) -> &cef_pointer_type_t {
-        &self.0
-    }
-}
-impl AsMut<cef_pointer_type_t> for PointerType {
-    fn as_mut(&mut self) -> &mut cef_pointer_type_t {
-        &mut self.0
-    }
-}
-impl From<cef_pointer_type_t> for PointerType {
-    fn from(value: cef_pointer_type_t) -> Self {
-        Self(value)
-    }
-}
-impl From<PointerType> for cef_pointer_type_t {
-    fn from(value: PointerType) -> Self {
-        value.0
-    }
-}
-impl PointerType {
-    #[doc = "See [`cef_pointer_type_t::CEF_POINTER_TYPE_TOUCH`] for more documentation."]
-    pub const TOUCH: Self = Self(cef_pointer_type_t::CEF_POINTER_TYPE_TOUCH);
-    #[doc = "See [`cef_pointer_type_t::CEF_POINTER_TYPE_MOUSE`] for more documentation."]
-    pub const MOUSE: Self = Self(cef_pointer_type_t::CEF_POINTER_TYPE_MOUSE);
-    #[doc = "See [`cef_pointer_type_t::CEF_POINTER_TYPE_PEN`] for more documentation."]
-    pub const PEN: Self = Self(cef_pointer_type_t::CEF_POINTER_TYPE_PEN);
-    #[doc = "See [`cef_pointer_type_t::CEF_POINTER_TYPE_ERASER`] for more documentation."]
-    pub const ERASER: Self = Self(cef_pointer_type_t::CEF_POINTER_TYPE_ERASER);
-    #[doc = "See [`cef_pointer_type_t::CEF_POINTER_TYPE_UNKNOWN`] for more documentation."]
-    pub const UNKNOWN: Self = Self(cef_pointer_type_t::CEF_POINTER_TYPE_UNKNOWN);
-}
-impl PointerType {
-    #[doc = "Get the raw integer representation."]
-    pub fn get_raw(&self) -> i32 {
-        self.0 as i32
-    }
-}
-impl Default for PointerType {
-    fn default() -> Self {
-        Self(cef_pointer_type_t::CEF_POINTER_TYPE_TOUCH)
-    }
-}
-
 /// See [`cef_paint_element_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct PaintElementType(cef_paint_element_type_t);
@@ -48154,35 +50683,6 @@ impl PaintElementType {
 impl Default for PaintElementType {
     fn default() -> Self {
         Self(cef_paint_element_type_t::PET_VIEW)
-    }
-}
-
-/// See [`cef_event_flags_t`] for more documentation.
-#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
-pub struct EventFlags(cef_event_flags_t);
-impl AsRef<cef_event_flags_t> for EventFlags {
-    fn as_ref(&self) -> &cef_event_flags_t {
-        &self.0
-    }
-}
-impl AsMut<cef_event_flags_t> for EventFlags {
-    fn as_mut(&mut self) -> &mut cef_event_flags_t {
-        &mut self.0
-    }
-}
-impl From<cef_event_flags_t> for EventFlags {
-    fn from(value: cef_event_flags_t) -> Self {
-        Self(value)
-    }
-}
-impl From<EventFlags> for cef_event_flags_t {
-    fn from(value: EventFlags) -> Self {
-        value.0
-    }
-}
-impl Default for EventFlags {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -48401,51 +50901,6 @@ impl From<QuickMenuEditStateFlags> for cef_quick_menu_edit_state_flags_t {
 impl Default for QuickMenuEditStateFlags {
     fn default() -> Self {
         unsafe { std::mem::zeroed() }
-    }
-}
-
-/// See [`cef_key_event_type_t`] for more documentation.
-#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
-pub struct KeyEventType(cef_key_event_type_t);
-impl AsRef<cef_key_event_type_t> for KeyEventType {
-    fn as_ref(&self) -> &cef_key_event_type_t {
-        &self.0
-    }
-}
-impl AsMut<cef_key_event_type_t> for KeyEventType {
-    fn as_mut(&mut self) -> &mut cef_key_event_type_t {
-        &mut self.0
-    }
-}
-impl From<cef_key_event_type_t> for KeyEventType {
-    fn from(value: cef_key_event_type_t) -> Self {
-        Self(value)
-    }
-}
-impl From<KeyEventType> for cef_key_event_type_t {
-    fn from(value: KeyEventType) -> Self {
-        value.0
-    }
-}
-impl KeyEventType {
-    #[doc = "See [`cef_key_event_type_t::KEYEVENT_RAWKEYDOWN`] for more documentation."]
-    pub const RAWKEYDOWN: Self = Self(cef_key_event_type_t::KEYEVENT_RAWKEYDOWN);
-    #[doc = "See [`cef_key_event_type_t::KEYEVENT_KEYDOWN`] for more documentation."]
-    pub const KEYDOWN: Self = Self(cef_key_event_type_t::KEYEVENT_KEYDOWN);
-    #[doc = "See [`cef_key_event_type_t::KEYEVENT_KEYUP`] for more documentation."]
-    pub const KEYUP: Self = Self(cef_key_event_type_t::KEYEVENT_KEYUP);
-    #[doc = "See [`cef_key_event_type_t::KEYEVENT_CHAR`] for more documentation."]
-    pub const CHAR: Self = Self(cef_key_event_type_t::KEYEVENT_CHAR);
-}
-impl KeyEventType {
-    #[doc = "Get the raw integer representation."]
-    pub fn get_raw(&self) -> i32 {
-        self.0 as i32
-    }
-}
-impl Default for KeyEventType {
-    fn default() -> Self {
-        Self(cef_key_event_type_t::KEYEVENT_RAWKEYDOWN)
     }
 }
 
@@ -50773,6 +53228,9 @@ impl ChromePageActionIconType {
     #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_WALLET_REMINDER_NOTICE`] for more documentation."]
     pub const WALLET_REMINDER_NOTICE: Self =
         Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_WALLET_REMINDER_NOTICE);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_GMAIL_OTP_OPT_IN`] for more documentation."]
+    pub const GMAIL_OTP_OPT_IN: Self =
+        Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_GMAIL_OTP_OPT_IN);
     #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_NUM_VALUES);
 }
@@ -51671,6 +54129,9 @@ impl ComponentUpdateError {
     #[doc = "See [`cef_component_update_error_t::CEF_COMPONENT_UPDATE_ERROR_BAD_CRX_DATA_CALLBACK`] for more documentation."]
     pub const BAD_CRX_DATA_CALLBACK: Self =
         Self(cef_component_update_error_t::CEF_COMPONENT_UPDATE_ERROR_BAD_CRX_DATA_CALLBACK);
+    #[doc = "See [`cef_component_update_error_t::CEF_COMPONENT_UPDATE_ERROR_UPDATE_DISABLED`] for more documentation."]
+    pub const UPDATE_DISABLED: Self =
+        Self(cef_component_update_error_t::CEF_COMPONENT_UPDATE_ERROR_UPDATE_DISABLED);
 }
 impl ComponentUpdateError {
     #[doc = "Get the raw integer representation."]
@@ -52096,6 +54557,21 @@ impl ColorId {
     #[doc = "See [`cef_color_id_t::CEF_ColorSysSurfaceNumberedForeground`] for more documentation."]
     pub const COLOR_SYS_SURFACE_NUMBERED_FOREGROUND: Self =
         Self(cef_color_id_t::CEF_ColorSysSurfaceNumberedForeground);
+    #[doc = "See [`cef_color_id_t::CEF_ColorSysSurfaceContainerLowest`] for more documentation."]
+    pub const COLOR_SYS_SURFACE_CONTAINER_LOWEST: Self =
+        Self(cef_color_id_t::CEF_ColorSysSurfaceContainerLowest);
+    #[doc = "See [`cef_color_id_t::CEF_ColorSysSurfaceContainerLow`] for more documentation."]
+    pub const COLOR_SYS_SURFACE_CONTAINER_LOW: Self =
+        Self(cef_color_id_t::CEF_ColorSysSurfaceContainerLow);
+    #[doc = "See [`cef_color_id_t::CEF_ColorSysSurfaceContainer`] for more documentation."]
+    pub const COLOR_SYS_SURFACE_CONTAINER: Self =
+        Self(cef_color_id_t::CEF_ColorSysSurfaceContainer);
+    #[doc = "See [`cef_color_id_t::CEF_ColorSysSurfaceContainerHigh`] for more documentation."]
+    pub const COLOR_SYS_SURFACE_CONTAINER_HIGH: Self =
+        Self(cef_color_id_t::CEF_ColorSysSurfaceContainerHigh);
+    #[doc = "See [`cef_color_id_t::CEF_ColorSysSurfaceContainerHighest`] for more documentation."]
+    pub const COLOR_SYS_SURFACE_CONTAINER_HIGHEST: Self =
+        Self(cef_color_id_t::CEF_ColorSysSurfaceContainerHighest);
     #[doc = "See [`cef_color_id_t::CEF_ColorSysOnSurfaceSecondary`] for more documentation."]
     pub const COLOR_SYS_ON_SURFACE_SECONDARY: Self =
         Self(cef_color_id_t::CEF_ColorSysOnSurfaceSecondary);
@@ -53319,9 +55795,15 @@ impl ColorId {
     #[doc = "See [`cef_color_id_t::CEF_ColorAppMenuYourChromeBackground`] for more documentation."]
     pub const COLOR_APP_MENU_YOUR_CHROME_BACKGROUND: Self =
         Self(cef_color_id_t::CEF_ColorAppMenuYourChromeBackground);
+    #[doc = "See [`cef_color_id_t::CEF_ColorAppMenuYourChromeForeground`] for more documentation."]
+    pub const COLOR_APP_MENU_YOUR_CHROME_FOREGROUND: Self =
+        Self(cef_color_id_t::CEF_ColorAppMenuYourChromeForeground);
     #[doc = "See [`cef_color_id_t::CEF_ColorAppMenuToolsAndActionsBackground`] for more documentation."]
     pub const COLOR_APP_MENU_TOOLS_AND_ACTIONS_BACKGROUND: Self =
         Self(cef_color_id_t::CEF_ColorAppMenuToolsAndActionsBackground);
+    #[doc = "See [`cef_color_id_t::CEF_ColorAppMenuToolsAndActionsForeground`] for more documentation."]
+    pub const COLOR_APP_MENU_TOOLS_AND_ACTIONS_FOREGROUND: Self =
+        Self(cef_color_id_t::CEF_ColorAppMenuToolsAndActionsForeground);
     #[doc = "See [`cef_color_id_t::CEF_ColorAppMenuBlockButtonBackground`] for more documentation."]
     pub const COLOR_APP_MENU_BLOCK_BUTTON_BACKGROUND: Self =
         Self(cef_color_id_t::CEF_ColorAppMenuBlockButtonBackground);
@@ -53849,6 +56331,12 @@ impl ColorId {
         Self(cef_color_id_t::CEF_ColorInfoBarContentAreaSeparator);
     #[doc = "See [`cef_color_id_t::CEF_ColorInfoBarForeground`] for more documentation."]
     pub const COLOR_INFO_BAR_FOREGROUND: Self = Self(cef_color_id_t::CEF_ColorInfoBarForeground);
+    #[doc = "See [`cef_color_id_t::CEF_ColorInfoBarQueuedCountPillBackground`] for more documentation."]
+    pub const COLOR_INFO_BAR_QUEUED_COUNT_PILL_BACKGROUND: Self =
+        Self(cef_color_id_t::CEF_ColorInfoBarQueuedCountPillBackground);
+    #[doc = "See [`cef_color_id_t::CEF_ColorInfoBarQueuedCountPillForeground`] for more documentation."]
+    pub const COLOR_INFO_BAR_QUEUED_COUNT_PILL_FOREGROUND: Self =
+        Self(cef_color_id_t::CEF_ColorInfoBarQueuedCountPillForeground);
     #[doc = "See [`cef_color_id_t::CEF_ColorIntentPickerItemBackgroundHovered`] for more documentation."]
     pub const COLOR_INTENT_PICKER_ITEM_BACKGROUND_HOVERED: Self =
         Self(cef_color_id_t::CEF_ColorIntentPickerItemBackgroundHovered);
@@ -53993,9 +56481,15 @@ impl ColorId {
     #[doc = "See [`cef_color_id_t::CEF_ColorTabStripControlButtonInkDrop`] for more documentation."]
     pub const COLOR_TAB_STRIP_CONTROL_BUTTON_INK_DROP: Self =
         Self(cef_color_id_t::CEF_ColorTabStripControlButtonInkDrop);
+    #[doc = "See [`cef_color_id_t::CEF_ColorTabStripControlButtonInkDropFrameInactive`] for more documentation."]
+    pub const COLOR_TAB_STRIP_CONTROL_BUTTON_INK_DROP_FRAME_INACTIVE: Self =
+        Self(cef_color_id_t::CEF_ColorTabStripControlButtonInkDropFrameInactive);
     #[doc = "See [`cef_color_id_t::CEF_ColorTabStripControlButtonInkDropRipple`] for more documentation."]
     pub const COLOR_TAB_STRIP_CONTROL_BUTTON_INK_DROP_RIPPLE: Self =
         Self(cef_color_id_t::CEF_ColorTabStripControlButtonInkDropRipple);
+    #[doc = "See [`cef_color_id_t::CEF_ColorTabStripControlButtonInkDropRippleFrameInactive`] for more documentation."]
+    pub const COLOR_TAB_STRIP_CONTROL_BUTTON_INK_DROP_RIPPLE_FRAME_INACTIVE: Self =
+        Self(cef_color_id_t::CEF_ColorTabStripControlButtonInkDropRippleFrameInactive);
     #[doc = "See [`cef_color_id_t::CEF_ColorTabStripScrollButtonBackground`] for more documentation."]
     pub const COLOR_TAB_STRIP_SCROLL_BUTTON_BACKGROUND: Self =
         Self(cef_color_id_t::CEF_ColorTabStripScrollButtonBackground);
@@ -54076,9 +56570,12 @@ impl ColorId {
     #[doc = "See [`cef_color_id_t::CEF_ColorNewTabPageThreadsRailBackground`] for more documentation."]
     pub const COLOR_NEW_TAB_PAGE_THREADS_RAIL_BACKGROUND: Self =
         Self(cef_color_id_t::CEF_ColorNewTabPageThreadsRailBackground);
-    #[doc = "See [`cef_color_id_t::CEF_ColorNewTabPageThreadsRailIconButton`] for more documentation."]
-    pub const COLOR_NEW_TAB_PAGE_THREADS_RAIL_ICON_BUTTON: Self =
-        Self(cef_color_id_t::CEF_ColorNewTabPageThreadsRailIconButton);
+    #[doc = "See [`cef_color_id_t::CEF_ColorNewTabPageThreadsRailPrimaryFont`] for more documentation."]
+    pub const COLOR_NEW_TAB_PAGE_THREADS_RAIL_PRIMARY_FONT: Self =
+        Self(cef_color_id_t::CEF_ColorNewTabPageThreadsRailPrimaryFont);
+    #[doc = "See [`cef_color_id_t::CEF_ColorNewTabPageThreadsRailHoverBackground`] for more documentation."]
+    pub const COLOR_NEW_TAB_PAGE_THREADS_RAIL_HOVER_BACKGROUND: Self =
+        Self(cef_color_id_t::CEF_ColorNewTabPageThreadsRailHoverBackground);
     #[doc = "See [`cef_color_id_t::CEF_ColorNewTabPageChipBackground`] for more documentation."]
     pub const COLOR_NEW_TAB_PAGE_CHIP_BACKGROUND: Self =
         Self(cef_color_id_t::CEF_ColorNewTabPageChipBackground);
@@ -54099,6 +56596,9 @@ impl ColorId {
     #[doc = "See [`cef_color_id_t::CEF_ColorComposeboxFontLight`] for more documentation."]
     pub const COLOR_COMPOSEBOX_FONT_LIGHT: Self =
         Self(cef_color_id_t::CEF_ColorComposeboxFontLight);
+    #[doc = "See [`cef_color_id_t::CEF_ColorComposeboxGhostCardBackground`] for more documentation."]
+    pub const COLOR_COMPOSEBOX_GHOST_CARD_BACKGROUND: Self =
+        Self(cef_color_id_t::CEF_ColorComposeboxGhostCardBackground);
     #[doc = "See [`cef_color_id_t::CEF_ColorComposeboxCancelButton`] for more documentation."]
     pub const COLOR_COMPOSEBOX_CANCEL_BUTTON: Self =
         Self(cef_color_id_t::CEF_ColorComposeboxCancelButton);
@@ -54155,9 +56655,6 @@ impl ColorId {
     #[doc = "See [`cef_color_id_t::CEF_ColorComposeboxUploadButton`] for more documentation."]
     pub const COLOR_COMPOSEBOX_UPLOAD_BUTTON: Self =
         Self(cef_color_id_t::CEF_ColorComposeboxUploadButton);
-    #[doc = "See [`cef_color_id_t::CEF_ColorComposeboxUploadButtonDisabled`] for more documentation."]
-    pub const COLOR_COMPOSEBOX_UPLOAD_BUTTON_DISABLED: Self =
-        Self(cef_color_id_t::CEF_ColorComposeboxUploadButtonDisabled);
     #[doc = "See [`cef_color_id_t::CEF_ColorComposeboxFileChipBackground`] for more documentation."]
     pub const COLOR_COMPOSEBOX_FILE_CHIP_BACKGROUND: Self =
         Self(cef_color_id_t::CEF_ColorComposeboxFileChipBackground);
@@ -54682,6 +57179,18 @@ impl ColorId {
     pub const COLOR_OMNIBOX_TEXT: Self = Self(cef_color_id_t::CEF_ColorOmniboxText);
     #[doc = "See [`cef_color_id_t::CEF_ColorOmniboxTextDimmed`] for more documentation."]
     pub const COLOR_OMNIBOX_TEXT_DIMMED: Self = Self(cef_color_id_t::CEF_ColorOmniboxTextDimmed);
+    #[doc = "See [`cef_color_id_t::CEF_ColorOrganizerPanelBackground`] for more documentation."]
+    pub const COLOR_ORGANIZER_PANEL_BACKGROUND: Self =
+        Self(cef_color_id_t::CEF_ColorOrganizerPanelBackground);
+    #[doc = "See [`cef_color_id_t::CEF_ColorOrganizerPanelDivider`] for more documentation."]
+    pub const COLOR_ORGANIZER_PANEL_DIVIDER: Self =
+        Self(cef_color_id_t::CEF_ColorOrganizerPanelDivider);
+    #[doc = "See [`cef_color_id_t::CEF_ColorOrganizerPanelForeground`] for more documentation."]
+    pub const COLOR_ORGANIZER_PANEL_FOREGROUND: Self =
+        Self(cef_color_id_t::CEF_ColorOrganizerPanelForeground);
+    #[doc = "See [`cef_color_id_t::CEF_ColorOrganizerPanelForegroundSubtle`] for more documentation."]
+    pub const COLOR_ORGANIZER_PANEL_FOREGROUND_SUBTLE: Self =
+        Self(cef_color_id_t::CEF_ColorOrganizerPanelForegroundSubtle);
     #[doc = "See [`cef_color_id_t::CEF_ColorPageInfoChosenObjectDeleteButtonIcon`] for more documentation."]
     pub const COLOR_PAGE_INFO_CHOSEN_OBJECT_DELETE_BUTTON_ICON: Self =
         Self(cef_color_id_t::CEF_ColorPageInfoChosenObjectDeleteButtonIcon);
@@ -55582,6 +58091,12 @@ impl ColorId {
     #[doc = "See [`cef_color_id_t::CEF_ColorSettingsSectionBackground`] for more documentation."]
     pub const COLOR_SETTINGS_SECTION_BACKGROUND: Self =
         Self(cef_color_id_t::CEF_ColorSettingsSectionBackground);
+    #[doc = "See [`cef_color_id_t::CEF_ColorSettingsRowBackgroundHovered`] for more documentation."]
+    pub const COLOR_SETTINGS_ROW_BACKGROUND_HOVERED: Self =
+        Self(cef_color_id_t::CEF_ColorSettingsRowBackgroundHovered);
+    #[doc = "See [`cef_color_id_t::CEF_ColorSettingsRowBackgroundActive`] for more documentation."]
+    pub const COLOR_SETTINGS_ROW_BACKGROUND_ACTIVE: Self =
+        Self(cef_color_id_t::CEF_ColorSettingsRowBackgroundActive);
     #[doc = "See [`cef_color_id_t::CEF_ColorShareThisTabAudioToggleBackground`] for more documentation."]
     pub const COLOR_SHARE_THIS_TAB_AUDIO_TOGGLE_BACKGROUND: Self =
         Self(cef_color_id_t::CEF_ColorShareThisTabAudioToggleBackground);
@@ -55930,6 +58445,12 @@ impl ColorId {
     #[doc = "See [`cef_color_id_t::CEF_ColorTabForegroundInactiveFrameInactive`] for more documentation."]
     pub const COLOR_TAB_FOREGROUND_INACTIVE_FRAME_INACTIVE: Self =
         Self(cef_color_id_t::CEF_ColorTabForegroundInactiveFrameInactive);
+    #[doc = "See [`cef_color_id_t::CEF_ColorTabForegroundInactiveHoverFrameActive`] for more documentation."]
+    pub const COLOR_TAB_FOREGROUND_INACTIVE_HOVER_FRAME_ACTIVE: Self =
+        Self(cef_color_id_t::CEF_ColorTabForegroundInactiveHoverFrameActive);
+    #[doc = "See [`cef_color_id_t::CEF_ColorTabForegroundInactiveHoverFrameInactive`] for more documentation."]
+    pub const COLOR_TAB_FOREGROUND_INACTIVE_HOVER_FRAME_INACTIVE: Self =
+        Self(cef_color_id_t::CEF_ColorTabForegroundInactiveHoverFrameInactive);
     #[doc = "See [`cef_color_id_t::CEF_ColorTabDividerFrameActive`] for more documentation."]
     pub const COLOR_TAB_DIVIDER_FRAME_ACTIVE: Self =
         Self(cef_color_id_t::CEF_ColorTabDividerFrameActive);
