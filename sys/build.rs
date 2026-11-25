@@ -138,9 +138,12 @@ fn main() -> anyhow::Result<()> {
     let api_version = cef_api_version_last(&cef_dir)?;
     println!("cargo::metadata=CEF_API_VERSION={api_version}");
 
+    let generator = cmake_generator(&target, os_arch.os);
+    clear_stale_cmake_build(&out_dir.join("build"), &generator)?;
+
     let mut cef_dll_wrapper = cmake::Config::new(&cef_dir);
     cef_dll_wrapper
-        .generator("Ninja")
+        .generator(&generator)
         .profile("RelWithDebInfo")
         .build_target("libcef_dll_wrapper")
         // Seeds the list CEF's cmake appends its own defines to and applies
@@ -398,6 +401,92 @@ fn cef_api_version_last(cef_dir: &std::path::Path) -> anyhow::Result<u32> {
                 .ok()
         })
         .ok_or_else(|| anyhow::anyhow!("no CEF_API_VERSION_LAST in {}", header.display()))
+}
+
+/// The names CMake looks for Ninja under.
+#[cfg(not(feature = "dox"))]
+const NINJA_NAMES: &[&str] = &["ninja-build", "ninja", "samu"];
+
+/// The CMake generator to build the wrapper with.
+///
+/// Windows targets always use Ninja: `cef_variables.cmake` and
+/// `configure_clang_cl` are written for it, and the Visual Studio generators
+/// put the library in a per-configuration directory. Other targets use the
+/// `CMAKE_GENERATOR` environment variable if it is set, else Ninja if it is
+/// installed, else `Unix Makefiles`.
+#[cfg(not(feature = "dox"))]
+fn cmake_generator(target: &str, target_os: &str) -> String {
+    if target_os != "windows" {
+        if let Some(generator) = cmake_env("CMAKE_GENERATOR", target) {
+            return generator.to_string_lossy().into_owned();
+        }
+        if !in_path(NINJA_NAMES) {
+            return "Unix Makefiles".to_owned();
+        }
+    }
+
+    "Ninja".to_owned()
+}
+
+/// Reads an environment variable the way the `cmake` crate does, which lets
+/// it be set for one target only: `<VAR>_<target>`, `<VAR>_<target_with_underscores>`,
+/// `HOST_<VAR>` or `TARGET_<VAR>`, then `<VAR>`.
+#[cfg(not(feature = "dox"))]
+fn cmake_env(var_base: &str, target: &str) -> Option<std::ffi::OsString> {
+    let kind = if std::env::var("HOST").is_ok_and(|host| host == target) {
+        "HOST"
+    } else {
+        "TARGET"
+    };
+
+    [
+        format!("{var_base}_{target}"),
+        format!("{var_base}_{}", target.replace('-', "_")),
+        format!("{kind}_{var_base}"),
+        var_base.to_owned(),
+    ]
+    .into_iter()
+    .find_map(|var| {
+        println!("cargo::rerun-if-env-changed={var}");
+        std::env::var_os(var)
+    })
+}
+
+/// Whether `PATH` has an executable with one of these names.
+#[cfg(not(feature = "dox"))]
+fn in_path(names: &[&str]) -> bool {
+    let Some(path) = std::env::var_os("PATH") else {
+        return false;
+    };
+
+    std::env::split_paths(&path).any(|dir| {
+        names.iter().any(|name| {
+            dir.join(format!("{name}{}", std::env::consts::EXE_SUFFIX))
+                .is_file()
+        })
+    })
+}
+
+/// CMake refuses to configure a build directory again with another generator,
+/// which happens when e.g. Ninja is installed after a build with Makefiles,
+/// so remove the build directory in that case.
+#[cfg(not(feature = "dox"))]
+fn clear_stale_cmake_build(
+    build_dir: &std::path::Path,
+    generator: &str,
+) -> Result<(), std::io::Error> {
+    let Ok(cache) = std::fs::read_to_string(build_dir.join("CMakeCache.txt")) else {
+        return Ok(());
+    };
+
+    let cached_generator = cache
+        .lines()
+        .find_map(|line| line.strip_prefix("CMAKE_GENERATOR:INTERNAL="));
+    if cached_generator.is_some_and(|cached_generator| cached_generator != generator) {
+        std::fs::remove_dir_all(build_dir)?;
+    }
+
+    Ok(())
 }
 
 #[cfg(not(feature = "dox"))]
