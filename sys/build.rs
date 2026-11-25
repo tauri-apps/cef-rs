@@ -11,6 +11,10 @@ fn main() -> anyhow::Result<()> {
     let target = env::var("TARGET")?;
     let os_arch = OsAndArch::try_from(target.as_str())?;
 
+    // Before the CEF download, which takes a while.
+    check_cmake(&target)?;
+    let generator = cmake_generator(&target, os_arch.os)?;
+
     println!("cargo::rerun-if-env-changed=FLATPAK");
     println!("cargo::rerun-if-env-changed=NIX_CEF_BINARY");
     println!("cargo::rerun-if-env-changed=CEF_PATH");
@@ -138,7 +142,6 @@ fn main() -> anyhow::Result<()> {
     let api_version = cef_api_version_last(&cef_dir)?;
     println!("cargo::metadata=CEF_API_VERSION={api_version}");
 
-    let generator = cmake_generator(&target, os_arch.os);
     clear_stale_cmake_build(&out_dir.join("build"), &generator)?;
 
     let mut cef_dll_wrapper = cmake::Config::new(&cef_dir);
@@ -407,6 +410,24 @@ fn cef_api_version_last(cef_dir: &std::path::Path) -> anyhow::Result<u32> {
 #[cfg(not(feature = "dox"))]
 const NINJA_NAMES: &[&str] = &["ninja-build", "ninja", "samu"];
 
+/// Fails with install instructions if the `cmake` crate won't find CMake.
+#[cfg(not(feature = "dox"))]
+fn check_cmake(target: &str) -> anyhow::Result<()> {
+    // Without `cmake` in `PATH`, the `cmake` crate uses the one that comes
+    // with Visual Studio.
+    let found = cmake_env("CMAKE", target).is_some()
+        || in_path(&["cmake"])
+        || cc::windows_registry::find_tool(target, "devenv").is_some();
+    anyhow::ensure!(
+        found,
+        "CMake is needed to build libcef_dll_wrapper, but `cmake` isn't in PATH. \
+         Install it with `{}`, or set the CMAKE environment variable to its path.",
+        install_command("cmake", "cmake", "Kitware.CMake"),
+    );
+
+    Ok(())
+}
+
 /// The CMake generator to build the wrapper with.
 ///
 /// Windows targets always use Ninja: `cef_variables.cmake` and
@@ -415,17 +436,42 @@ const NINJA_NAMES: &[&str] = &["ninja-build", "ninja", "samu"];
 /// `CMAKE_GENERATOR` environment variable if it is set, else Ninja if it is
 /// installed, else `Unix Makefiles`.
 #[cfg(not(feature = "dox"))]
-fn cmake_generator(target: &str, target_os: &str) -> String {
-    if target_os != "windows" {
+fn cmake_generator(target: &str, target_os: &str) -> anyhow::Result<String> {
+    let install_ninja = install_command("ninja", "ninja-build", "Ninja-build.Ninja");
+
+    if target_os == "windows" {
+        anyhow::ensure!(
+            in_path(NINJA_NAMES),
+            "Ninja is needed to build libcef_dll_wrapper for Windows, but `ninja` isn't in PATH. \
+             Install it with `{install_ninja}`.",
+        );
+    } else {
         if let Some(generator) = cmake_env("CMAKE_GENERATOR", target) {
-            return generator.to_string_lossy().into_owned();
+            return Ok(generator.to_string_lossy().into_owned());
         }
         if !in_path(NINJA_NAMES) {
-            return "Unix Makefiles".to_owned();
+            anyhow::ensure!(
+                in_path(&["make", "gmake"]),
+                "Ninja or Make is needed to build libcef_dll_wrapper, but neither `ninja` nor \
+                 `make` is in PATH. Install Ninja with `{install_ninja}`.",
+            );
+            return Ok("Unix Makefiles".to_owned());
         }
     }
 
-    "Ninja".to_owned()
+    Ok("Ninja".to_owned())
+}
+
+/// The command that installs a package on the host.
+#[cfg(not(feature = "dox"))]
+fn install_command(brew: &str, apt: &str, winget: &str) -> String {
+    if cfg!(target_os = "macos") {
+        format!("brew install {brew}")
+    } else if cfg!(windows) {
+        format!("winget install {winget}")
+    } else {
+        format!("sudo apt install {apt}")
+    }
 }
 
 /// Reads an environment variable the way the `cmake` crate does, which lets

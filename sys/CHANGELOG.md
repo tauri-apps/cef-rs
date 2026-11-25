@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- fix(sys): build without Ninja on Linux and macOS, and name the missing build tool
+
 ## [156.5.0+156.0.28](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v156.4.0+156.0.26...cef-dll-sys-v156.5.0+156.0.28) - 2026-11-15
 
 ### Other
