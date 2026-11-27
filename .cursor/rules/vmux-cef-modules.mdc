@@ -1,0 +1,42 @@
+---
+description: vmux browser::cef — flat modules, one-word file names, no nested mod blocks
+globs: examples/vmux/src/browser/cef/**/*.rs
+alwaysApply: false
+---
+
+# vmux `browser::cef` module layout
+
+## No nested `mod { … }` inside CEF integration files
+
+Do **not** add nested `pub mod foo { … }` (or private `mod foo { … }`) inside the large integration files listed below. Keep **flat** `pub fn`, `pub struct`, and `pub type` items at the module root of each file. Splitting further uses **sibling files** under `cef/` (`facet.rs`, `stage.rs`, …), not inner modules in `cef.rs` / `osr.rs` / `renderer.rs`.
+
+| File | Role |
+|------|------|
+| `cef.rs` | Root CEF wiring: `pub mod` children only via `mod name;` → `cef/<name>.rs`. Message-loop helpers (`message_loop_pump`, `main_message_loop_tick`), UI-thread context, `pub mod osr`, `pub mod renderer`, plus locale/tests at file bottom. |
+| `cef/osr.rs` | Single-file OSR hub: `WindowEntry`, render handler, geometry, paint path — all **flat** in `osr`, no `hub` / `render` submodules. |
+| `cef/renderer.rs` | wgpu composite + device helpers — **flat** in `renderer` (no nested `gpu` / `composite` modules). `cef/shader.wgsl` is included from here. |
+
+Other integration modules under `cef/` stay **one word, no underscores** in the filename:
+
+| File | Role |
+|------|------|
+| `facet.rs` | Per-browser ECS components (focus hint, link-hint width, last URL, DOM walk limit resource). |
+| `context.rs` | CEF `RequestContext` handler wiring. |
+| `lifecycle.rs` | Close guards, browser lifecycle mutex resources, `RequestCloseAllBrowsersEvent` bridge. |
+| `entity.rs` | Browser ECS entities, spawn/despawn, `CefBrowserHandles`, OSR bundle pieces. |
+| `active.rs` | `ActiveBrowserId` and navigate-active-browser systems. |
+| `app.rs` | CEF `App` (`VmuxApp`), command-line / env Chromium switches, `AppBrowserProcessHandler`. |
+| `queue.rs` | `BrowserUiOp` queue + `apply_browser_ui_ops_system`. |
+| `client.rs` | CEF `Client`, display/load handlers, `BrowserClient`, UI-thread task bridges. |
+| `focus.rs` | Editable-focus DOM probe tasks and dispatch systems. |
+| `ffi.rs` | `OnceLock` mirrors for browser handles, lifecycle, close guards, `CefAttach` (non-ECS / CEF thread paths). |
+| `shell.rs` | `OsrHostState` and window/browser resolution helpers. |
+| `stage.rs` | Winit/pump integration: pending browser creation, startup window, staged navigation. |
+| `titles.rs` | Pending title strings from CEF → shell. |
+| `quit.rs` | Quit-time visual feedback (macOS). |
+| `macos.rs` | AppKit `VmuxApplication` / CEF app wiring (macOS only). |
+| `input.rs` + `input/` | Winit keyboard/mouse → CEF event helpers (`keyboard`, `mouse`). |
+
+## Paths
+
+Prefer `crate::browser::cef::<module>::…` in call sites. OSR and renderer symbols live directly under `cef::osr::…` and `cef::renderer::…` (not `osr::hub::…` or `renderer::composite::…`). Do not reintroduce `browser_shell` or nested-module re-export barrels unless there is a strong, documented reason.
