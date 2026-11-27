@@ -793,6 +793,39 @@ impl Display for CefStringWide {
     }
 }
 
+/// A string that one of the collection getters (`cef_string_list_value`, `cef_string_map_key`,
+/// `cef_string_multimap_enumerate`, ...) copied into a caller-provided `cef_string_t`. The copy
+/// belongs to the caller, so it's cleared on drop.
+struct CopiedString(_cef_string_utf16_t);
+
+impl CopiedString {
+    fn new() -> Self {
+        Self(unsafe { mem::zeroed() })
+    }
+
+    fn as_ptr(&self) -> *const _cef_string_utf16_t {
+        &self.0
+    }
+
+    fn as_mut_ptr(&mut self) -> *mut _cef_string_utf16_t {
+        &mut self.0
+    }
+}
+
+impl Display for CopiedString {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        write!(f, "{}", CefString::from(self.as_ptr()))
+    }
+}
+
+impl Drop for CopiedString {
+    fn drop(&mut self) {
+        unsafe {
+            cef_dll_sys::cef_string_utf16_clear(&mut self.0);
+        }
+    }
+}
+
 enum CefStringCollection<T> {
     Borrowed(Option<T>),
     BorrowedMut(Option<NonNull<T>>),
@@ -946,10 +979,11 @@ impl IntoIterator for CefStringList {
             let count = unsafe { cef_dll_sys::cef_string_list_size(list) };
             (0..count)
                 .filter_map(|i| unsafe {
-                    let mut value = mem::zeroed();
-                    (cef_dll_sys::cef_string_list_value(list, i, &mut value) > 0).then_some(value)
+                    let mut value = CopiedString::new();
+                    (cef_dll_sys::cef_string_list_value(list, i, value.as_mut_ptr()) > 0)
+                        .then_some(value)
                 })
-                .map(|value| CefString::from(ptr::from_ref(&value)).to_string())
+                .map(|value| value.to_string())
                 .collect::<Vec<_>>()
         })
         .unwrap_or_default()
@@ -972,9 +1006,9 @@ impl Debug for CefStringList {
             let count = cef_dll_sys::cef_string_list_size(list);
             for i in 0..count {
                 let separator = if i > 0 { ", " } else { "" };
-                let mut value = mem::zeroed();
-                if cef_dll_sys::cef_string_list_value(list, i, &mut value) != 0 {
-                    let value = CefString::from(ptr::from_ref(&value)).to_string();
+                let mut value = CopiedString::new();
+                if cef_dll_sys::cef_string_list_value(list, i, value.as_mut_ptr()) != 0 {
+                    let value = value.to_string();
                     write!(f, "{separator}{value:?}")?;
                 } else {
                     write!(f, "{separator}null")?;
@@ -1079,18 +1113,13 @@ impl IntoIterator for CefStringMap {
             let count = unsafe { cef_dll_sys::cef_string_map_size(map) };
             (0..count)
                 .filter_map(|i| unsafe {
-                    let mut key = mem::zeroed();
-                    let mut value = mem::zeroed();
-                    (cef_dll_sys::cef_string_map_key(map, i, &mut key) > 0
-                        && cef_dll_sys::cef_string_map_value(map, i, &mut value) > 0)
+                    let mut key = CopiedString::new();
+                    let mut value = CopiedString::new();
+                    (cef_dll_sys::cef_string_map_key(map, i, key.as_mut_ptr()) > 0
+                        && cef_dll_sys::cef_string_map_value(map, i, value.as_mut_ptr()) > 0)
                         .then_some((key, value))
                 })
-                .map(|(key, value)| {
-                    (
-                        CefString::from(ptr::from_ref(&key)).to_string(),
-                        CefString::from(ptr::from_ref(&value)).to_string(),
-                    )
-                })
+                .map(|(key, value)| (key.to_string(), value.to_string()))
                 .collect::<Vec<_>>()
         })
         .unwrap_or_default()
@@ -1112,15 +1141,14 @@ impl Debug for CefStringMap {
 
             let count = cef_dll_sys::cef_string_map_size(map);
             for i in 0..count {
-                let mut key = mem::zeroed();
-                if cef_dll_sys::cef_string_map_key(map, i, &mut key) != 0 {
+                let mut key = CopiedString::new();
+                if cef_dll_sys::cef_string_map_key(map, i, key.as_mut_ptr()) != 0 {
                     let separator = if i > 0 { ", " } else { "" };
-                    let key = CefString::from(ptr::from_ref(&key));
                     write!(f, "{separator}{key}: ")?;
 
-                    let mut value = mem::zeroed();
-                    if cef_dll_sys::cef_string_map_value(map, i, &mut value) != 0 {
-                        let value = CefString::from(ptr::from_ref(&value)).to_string();
+                    let mut value = CopiedString::new();
+                    if cef_dll_sys::cef_string_map_value(map, i, value.as_mut_ptr()) != 0 {
+                        let value = value.to_string();
                         write!(f, "{value:?}")?;
                     } else {
                         write!(f, "null")?;
@@ -1166,7 +1194,7 @@ impl Drop for CefStringMultimap {
     fn drop(&mut self) {
         unsafe {
             if let CefStringCollection::Free(Some(map)) = &mut self.0 {
-                cef_dll_sys::cef_string_multimap_clear(map.as_ptr());
+                cef_dll_sys::cef_string_multimap_free(map.as_ptr());
             }
         }
     }
@@ -1229,29 +1257,27 @@ impl IntoIterator for CefStringMultimap {
                     let count = cef_dll_sys::cef_string_multimap_size(multimap);
                     let mut visited: BTreeSet<String> = Default::default();
                     for i in 0..count {
-                        let mut key = mem::zeroed();
-                        if cef_dll_sys::cef_string_multimap_key(multimap, i, &mut key) != 0 {
-                            let key = CefString::from(ptr::from_ref(&key));
+                        let mut key = CopiedString::new();
+                        if cef_dll_sys::cef_string_multimap_key(multimap, i, key.as_mut_ptr()) != 0
+                        {
                             let key_string = key.to_string();
                             if visited.contains(&key_string) {
                                 continue;
                             }
 
-                            let count = cef_dll_sys::cef_string_multimap_find_count(
-                                multimap,
-                                (&key).into(),
-                            );
+                            let count =
+                                cef_dll_sys::cef_string_multimap_find_count(multimap, key.as_ptr());
                             let mut values = vec![];
                             for i in 0..count {
-                                let mut value = mem::zeroed();
+                                let mut value = CopiedString::new();
                                 if cef_dll_sys::cef_string_multimap_enumerate(
                                     multimap,
-                                    (&key).into(),
+                                    key.as_ptr(),
                                     i,
-                                    &mut value,
+                                    value.as_mut_ptr(),
                                 ) != 0
                                 {
-                                    values.push(CefString::from(ptr::from_ref(&value)).to_string());
+                                    values.push(value.to_string());
                                 }
                             }
 
@@ -1282,9 +1308,8 @@ impl Debug for CefStringMultimap {
             let count = cef_dll_sys::cef_string_multimap_size(multimap);
             let mut visited: BTreeSet<String> = Default::default();
             for i in 0..count {
-                let mut key = mem::zeroed();
-                if cef_dll_sys::cef_string_multimap_key(multimap, i, &mut key) != 0 {
-                    let key = CefString::from(ptr::from_ref(&key));
+                let mut key = CopiedString::new();
+                if cef_dll_sys::cef_string_multimap_key(multimap, i, key.as_mut_ptr()) != 0 {
                     let key_string = key.to_string();
                     if visited.contains(&key_string) {
                         continue;
@@ -1293,19 +1318,18 @@ impl Debug for CefStringMultimap {
                     let separator = if i > 0 { ", " } else { "" };
                     write!(f, "{separator}{key_string}: [")?;
 
-                    let count =
-                        cef_dll_sys::cef_string_multimap_find_count(multimap, (&key).into());
+                    let count = cef_dll_sys::cef_string_multimap_find_count(multimap, key.as_ptr());
                     for i in 0..count {
                         let separator = if i > 0 { ", " } else { "" };
-                        let mut value = mem::zeroed();
+                        let mut value = CopiedString::new();
                         if cef_dll_sys::cef_string_multimap_enumerate(
                             multimap,
-                            (&key).into(),
+                            key.as_ptr(),
                             i,
-                            &mut value,
+                            value.as_mut_ptr(),
                         ) != 0
                         {
-                            let value = CefString::from(ptr::from_ref(&value)).to_string();
+                            let value = value.to_string();
                             write!(f, "{separator}{value:?}")?;
                         } else {
                             write!(f, "{separator}null")?;
