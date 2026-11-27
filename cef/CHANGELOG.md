@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- *(string)* pass empty `CefString` out-parameters as a valid pointer instead of null
+
 ## [156.3.1+156.0.15](https://github.com/tauri-apps/cef-rs/compare/cef-v156.3.0+156.0.15...cef-v156.3.1+156.0.15) - 2026-11-07
 
 ### Fixed
