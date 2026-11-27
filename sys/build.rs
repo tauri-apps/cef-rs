@@ -111,13 +111,16 @@ fn main() -> anyhow::Result<()> {
     };
 
     // TODO: far from ideal, but there's no other way to get the target dir, see <https://github.com/rust-lang/cargo/issues/9661>
+    // It's the parent of the `build` directory OUT_DIR is in, which is
+    // `build/<package>-<hash>/out` in the old build-dir layout and
+    // `build/<package>/<hash>/out` in the one Cargo 1.100 made the default.
     let target_dir = out_dir
-        .parent()
-        .unwrap()
-        .parent()
-        .unwrap()
-        .parent()
-        .unwrap();
+        .ancestors()
+        .find(|dir| dir.file_name().is_some_and(|name| name == "build"))
+        .and_then(Path::parent)
+        .ok_or_else(|| {
+            anyhow::anyhow!("OUT_DIR isn't in a build directory: {}", out_dir.display())
+        })?;
 
     let cef_dir_str = cef_dir.to_string_lossy().into_owned();
 
