@@ -11,6 +11,10 @@ Use CEF in Rust.
 
 ## Usage
 
+### Build Requirements
+
+The `cef-dll-sys` crate builds CEF's `libcef_dll_wrapper` with [CMake](https://cmake.org/), so you need `cmake` and a C++ toolchain. [Ninja](https://ninja-build.org/) is required for Windows targets. For Linux and macOS targets it is optional: the build uses it if it is installed, and Makefiles otherwise. Set the `CMAKE_GENERATOR` environment variable to select another generator for those targets.
+
 ### Nix (on Linux)
 
 If you are using Nix on Linux with the `nixpkgs` channel configured, you can take advantage of the `cef-binary` package to share the CEF binaries across your system. Just set the `NIX_CEF_BINARY` environment variable before running any of these `cargo` commands.
